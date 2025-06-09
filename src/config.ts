@@ -1,15 +1,16 @@
 import type { BackupConfig } from './types'
 // @ts-expect-error - bunfig is not typed
 import { loadConfig } from 'bunfig'
+import { DEFAULT_CONFIG } from './constants'
 
 export const defaultConfig: BackupConfig = {
-  verbose: true,
+  verbose: DEFAULT_CONFIG.VERBOSE,
   databases: [],
   files: [],
-  outputPath: './backups',
+  outputPath: DEFAULT_CONFIG.BACKUP_PATH,
   retention: {
-    count: 5,
-    maxAge: 30,
+    count: DEFAULT_CONFIG.RETENTION_COUNT,
+    maxAge: DEFAULT_CONFIG.RETENTION_MAX_AGE,
   },
 }
 

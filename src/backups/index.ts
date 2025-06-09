@@ -1,6 +1,7 @@
 import type { BackupConfig, BackupResult, BackupSummary, DatabaseConfig, FileConfig } from '../types'
 import { mkdir, readdir, stat, unlink } from 'node:fs/promises'
 import { join } from 'node:path'
+import { BackupType } from '../types'
 import { backupDirectory } from './directory'
 import { backupFile } from './file'
 import { backupMySQL } from './mysql'
@@ -79,7 +80,7 @@ export class BackupManager {
 
         results.push({
           name: fileConfig.name,
-          type: fileType,
+          type: fileType === 'directory' ? BackupType.DIRECTORY : BackupType.FILE,
           filename: '',
           size: 0,
           duration: 0,
@@ -106,8 +107,8 @@ export class BackupManager {
       totalDuration,
       successCount: results.filter(r => r.success).length,
       failureCount: results.filter(r => !r.success).length,
-      databaseBackups: results.filter(r => ['sqlite', 'postgresql', 'mysql'].includes(r.type)),
-      fileBackups: results.filter(r => ['directory', 'file'].includes(r.type)),
+      databaseBackups: results.filter(r => [BackupType.SQLITE, BackupType.POSTGRESQL, BackupType.MYSQL].includes(r.type)),
+      fileBackups: results.filter(r => [BackupType.DIRECTORY, BackupType.FILE].includes(r.type)),
     }
 
     if (this.config.verbose) {
@@ -182,19 +183,36 @@ export class BackupManager {
       const files = await readdir(outputPath)
       const backupFiles: Array<{ name: string, path: string, stats: any, age: number }> = []
 
-      // Get info about all backup files (SQL, TAR, and other backup formats)
+      // Get info about all backup files - be more inclusive in matching backup files
       for (const file of files) {
-        if (file.endsWith('.sql') || file.endsWith('.tar') || file.endsWith('.tar.gz') || file.includes('_')) {
-          const filePath = join(outputPath, file)
-          const fileStats = await stat(filePath)
-          const age = Date.now() - fileStats.mtime.getTime()
+        // Match backup files by common extensions and patterns
+        const isBackupFile
+          = file.endsWith('.sql')
+            || file.endsWith('.tar')
+            || file.endsWith('.tar.gz')
+            || file.endsWith('.gz')
+            || file.includes('_backup')
+            || file.includes('backup_')
+            || /\d{4}-\d{2}-\d{2}T\d{2}-\d{2}-\d{2}/.test(file) // timestamp pattern
+            || file.includes('_') // fallback for timestamped files
 
-          backupFiles.push({
-            name: file,
-            path: filePath,
-            stats: fileStats,
-            age: age / (1000 * 60 * 60 * 24), // Convert to days
-          })
+        if (isBackupFile) {
+          const filePath = join(outputPath, file)
+          try {
+            const fileStats = await stat(filePath)
+            const age = Date.now() - fileStats.mtime.getTime()
+
+            backupFiles.push({
+              name: file,
+              path: filePath,
+              stats: fileStats,
+              age: age / (1000 * 60 * 60 * 24), // Convert to days
+            })
+          }
+          catch {
+            // Skip files we can't stat
+            continue
+          }
         }
       }
 

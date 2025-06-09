@@ -1,3 +1,11 @@
+export enum BackupType {
+  SQLITE = 'sqlite',
+  POSTGRESQL = 'postgresql',
+  MYSQL = 'mysql',
+  DIRECTORY = 'directory',
+  FILE = 'file',
+}
+
 export interface BackupConfig {
   verbose: boolean
   databases: DatabaseConfig[]
@@ -52,13 +60,13 @@ export interface FileConfig {
 }
 
 export interface SQLiteConfig extends BaseDbConfig {
-  type: 'sqlite'
+  type: BackupType.SQLITE
   /** Path to the SQLite database file */
   path: string
 }
 
 export interface PostgreSQLConfig extends BaseDbConfig {
-  type: 'postgresql'
+  type: BackupType.POSTGRESQL
   /** Connection URL or individual connection parameters */
   connection: string | {
     hostname?: string
@@ -79,7 +87,7 @@ export interface PostgreSQLConfig extends BaseDbConfig {
 }
 
 export interface MySQLConfig extends BaseDbConfig {
-  type: 'mysql'
+  type: BackupType.MYSQL
   /** Connection URL or individual connection parameters */
   connection: string | {
     hostname?: string
@@ -101,7 +109,7 @@ export interface MySQLConfig extends BaseDbConfig {
 
 export interface BackupResult {
   name: string
-  type: 'sqlite' | 'postgresql' | 'mysql' | 'directory' | 'file'
+  type: BackupType
   filename: string
   size: number
   duration: number

@@ -1,4 +1,5 @@
 import type { BackupConfig } from './src/types'
+import { BackupType } from './src/types'
 
 const config: BackupConfig = {
   verbose: true,
@@ -10,7 +11,7 @@ const config: BackupConfig = {
   databases: [
     // SQLite example
     {
-      type: 'sqlite',
+      type: BackupType.SQLITE,
       name: 'app-database',
       path: './database.sqlite',
       compress: false,
@@ -18,7 +19,7 @@ const config: BackupConfig = {
 
     // PostgreSQL examples
     {
-      type: 'postgresql',
+      type: BackupType.POSTGRESQL,
       name: 'main-postgres',
       connection: 'postgres://user:password@localhost:5432/myapp',
       includeSchema: true,
@@ -27,7 +28,7 @@ const config: BackupConfig = {
       // excludeTables: ['logs', 'temp'], // Optional: exclude tables
     },
     {
-      type: 'postgresql',
+      type: BackupType.POSTGRESQL,
       name: 'analytics-postgres',
       connection: {
         hostname: 'localhost',
@@ -35,7 +36,7 @@ const config: BackupConfig = {
         database: 'analytics',
         username: 'analytics_user',
         password: 'secret',
-        ssl: 'prefer',
+        ssl: false,
       },
       includeSchema: true,
       includeData: true,
@@ -43,7 +44,7 @@ const config: BackupConfig = {
 
     // MySQL example (placeholder - coming soon to Bun!)
     {
-      type: 'mysql',
+      type: BackupType.MYSQL,
       name: 'legacy-mysql',
       connection: {
         hostname: 'localhost',

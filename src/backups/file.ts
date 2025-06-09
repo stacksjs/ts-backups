@@ -3,6 +3,7 @@ import { createReadStream, createWriteStream, existsSync } from 'node:fs'
 import { copyFile, mkdir, stat, writeFile } from 'node:fs/promises'
 import { dirname, extname, join } from 'node:path'
 import { createGzip } from 'node:zlib'
+import { BackupType } from '../types'
 
 export async function backupFile(config: FileConfig, outputPath: string): Promise<BackupResult> {
   const startTime = Date.now()
@@ -62,7 +63,7 @@ export async function backupFile(config: FileConfig, outputPath: string): Promis
 
     return {
       name: config.name,
-      type: 'file',
+      type: BackupType.FILE,
       filename,
       size: actualSize,
       duration,
@@ -80,7 +81,7 @@ export async function backupFile(config: FileConfig, outputPath: string): Promis
 
     return {
       name: config.name,
-      type: 'file',
+      type: BackupType.FILE,
       filename: '',
       size: 0,
       duration,

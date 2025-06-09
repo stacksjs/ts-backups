@@ -4,6 +4,7 @@ import { createWriteStream, existsSync } from 'node:fs'
 import { mkdir, readdir, readFile, stat } from 'node:fs/promises'
 import { dirname, join, relative } from 'node:path'
 import { createGzip } from 'node:zlib'
+import { BackupType } from '../types'
 
 export async function backupDirectory(config: FileConfig, outputPath: string): Promise<BackupResult> {
   const startTime = Date.now()
@@ -47,7 +48,7 @@ export async function backupDirectory(config: FileConfig, outputPath: string): P
 
     return {
       name: config.name,
-      type: 'directory',
+      type: BackupType.DIRECTORY,
       filename,
       size,
       duration,
@@ -65,7 +66,7 @@ export async function backupDirectory(config: FileConfig, outputPath: string): P
 
     return {
       name: config.name,
-      type: 'directory',
+      type: BackupType.DIRECTORY,
       filename: '',
       size: 0,
       duration,

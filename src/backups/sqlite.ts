@@ -2,6 +2,7 @@ import type { BackupResult, SQLiteConfig } from '../types'
 import { Database } from 'bun:sqlite'
 import { writeFile } from 'node:fs/promises'
 import { join } from 'node:path'
+import { BackupType } from '../types'
 
 export async function backupSQLite(
   config: SQLiteConfig,
@@ -144,7 +145,7 @@ export async function backupSQLite(
 
     return {
       name: config.name,
-      type: 'sqlite',
+      type: BackupType.SQLITE,
       filename,
       size: stats.size,
       duration,
@@ -163,7 +164,7 @@ export async function backupSQLite(
 
     return {
       name: config.name,
-      type: 'sqlite',
+      type: BackupType.SQLITE,
       filename: '',
       size: 0,
       duration,

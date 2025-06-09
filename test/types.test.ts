@@ -1,11 +1,12 @@
 import type { BackupConfig, BackupResult, MySQLConfig, PostgreSQLConfig, SQLiteConfig } from '../src/types'
 import { describe, expect, it } from 'bun:test'
+import { BackupType } from '../src/types'
 
 describe('Types', () => {
   describe('DatabaseConfig', () => {
     it('should accept SQLite configuration', () => {
       const config: SQLiteConfig = {
-        type: 'sqlite',
+        type: BackupType.SQLITE,
         name: 'test-db',
         path: './test.sqlite',
         verbose: true,
@@ -13,14 +14,14 @@ describe('Types', () => {
         filename: 'custom-backup',
       }
 
-      expect(config.type).toBe('sqlite')
+      expect(config.type).toBe(BackupType.SQLITE)
       expect(config.name).toBe('test-db')
       expect(config.path).toBe('./test.sqlite')
     })
 
     it('should accept PostgreSQL configuration with connection string', () => {
       const config: PostgreSQLConfig = {
-        type: 'postgresql',
+        type: BackupType.POSTGRESQL,
         name: 'pg-db',
         connection: 'postgres://user:pass@localhost:5432/mydb',
         tables: ['users', 'orders'],
@@ -29,14 +30,14 @@ describe('Types', () => {
         includeData: true,
       }
 
-      expect(config.type).toBe('postgresql')
+      expect(config.type).toBe(BackupType.POSTGRESQL)
       expect(config.connection).toBe('postgres://user:pass@localhost:5432/mydb')
       expect(config.tables).toEqual(['users', 'orders'])
     })
 
     it('should accept PostgreSQL configuration with connection object', () => {
       const config: PostgreSQLConfig = {
-        type: 'postgresql',
+        type: BackupType.POSTGRESQL,
         name: 'pg-db',
         connection: {
           hostname: 'localhost',
@@ -48,14 +49,14 @@ describe('Types', () => {
         },
       }
 
-      expect(config.type).toBe('postgresql')
+      expect(config.type).toBe(BackupType.POSTGRESQL)
       expect(typeof config.connection).toBe('object')
       expect((config.connection as any).database).toBe('mydb')
     })
 
     it('should accept MySQL configuration', () => {
       const config: MySQLConfig = {
-        type: 'mysql',
+        type: BackupType.MYSQL,
         name: 'mysql-db',
         connection: {
           hostname: 'localhost',
@@ -68,7 +69,7 @@ describe('Types', () => {
         excludeTables: ['cache', 'sessions'],
       }
 
-      expect(config.type).toBe('mysql')
+      expect(config.type).toBe(BackupType.MYSQL)
       expect(config.excludeTables).toEqual(['cache', 'sessions'])
     })
   })
@@ -79,12 +80,12 @@ describe('Types', () => {
         verbose: true,
         databases: [
           {
-            type: 'sqlite',
+            type: BackupType.SQLITE,
             name: 'app-db',
             path: './app.sqlite',
           },
           {
-            type: 'postgresql',
+            type: BackupType.POSTGRESQL,
             name: 'main-db',
             connection: 'postgres://user:pass@localhost/app',
           },
@@ -122,7 +123,7 @@ describe('Types', () => {
     it('should represent successful backup result', () => {
       const result: BackupResult = {
         name: 'test-db',
-        type: 'sqlite',
+        type: BackupType.SQLITE,
         filename: 'test-db_2023-12-01.sql',
         size: 1024,
         duration: 500,
@@ -137,7 +138,7 @@ describe('Types', () => {
     it('should represent failed backup result', () => {
       const result: BackupResult = {
         name: 'test-db',
-        type: 'postgresql',
+        type: BackupType.POSTGRESQL,
         filename: '',
         size: 0,
         duration: 100,

@@ -5,6 +5,7 @@ import { existsSync } from 'node:fs'
 import { mkdir, readdir, rmdir, unlink, writeFile } from 'node:fs/promises'
 import { join } from 'node:path'
 import { BackupManager, createBackup } from '../src/backups'
+import { BackupType } from '../src/types'
 
 describe('BackupManager', () => {
   const testOutputDir = './test-backup-manager'
@@ -92,7 +93,7 @@ describe('BackupManager', () => {
         outputPath: testOutputDir,
         databases: [
           {
-            type: 'sqlite',
+            type: BackupType.SQLITE,
             name: 'test-db1',
             path: testDb1Path,
           },
@@ -113,7 +114,7 @@ describe('BackupManager', () => {
       const result = summary.results[0]
       expect(result.success).toBe(true)
       expect(result.name).toBe('test-db1')
-      expect(result.type).toBe('sqlite')
+      expect(result.type).toBe(BackupType.SQLITE)
       expect(result.filename).toBeTruthy()
       expect(result.size).toBeGreaterThan(0)
 
@@ -128,7 +129,7 @@ describe('BackupManager', () => {
         outputPath: testOutputDir,
         databases: [
           {
-            type: 'sqlite',
+            type: BackupType.SQLITE,
             name: 'missing-db',
             path: './non-existent.sqlite',
           },
@@ -178,7 +179,7 @@ describe('BackupManager', () => {
       const result = summary.results[0]
       expect(result.success).toBe(true)
       expect(result.name).toBe('config-backup')
-      expect(result.type).toBe('file')
+      expect(result.type).toBe(BackupType.FILE)
       expect(result.filename).toBeTruthy()
       expect(result.size).toBeGreaterThan(0)
       expect(result.fileCount).toBe(1)
@@ -214,7 +215,7 @@ describe('BackupManager', () => {
       const result = summary.results[0]
       expect(result.success).toBe(true)
       expect(result.name).toBe('uploads-backup')
-      expect(result.type).toBe('directory')
+      expect(result.type).toBe(BackupType.DIRECTORY)
       expect(result.filename).toMatch(/\.tar\.gz$/)
       expect(result.fileCount).toBe(3) // jpg, png, pdf files
     })
@@ -227,12 +228,12 @@ describe('BackupManager', () => {
         outputPath: testOutputDir,
         databases: [
           {
-            type: 'sqlite',
+            type: BackupType.SQLITE,
             name: 'users-db',
             path: testDb1Path,
           },
           {
-            type: 'sqlite',
+            type: BackupType.SQLITE,
             name: 'products-db',
             path: testDb2Path,
           },
@@ -265,17 +266,17 @@ describe('BackupManager', () => {
         outputPath: testOutputDir,
         databases: [
           {
-            type: 'sqlite',
+            type: BackupType.SQLITE,
             name: 'good-db',
             path: testDb1Path,
           },
           {
-            type: 'sqlite',
+            type: BackupType.SQLITE,
             name: 'bad-db',
             path: './non-existent.sqlite',
           },
           {
-            type: 'sqlite',
+            type: BackupType.SQLITE,
             name: 'another-good-db',
             path: testDb2Path,
           },
@@ -307,7 +308,7 @@ describe('BackupManager', () => {
         outputPath: testOutputDir,
         databases: [
           {
-            type: 'sqlite',
+            type: BackupType.SQLITE,
             name: 'main-db',
             path: testDb1Path,
           },
@@ -359,12 +360,12 @@ describe('BackupManager', () => {
         outputPath: testOutputDir,
         databases: [
           {
-            type: 'sqlite',
+            type: BackupType.SQLITE,
             name: 'good-db',
             path: testDb1Path,
           },
           {
-            type: 'sqlite',
+            type: BackupType.SQLITE,
             name: 'bad-db',
             path: './non-existent.sqlite',
           },
@@ -420,7 +421,7 @@ describe('BackupManager', () => {
         },
         databases: [
           {
-            type: 'sqlite',
+            type: BackupType.SQLITE,
             name: 'test-db',
             path: testDb1Path,
           },
@@ -439,6 +440,9 @@ describe('BackupManager', () => {
       await writeFile(join(testOutputDir, 'old_backup2.tar'), 'old backup 2')
       await writeFile(join(testOutputDir, 'old_backup3.txt'), 'old backup 3')
 
+      // Wait a bit to ensure timestamp difference
+      await new Promise(resolve => setTimeout(resolve, 10))
+
       const manager = new BackupManager(config)
       await manager.createBackup()
 
@@ -456,7 +460,7 @@ describe('BackupManager', () => {
         outputPath: testOutputDir,
         databases: [
           {
-            type: 'sqlite',
+            type: BackupType.SQLITE,
             name: 'verbose-db',
             path: testDb1Path,
           },
@@ -506,7 +510,7 @@ describe('BackupManager', () => {
         outputPath: testOutputDir,
         databases: [
           {
-            type: 'sqlite',
+            type: BackupType.SQLITE,
             name: 'verbose-override',
             path: testDb1Path,
             verbose: true, // But this database has verbose true
@@ -576,7 +580,7 @@ describe('BackupManager', () => {
         outputPath: testOutputDir,
         databases: [
           {
-            type: 'sqlite',
+            type: BackupType.SQLITE,
             name: 'convenience-db',
             path: testDb1Path,
           },
@@ -625,7 +629,7 @@ describe('BackupManager', () => {
         outputPath: testOutputDir,
         databases: [
           {
-            type: 'sqlite',
+            type: BackupType.SQLITE,
             name: 'only-db',
             path: testDb1Path,
           },

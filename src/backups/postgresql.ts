@@ -2,6 +2,7 @@ import type { BackupResult, PostgreSQLConfig } from '../types'
 import { SQL } from 'bun'
 import { writeFile } from 'node:fs/promises'
 import { join } from 'node:path'
+import { BackupType } from '../types'
 
 function createConnectionString(connection: PostgreSQLConfig['connection']): string {
   if (typeof connection === 'string') {
@@ -265,7 +266,7 @@ export async function backupPostgreSQL(
 
     return {
       name: config.name,
-      type: 'postgresql',
+      type: BackupType.POSTGRESQL,
       filename,
       size: stats.size,
       duration,
@@ -284,7 +285,7 @@ export async function backupPostgreSQL(
 
     return {
       name: config.name,
-      type: 'postgresql',
+      type: BackupType.POSTGRESQL,
       filename: '',
       size: 0,
       duration,

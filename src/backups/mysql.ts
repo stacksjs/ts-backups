@@ -1,6 +1,7 @@
 import type { BackupResult, MySQLConfig } from '../types'
 import { writeFile } from 'node:fs/promises'
 import { join } from 'node:path'
+import { BackupType } from '../types'
 
 // Note: Bun's MySQL support is still in development
 // For now, we'll use a placeholder implementation that shows the structure
@@ -75,7 +76,7 @@ export async function backupMySQL(
 
     return {
       name: config.name,
-      type: 'mysql',
+      type: BackupType.MYSQL,
       filename,
       size: stats.size,
       duration,
@@ -94,7 +95,7 @@ export async function backupMySQL(
 
     return {
       name: config.name,
-      type: 'mysql',
+      type: BackupType.MYSQL,
       filename: '',
       size: 0,
       duration,
