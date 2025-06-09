@@ -4,6 +4,7 @@ import { existsSync } from 'node:fs'
 import { mkdir, readdir, rmdir, unlink, writeFile } from 'node:fs/promises'
 import { join } from 'node:path'
 import { backupDirectory } from '../src/backups/directory'
+import { BackupType } from '../src/types'
 
 describe('Directory Backup', () => {
   const testSourceDir = './test-source-dir'
@@ -77,7 +78,7 @@ describe('Directory Backup', () => {
 
       expect(result.success).toBe(true)
       expect(result.name).toBe('full-backup')
-      expect(result.type).toBe('directory')
+      expect(result.type).toBe(BackupType.DIRECTORY)
       expect(result.filename).toMatch(/full-backup_\d{4}-\d{2}-\d{2}T\d{2}-\d{2}-\d{2}.*\.tar/)
       expect(result.size).toBeGreaterThan(0)
       expect(result.duration).toBeGreaterThan(0)

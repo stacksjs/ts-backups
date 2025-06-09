@@ -136,11 +136,15 @@ const productionRetention: BackupConfig = {
   verbose: false,
   outputPath: '/var/backups/app',
 
-  databases: [...],
-  files: [...],
+  databases: [
+    // ...
+  ],
+  files: [
+    // ...
+  ],
 
   retention: {
-    count: 30,   // Keep 30 recent backups (1 month daily)
+    count: 30, // Keep 30 recent backups (1 month daily)
     maxAge: 365, // Keep backups for 1 year
   }
 }

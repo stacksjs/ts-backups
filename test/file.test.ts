@@ -4,6 +4,7 @@ import { existsSync } from 'node:fs'
 import { mkdir, readdir, rmdir, unlink, writeFile } from 'node:fs/promises'
 import { join } from 'node:path'
 import { backupFile } from '../src/backups/file'
+import { BackupType } from '../src/types'
 
 describe('File Backup', () => {
   const testFileDir = './test-file-dir'
@@ -64,7 +65,7 @@ describe('File Backup', () => {
 
       expect(result.success).toBe(true)
       expect(result.name).toBe('test-file-backup')
-      expect(result.type).toBe('file')
+      expect(result.type).toBe(BackupType.FILE)
       expect(result.filename).toMatch(/test-file-backup_\d{4}-\d{2}-\d{2}T\d{2}-\d{2}-\d{2}.*\.txt/)
       expect(result.size).toBeGreaterThan(0)
       expect(result.duration).toBeGreaterThanOrEqual(0) // Duration can be 0 for very fast operations

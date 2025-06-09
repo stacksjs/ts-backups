@@ -5,6 +5,7 @@ import { existsSync } from 'node:fs'
 import { mkdir, readdir, readFile, rmdir, unlink } from 'node:fs/promises'
 import { join } from 'node:path'
 import { backupSQLite } from '../src/backups/sqlite'
+import { BackupType } from '../src/types'
 
 describe('SQLite Backup', () => {
   const testDbPath = './test-db.sqlite'
@@ -87,7 +88,7 @@ describe('SQLite Backup', () => {
   describe('successful backup', () => {
     it('should create a complete backup with schema and data', async () => {
       const config: SQLiteConfig = {
-        type: 'sqlite',
+        type: BackupType.SQLITE,
         name: 'test-database',
         path: testDbPath,
         verbose: false,
@@ -97,7 +98,7 @@ describe('SQLite Backup', () => {
 
       expect(result.success).toBe(true)
       expect(result.name).toBe('test-database')
-      expect(result.type).toBe('sqlite')
+      expect(result.type).toBe(BackupType.SQLITE)
       expect(result.filename).toMatch(/test-database_\d{4}-\d{2}-\d{2}T\d{2}-\d{2}-\d{2}.*\.sql/)
       expect(result.size).toBeGreaterThan(0)
       expect(result.duration).toBeGreaterThan(0)
@@ -137,7 +138,7 @@ describe('SQLite Backup', () => {
 
     it('should use custom filename when provided', async () => {
       const config: SQLiteConfig = {
-        type: 'sqlite',
+        type: BackupType.SQLITE,
         name: 'test-database',
         path: testDbPath,
         filename: 'custom-backup',
@@ -157,7 +158,7 @@ describe('SQLite Backup', () => {
       emptyDb.close()
 
       const config: SQLiteConfig = {
-        type: 'sqlite',
+        type: BackupType.SQLITE,
         name: 'empty-db',
         path: emptyDbPath,
         verbose: false,
@@ -200,7 +201,7 @@ describe('SQLite Backup', () => {
       specialDb.close()
 
       const config: SQLiteConfig = {
-        type: 'sqlite',
+        type: BackupType.SQLITE,
         name: 'special-chars',
         path: testDbPath,
         verbose: false,
@@ -220,7 +221,7 @@ describe('SQLite Backup', () => {
   describe('error handling', () => {
     it('should handle non-existent database file', async () => {
       const config: SQLiteConfig = {
-        type: 'sqlite',
+        type: BackupType.SQLITE,
         name: 'missing-db',
         path: './non-existent.sqlite',
         verbose: false,
@@ -237,7 +238,7 @@ describe('SQLite Backup', () => {
 
     it('should handle invalid output directory permissions', async () => {
       const config: SQLiteConfig = {
-        type: 'sqlite',
+        type: BackupType.SQLITE,
         name: 'test-db',
         path: testDbPath,
         verbose: false,
@@ -255,7 +256,7 @@ describe('SQLite Backup', () => {
   describe('verbose mode', () => {
     it('should work with verbose logging enabled', async () => {
       const config: SQLiteConfig = {
-        type: 'sqlite',
+        type: BackupType.SQLITE,
         name: 'verbose-test',
         path: testDbPath,
         verbose: true,
