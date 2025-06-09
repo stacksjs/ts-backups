@@ -1,4 +1,16 @@
 
+## v0.1.0...main
+
+[compare changes](https://github.com/stacksjs/backupx/compare/v0.1.0...main)
+
+### 🏡 Chore
+
+- Properly use backupx name everywhere ([65566fe](https://github.com/stacksjs/backupx/commit/65566fe))
+
+### ❤️ Contributors
+
+- Chris ([@chrisbbreuer](https://github.com/chrisbbreuer))
+
 ## ...main
 
 
