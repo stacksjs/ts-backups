@@ -1,16 +1,16 @@
 # Quick Start
 
-Get up and running with ts-backups in minutes. This guide covers both library and CLI usage.
+Get up and running with backupx in minutes. This guide covers both library and CLI usage.
 
 ## Library Usage
 
 ### Basic Setup
 
-First, import and configure ts-backups:
+First, import and configure backupx:
 
 ```ts
-import type { BackupConfig } from 'ts-backups'
-import { BackupManager, BackupType } from 'ts-backups'
+import type { BackupConfig } from 'backupx'
+import { BackupManager, BackupType } from 'backupx'
 
 const config: BackupConfig = {
   verbose: true,
@@ -42,7 +42,7 @@ console.log(`Backup completed: ${summary.successCount}/${summary.results.length}
 Focus on just database backups:
 
 ```ts
-import { BackupManager, BackupType } from 'ts-backups'
+import { BackupManager, BackupType } from 'backupx'
 
 const config = {
   verbose: true,
@@ -92,7 +92,7 @@ await manager.createBackup()
 Focus on just file and directory backups:
 
 ```ts
-import { BackupManager } from 'ts-backups'
+import { BackupManager } from 'backupx'
 
 const config = {
   verbose: true,
@@ -135,7 +135,7 @@ await manager.createBackup()
 Handle backup errors gracefully:
 
 ```ts
-import { BackupManager } from 'ts-backups'
+import { BackupManager } from 'backupx'
 
 try {
   const manager = new BackupManager(config)
@@ -180,7 +180,7 @@ Create a `backups.config.ts` file in your project root:
 
 ```ts
 // backups.config.ts
-import { BackupConfig, BackupType } from 'ts-backups'
+import { BackupConfig, BackupType } from 'backupx'
 
 const config: BackupConfig = {
   verbose: true,
@@ -237,7 +237,7 @@ BACKUP_CONFIG=./custom-backup.config.ts backups start
 
 # Run in Docker
 docker run --rm -v $(pwd):/app -w /app oven/bun:1 \
-  bun add -g ts-backups && backups start --verbose
+  bun add -g backupx && backups start --verbose
 
 # Scheduled backups with cron
 # Run daily at 2 AM
@@ -349,7 +349,7 @@ const config = {
 Complete backup solution for a web application:
 
 ```ts
-import { BackupConfig, BackupType } from 'ts-backups'
+import { BackupConfig, BackupType } from 'backupx'
 
 const webAppConfig: BackupConfig = {
   verbose: true,

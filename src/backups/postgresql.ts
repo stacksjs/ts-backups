@@ -59,7 +59,7 @@ export async function backupPostgreSQL(
     sqlDump += `-- PostgreSQL Database Backup\n`
     sqlDump += `-- Database: ${current_database}\n`
     sqlDump += `-- Generated: ${new Date().toISOString()}\n`
-    sqlDump += `-- Backup tool: ts-backups\n\n`
+    sqlDump += `-- Backup tool: backupx\n\n`
 
     // Get tables to backup
     let tables: { table_name: string, table_schema: string }[]

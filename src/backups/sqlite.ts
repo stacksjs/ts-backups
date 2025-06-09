@@ -37,7 +37,7 @@ export async function backupSQLite(
     sqlDump += `-- SQLite Database Backup\n`
     sqlDump += `-- Database: ${config.path}\n`
     sqlDump += `-- Generated: ${new Date().toISOString()}\n`
-    sqlDump += `-- Backup tool: ts-backups\n\n`
+    sqlDump += `-- Backup tool: backupx\n\n`
 
     // Enable foreign keys for restore
     sqlDump += `PRAGMA foreign_keys=OFF;\n`

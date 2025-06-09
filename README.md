@@ -6,7 +6,7 @@
 <!-- [![npm downloads][npm-downloads-src]][npm-downloads-href] -->
 <!-- [![Codecov][codecov-src]][codecov-href] -->
 
-# ts-backups
+# backupx
 
 A comprehensive TypeScript backup library with native Bun support for databases, files, and directories.
 
@@ -27,7 +27,7 @@ A comprehensive TypeScript backup library with native Bun support for databases,
 
 ```bash
 # Using Bun (recommended)
-bun add ts-backups
+bun add backupx
 ```
 
 ## Quick Start
@@ -35,7 +35,7 @@ bun add ts-backups
 ### Programmatic Usage
 
 ```ts
-import { createBackup } from 'ts-backups'
+import { createBackup } from 'backupx'
 
 const config = {
   verbose: true,
@@ -156,7 +156,7 @@ describe('Custom Tests', () => {
 Create a `backups.config.ts` file:
 
 ```ts
-import { BackupConfig } from 'ts-backups'
+import { BackupConfig } from 'backupx'
 
 export const config: BackupConfig = {
   verbose: true,
@@ -290,7 +290,7 @@ const summary = await manager.createBackup()
 ### Database-Specific Functions
 
 ```ts
-import { backupPostgreSQL, backupSQLite } from 'ts-backups'
+import { backupPostgreSQL, backupSQLite } from 'backupx'
 
 const result = await backupSQLite(sqliteConfig, './output')
 const result = await backupPostgreSQL(pgConfig, './output')

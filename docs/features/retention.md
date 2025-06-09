@@ -1,6 +1,6 @@
 # Retention Policies
 
-ts-backups provides intelligent retention policies to automatically clean up old backups, preventing storage bloat while ensuring you keep enough backups for recovery needs.
+backupx provides intelligent retention policies to automatically clean up old backups, preventing storage bloat while ensuring you keep enough backups for recovery needs.
 
 ## Overview
 
@@ -65,7 +65,7 @@ Retention cleanup happens automatically after each backup:
 
 ### File Identification
 
-ts-backups recognizes backup files by:
+backupx recognizes backup files by:
 - **Extensions**: `.sql`, `.tar`, `.tar.gz`, `.gz`
 - **Patterns**: Files containing backup-related patterns
 - **Timestamps**: Files with timestamp patterns in names
@@ -389,7 +389,7 @@ try {
   }
 
   // Check for cleanup warnings (if any)
-  // (ts-backups logs cleanup errors but doesn't fail the backup)
+  // (backupx logs cleanup errors but doesn't fail the backup)
 }
 catch (error) {
   console.error('❌ Backup process failed:', error)

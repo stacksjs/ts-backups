@@ -52,7 +52,7 @@ export async function backupMySQL(
     sqlDump += `-- MySQL Database Backup\n`
     sqlDump += `-- Database: ${typeof config.connection === 'string' ? 'from connection string' : config.connection.database}\n`
     sqlDump += `-- Generated: ${new Date().toISOString()}\n`
-    sqlDump += `-- Backup tool: ts-backups\n`
+    sqlDump += `-- Backup tool: backupx\n`
     sqlDump += `-- Note: This is a placeholder until Bun adds MySQL support\n\n`
 
     sqlDump += `-- MySQL support is currently in development for Bun\n`

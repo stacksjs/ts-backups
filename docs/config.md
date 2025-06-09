@@ -1,10 +1,10 @@
 # Configuration Reference
 
-This page provides a comprehensive reference for all ts-backups configuration options.
+This page provides a comprehensive reference for all backupx configuration options.
 
 ## Configuration File Location
 
-ts-backups automatically looks for configuration files in the following order:
+backupx automatically looks for configuration files in the following order:
 
 1. `backups.config.ts` (TypeScript configuration)
 2. `backups.config.js` (JavaScript configuration)
@@ -37,7 +37,7 @@ interface BackupConfig {
 
 ```ts
 // backups.config.ts
-import { BackupConfig, BackupType } from 'ts-backups'
+import { BackupConfig, BackupType } from 'backupx'
 
 const config: BackupConfig = {
   verbose: true,
@@ -428,7 +428,7 @@ Use environment variables for sensitive configuration:
 
 ```ts
 // backups.config.ts
-import { BackupConfig, BackupType } from 'ts-backups'
+import { BackupConfig, BackupType } from 'backupx'
 
 const config: BackupConfig = {
   verbose: process.env.NODE_ENV === 'development',
@@ -464,7 +464,7 @@ Create different configurations for different environments:
 
 ```ts
 // backups.config.ts
-import { BackupConfig, BackupType } from 'ts-backups'
+import { BackupConfig, BackupType } from 'backupx'
 
 const baseConfig: BackupConfig = {
   verbose: true,
@@ -519,7 +519,7 @@ export default configs[env as keyof typeof configs]
 
 ## Configuration Validation
 
-ts-backups automatically validates your configuration and will provide helpful error messages:
+backupx automatically validates your configuration and will provide helpful error messages:
 
 ### Common Validation Errors
 
@@ -555,7 +555,7 @@ Always use `.ts` configuration files for type safety:
 
 ```ts
 // ✅ Good - Full type safety
-import { BackupConfig, BackupType } from 'ts-backups'
+import { BackupConfig, BackupType } from 'backupx'
 
 const config: BackupConfig = {
   // TypeScript will catch errors

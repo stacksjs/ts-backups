@@ -1,14 +1,14 @@
 # Custom Extensions
 
-This guide covers how to extend ts-backups with custom backup types, storage providers, compression algorithms, and transformation pipelines.
+This guide covers how to extend backupx with custom backup types, storage providers, compression algorithms, and transformation pipelines.
 
 ## Custom Backup Types
 
 ### Creating a Custom Database Backup
 
 ```ts
-import type { BackupResult, DatabaseConfig } from 'ts-backups'
-import { BackupType } from 'ts-backups'
+import type { BackupResult, DatabaseConfig } from 'backupx'
+import { BackupType } from 'backupx'
 
 // Define custom backup type
 export enum CustomBackupType {
@@ -261,4 +261,4 @@ manager.registerPlugin({
 })
 ```
 
-This extension system allows ts-backups to be highly customizable and adaptable to specific use cases while maintaining a clean, modular architecture.
+This extension system allows backupx to be highly customizable and adaptable to specific use cases while maintaining a clean, modular architecture.

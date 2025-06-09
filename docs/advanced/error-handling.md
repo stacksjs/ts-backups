@@ -1,6 +1,6 @@
 # Error Handling
 
-This guide covers comprehensive error handling strategies for ts-backups, including custom error types, recovery mechanisms, and debugging techniques.
+This guide covers comprehensive error handling strategies for backupx, including custom error types, recovery mechanisms, and debugging techniques.
 
 ## Error Types & Classification
 

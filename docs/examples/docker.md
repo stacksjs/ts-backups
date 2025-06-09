@@ -1,6 +1,6 @@
 # Docker Integration Examples
 
-This guide shows how to use ts-backups in Docker containers and docker-compose setups.
+This guide shows how to use backupx in Docker containers and docker-compose setups.
 
 ## Basic Docker Container
 
@@ -431,4 +431,4 @@ volumes:
   influxdb_data:
 ```
 
-This guide provides comprehensive examples for running ts-backups in containerized environments with proper monitoring and scheduling.
+This guide provides comprehensive examples for running backupx in containerized environments with proper monitoring and scheduling.

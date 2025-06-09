@@ -1,6 +1,6 @@
 # Examples
 
-Real-world examples and common usage patterns for ts-backups.
+Real-world examples and common usage patterns for backupx.
 
 ## Web Application Backup
 
@@ -8,8 +8,8 @@ Complete backup setup for a typical web application:
 
 ```ts
 // backups.config.ts
-import type { BackupConfig } from 'ts-backups'
-import { BackupType } from 'ts-backups'
+import type { BackupConfig } from 'backupx'
+import { BackupType } from 'backupx'
 
 const config: BackupConfig = {
   verbose: process.env.NODE_ENV === 'development',
@@ -96,8 +96,8 @@ Simplified backup for development environment:
 
 ```ts
 // dev-backup.config.ts
-import type { BackupConfig } from 'ts-backups'
-import { BackupType } from 'ts-backups'
+import type { BackupConfig } from 'backupx'
+import { BackupType } from 'backupx'
 
 const config: BackupConfig = {
   verbose: true,
@@ -153,9 +153,9 @@ export default config
 Production-ready backup with monitoring:
 
 ```ts
-import type { BackupConfig, BackupSummary } from 'ts-backups'
+import type { BackupConfig, BackupSummary } from 'backupx'
 // production-backup.ts
-import { BackupManager, BackupType } from 'ts-backups'
+import { BackupManager, BackupType } from 'backupx'
 
 class ProductionBackupService {
   private config: BackupConfig = {
@@ -311,8 +311,8 @@ Different configurations for each environment:
 
 ```ts
 // multi-env-backup.ts
-import type { BackupConfig } from 'ts-backups'
-import { BackupType } from 'ts-backups'
+import type { BackupConfig } from 'backupx'
+import { BackupType } from 'backupx'
 
 const environments = {
   development: {
@@ -387,10 +387,10 @@ export default createEnvironmentConfig()
 Trigger backups based on application events:
 
 ```ts
-import type { BackupConfig } from 'ts-backups'
+import type { BackupConfig } from 'backupx'
 // event-driven-backup.ts
 import { EventEmitter } from 'node:events'
-import { BackupManager } from 'ts-backups'
+import { BackupManager } from 'backupx'
 
 class EventDrivenBackupService extends EventEmitter {
   private backupManager: BackupManager

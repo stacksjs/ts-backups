@@ -1,6 +1,6 @@
 # Types API Reference
 
-This page documents all TypeScript interfaces and types used in ts-backups.
+This page documents all TypeScript interfaces and types used in backupx.
 
 ## Core Configuration Types
 

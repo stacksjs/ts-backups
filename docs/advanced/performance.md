@@ -1,6 +1,6 @@
 # Performance Tuning
 
-This guide covers performance optimization strategies for ts-backups, including memory management, parallel processing, and bottleneck identification.
+This guide covers performance optimization strategies for backupx, including memory management, parallel processing, and bottleneck identification.
 
 ## Understanding Performance Characteristics
 
@@ -57,7 +57,7 @@ const operationProfiles: Record<string, PerformanceProfile> = {
 ### Streaming vs Buffering
 
 ```ts
-import type { BackupConfig } from 'ts-backups'
+import type { BackupConfig } from 'backupx'
 import { createReadStream, createWriteStream } from 'node:fs'
 import { pipeline } from 'node:stream/promises'
 import { createGzip } from 'node:zlib'
@@ -194,7 +194,7 @@ memoryMonitor.startMonitoring()
 ### Concurrent Database Backups
 
 ```ts
-import type { BackupResult, DatabaseConfig } from 'ts-backups'
+import type { BackupResult, DatabaseConfig } from 'backupx'
 
 class ParallelBackupManager extends BackupManager {
   private readonly MAX_CONCURRENT_DATABASES = 3
@@ -309,7 +309,7 @@ class Semaphore {
 ### Worker Threads for CPU-Intensive Tasks
 
 ```ts
-import type { FileConfig } from 'ts-backups'
+import type { FileConfig } from 'backupx'
 import { isMainThread, parentPort, Worker, workerData } from 'node:worker_threads'
 
 // Worker script (compression-worker.ts)
@@ -719,4 +719,4 @@ await profiler.profile('directory-scan', () => scanDirectory(dir))
 console.log(JSON.stringify(profiler.getReport(), null, 2))
 ```
 
-This performance tuning guide provides comprehensive strategies for optimizing ts-backups operations, from memory management to parallel processing and bottleneck identification.
+This performance tuning guide provides comprehensive strategies for optimizing backupx operations, from memory management to parallel processing and bottleneck identification.

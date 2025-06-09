@@ -1,6 +1,6 @@
 # API Reference
 
-Complete API reference for ts-backups TypeScript library.
+Complete API reference for backupx TypeScript library.
 
 ## Main Classes
 
@@ -32,7 +32,7 @@ const summary = await manager.createBackup()
 
 ### BackupConfig
 
-Main configuration interface for ts-backups.
+Main configuration interface for backupx.
 
 ```ts
 interface BackupConfig {
@@ -404,7 +404,7 @@ interface CLIOption {
 ### Basic Usage
 
 ```ts
-import { BackupManager, BackupType } from 'ts-backups'
+import { BackupManager, BackupType } from 'backupx'
 
 const config = {
   verbose: true,
@@ -433,7 +433,7 @@ console.log(`Backup completed: ${summary.successCount}/${summary.totalCount}`)
 ### Individual Function Usage
 
 ```ts
-import { backupFile, backupSQLite } from 'ts-backups'
+import { backupFile, backupSQLite } from 'backupx'
 
 // Database backup
 const dbResult = await backupSQLite({
@@ -454,7 +454,7 @@ const fileResult = await backupFile({
 ### Error Handling
 
 ```ts
-import { BackupError, BackupErrorCode } from 'ts-backups'
+import { BackupError, BackupErrorCode } from 'backupx'
 
 try {
   await manager.createBackup()
@@ -477,7 +477,7 @@ catch (error) {
 
 ## TypeScript Support
 
-ts-backups is written in TypeScript and provides full type definitions. All interfaces and types are exported for use in your TypeScript projects.
+backupx is written in TypeScript and provides full type definitions. All interfaces and types are exported for use in your TypeScript projects.
 
 ```ts
 // Import types for your own functions
@@ -487,7 +487,7 @@ import type {
   BackupSummary,
   DatabaseConfig,
   FileConfig
-} from 'ts-backups'
+} from 'backupx'
 
 function processBackupResults(results: BackupResult[]): void {
   // TypeScript will provide full intellisense

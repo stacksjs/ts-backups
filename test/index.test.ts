@@ -7,7 +7,7 @@ import './sqlite.test'
 import './backup-manager.test'
 
 // Basic integration tests
-describe('ts-backups', () => {
+describe('backupx', () => {
   it('should export main modules', async () => {
     const { BackupManager, createBackup, defaultConfig } = await import('../src')
 

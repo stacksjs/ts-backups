@@ -1,6 +1,6 @@
 # Custom Filtering
 
-This guide covers advanced filtering strategies for ts-backups, including custom glob patterns, dynamic filtering, and content-based exclusions.
+This guide covers advanced filtering strategies for backupx, including custom glob patterns, dynamic filtering, and content-based exclusions.
 
 ## File Filtering Patterns
 

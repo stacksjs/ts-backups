@@ -1,6 +1,6 @@
 # GitHub Actions CI/CD Integration
 
-This guide shows how to integrate ts-backups into GitHub Actions workflows for automated backup operations.
+This guide shows how to integrate backupx into GitHub Actions workflows for automated backup operations.
 
 ## Basic Backup Workflow
 
@@ -447,4 +447,4 @@ jobs:
             🔗 **Check the logs:** ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
 ```
 
-This guide provides comprehensive examples for integrating ts-backups into CI/CD pipelines with proper error handling, testing, and notifications.
+This guide provides comprehensive examples for integrating backupx into CI/CD pipelines with proper error handling, testing, and notifications.

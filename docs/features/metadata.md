@@ -1,6 +1,6 @@
 # Metadata Preservation
 
-ts-backups can preserve file metadata including timestamps, permissions, ownership, and other file attributes, ensuring complete restoration capabilities.
+backupx can preserve file metadata including timestamps, permissions, ownership, and other file attributes, ensuring complete restoration capabilities.
 
 ## Overview
 
@@ -25,7 +25,7 @@ const config = {
 
 ### Metadata Files
 
-When enabled, ts-backups creates `.meta` files alongside backups:
+When enabled, backupx creates `.meta` files alongside backups:
 
 ```
 backups/

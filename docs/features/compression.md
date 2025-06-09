@@ -1,10 +1,10 @@
 # Compression
 
-ts-backups provides intelligent compression capabilities to reduce backup size while maintaining data integrity and providing detailed efficiency metrics.
+backupx provides intelligent compression capabilities to reduce backup size while maintaining data integrity and providing detailed efficiency metrics.
 
 ## Overview
 
-Compression in ts-backups is:
+Compression in backupx is:
 - **Optional**: Enable per backup or globally
 - **Intelligent**: Automatic compression ratio reporting
 - **Streaming**: Memory-efficient for large files
@@ -56,7 +56,7 @@ When compression is enabled, you'll see detailed statistics:
 
 ### Gzip Algorithm
 
-ts-backups uses gzip compression, which provides:
+backupx uses gzip compression, which provides:
 - **Good compression ratios** for text-based content
 - **Fast compression/decompression** speeds
 - **Wide compatibility** with standard tools
@@ -176,7 +176,7 @@ const compactBackup = {
 
 ### Understanding the Output
 
-When compression is enabled, ts-backups reports:
+When compression is enabled, backupx reports:
 
 ```
 Original Size: 10.5 MB

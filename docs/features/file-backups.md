@@ -1,6 +1,6 @@
 # File & Directory Backups
 
-ts-backups provides powerful file and directory backup capabilities with advanced filtering, compression, and metadata preservation features.
+backupx provides powerful file and directory backup capabilities with advanced filtering, compression, and metadata preservation features.
 
 ## Overview
 
@@ -81,7 +81,7 @@ const config = {
 
 ### File Type Support
 
-ts-backups handles all file types:
+backupx handles all file types:
 
 ```ts
 const fileBackups = [
@@ -167,7 +167,7 @@ const noSymlinksConfig = {
 
 ### Custom Archive Format
 
-ts-backups uses a custom archive format that includes:
+backupx uses a custom archive format that includes:
 
 - **JSON Headers**: File metadata for each file
 - **Streaming Data**: Actual file content
@@ -409,7 +409,7 @@ const config = {
 
 ## Archive Format Details
 
-ts-backups creates custom archive files with this structure:
+backupx creates custom archive files with this structure:
 
 ```
 Archive File Structure:

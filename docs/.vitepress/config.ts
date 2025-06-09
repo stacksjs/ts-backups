@@ -22,7 +22,7 @@ const nav = [
   { text: 'API', link: '/api/overview' },
   {
     text: 'Changelog',
-    link: 'https://github.com/stacksjs/ts-backups/blob/main/CHANGELOG.md',
+    link: 'https://github.com/stacksjs/backupx/blob/main/CHANGELOG.md',
   },
   {
     text: 'Resources',
@@ -34,11 +34,11 @@ const nav = [
         items: [
           {
             text: 'Contributing',
-            link: 'https://github.com/stacksjs/ts-backups/blob/main/.github/CONTRIBUTING.md',
+            link: 'https://github.com/stacksjs/backupx/blob/main/.github/CONTRIBUTING.md',
           },
           {
             text: 'Issues',
-            link: 'https://github.com/stacksjs/ts-backups/issues',
+            link: 'https://github.com/stacksjs/backupx/issues',
           },
         ],
       },
@@ -101,12 +101,12 @@ const sidebar = [
 ]
 
 const description = 'A comprehensive TypeScript backup library for databases and files, built for Bun runtime.'
-const title = 'ts-backups | TypeScript Backup Library for Databases & Files'
+const title = 'backupx | TypeScript Backup Library for Databases & Files'
 
 export default withPwa(
   defineConfig({
     lang: 'en-US',
-    title: 'ts-backups',
+    title: 'backupx',
     description,
     metaChunk: true,
     cleanUrls: true,
@@ -129,9 +129,9 @@ export default withPwa(
       ['meta', { property: 'og:title', content: title }],
       ['meta', { property: 'og:description', content: description }],
 
-      ['meta', { property: 'og:site_name', content: 'ts-backups' }],
+      ['meta', { property: 'og:site_name', content: 'backupx' }],
       ['meta', { property: 'og:image', content: './images/og-image.jpg' }],
-      ['meta', { property: 'og:url', content: 'https://ts-backups.dev/' }],
+      ['meta', { property: 'og:url', content: 'https://backupx.dev/' }],
       ...analyticsHead,
     ],
 
@@ -148,7 +148,7 @@ export default withPwa(
       sidebar,
 
       editLink: {
-        pattern: 'https://github.com/stacksjs/ts-backups/edit/main/docs/:path',
+        pattern: 'https://github.com/stacksjs/backupx/edit/main/docs/:path',
         text: 'Edit this page on GitHub',
       },
 
@@ -160,7 +160,7 @@ export default withPwa(
       socialLinks: [
         { icon: 'twitter', link: 'https://twitter.com/stacksjs' },
         { icon: 'bluesky', link: 'https://bsky.app/profile/chrisbreuer.dev' },
-        { icon: 'github', link: 'https://github.com/stacksjs/ts-backups' },
+        { icon: 'github', link: 'https://github.com/stacksjs/backupx' },
         { icon: 'discord', link: 'https://discord.gg/stacksjs' },
       ],
     },

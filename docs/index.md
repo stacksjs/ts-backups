@@ -3,7 +3,7 @@
 layout: home
 
 hero:
-  name: "ts-backups"
+  name: "backupx"
   text: "TypeScript Backup Library"
   tagline: "Comprehensive database and file backup solution built for Bun runtime with TypeScript-first design."
   image: /images/logo-white.png
@@ -13,7 +13,7 @@ hero:
       link: /intro
     - theme: alt
       text: View on GitHub
-      link: https://github.com/stacksjs/ts-backups
+      link: https://github.com/stacksjs/backupx
 
 features:
   - title: "🗄️ Database Backups"

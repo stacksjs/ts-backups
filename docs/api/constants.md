@@ -1,6 +1,6 @@
 # Constants API Reference
 
-This page documents all constants, default values, and configuration presets available in ts-backups.
+This page documents all constants, default values, and configuration presets available in backupx.
 
 ## Backup Type Constants
 
@@ -20,7 +20,7 @@ const BackupType = {
 
 **Usage:**
 ```ts
-import { BackupType } from 'ts-backups'
+import { BackupType } from 'backupx'
 
 const config = {
   type: BackupType.POSTGRESQL,
@@ -413,7 +413,7 @@ const TIME_UNITS = {
 ### Using Presets
 
 ```ts
-import { COMMON_EXCLUDE_PATTERNS, PRESET_CONFIGS } from 'ts-backups'
+import { COMMON_EXCLUDE_PATTERNS, PRESET_CONFIGS } from 'backupx'
 
 const config = {
   ...PRESET_CONFIGS.PRODUCTION,
@@ -431,7 +431,7 @@ const config = {
 ### Using Default Values
 
 ```ts
-import { DEFAULT_CONFIG, DEFAULT_RETENTION } from 'ts-backups'
+import { DEFAULT_CONFIG, DEFAULT_RETENTION } from 'backupx'
 
 const config = {
   verbose: true, // Override default

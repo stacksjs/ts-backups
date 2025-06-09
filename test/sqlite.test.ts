@@ -113,7 +113,7 @@ describe('SQLite Backup', () => {
       // Check for header comments
       expect(backupContent).toContain('-- SQLite Database Backup')
       expect(backupContent).toContain('-- Database: ./test-db.sqlite')
-      expect(backupContent).toContain('-- Backup tool: ts-backups')
+      expect(backupContent).toContain('-- Backup tool: backupx')
 
       // Check for schema
       expect(backupContent).toContain('CREATE TABLE')

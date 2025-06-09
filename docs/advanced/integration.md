@@ -1,18 +1,18 @@
 # Integration Patterns
 
-This guide covers advanced integration patterns for ts-backups, including monitoring systems, web frameworks, and external services.
+This guide covers advanced integration patterns for backupx, including monitoring systems, web frameworks, and external services.
 
 ## Monitoring System Integration
 
 ### Prometheus & Grafana
 
 ```ts
-import type { BackupResult, BackupSummary } from 'ts-backups'
+import type { BackupResult, BackupSummary } from 'backupx'
 // Expose metrics endpoint
 import express from 'express'
 import { Counter, Gauge, Histogram, register } from 'prom-client'
 
-import { BackupManager } from 'ts-backups'
+import { BackupManager } from 'backupx'
 
 // Define metrics
 const backupCounter = new Counter({
@@ -76,7 +76,7 @@ app.listen(9090)
 ### Custom Webhook Integration
 
 ```ts
-import type { BackupSummary } from 'ts-backups'
+import type { BackupSummary } from 'backupx'
 
 interface WebhookPayload {
   timestamp: string
@@ -102,7 +102,7 @@ class WebhookNotifier {
     const body = JSON.stringify(payload)
     const headers: Record<string, string> = {
       'Content-Type': 'application/json',
-      'User-Agent': 'ts-backups/1.0',
+      'User-Agent': 'backupx/1.0',
     }
 
     // Add signature if secret is provided
@@ -149,9 +149,9 @@ await notifier.notify(summary)
 ### Express.js API
 
 ```ts
-import type { BackupConfig } from 'ts-backups'
+import type { BackupConfig } from 'backupx'
 import express from 'express'
-import { BackupManager } from 'ts-backups'
+import { BackupManager } from 'backupx'
 
 const app = express()
 app.use(express.json())
@@ -244,9 +244,9 @@ app.listen(3000)
 
 ```ts
 import type { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify'
-import type { BackupConfig } from 'ts-backups'
+import type { BackupConfig } from 'backupx'
 import fastify from 'fastify'
-import { BackupManager } from 'ts-backups'
+import { BackupManager } from 'backupx'
 
 // Plugin for backup functionality
 async function backupPlugin(fastify: FastifyInstance) {
@@ -300,10 +300,10 @@ app.listen({ port: 3000 })
 ### AWS S3 Upload
 
 ```ts
-import type { BackupResult } from 'ts-backups'
+import type { BackupResult } from 'backupx'
 import { createReadStream } from 'node:fs'
 import { PutObjectCommand, S3Client } from '@aws-sdk/client-s3'
-import { BackupManager } from 'ts-backups'
+import { BackupManager } from 'backupx'
 
 class S3BackupManager extends BackupManager {
   private s3Client: S3Client
@@ -380,7 +380,7 @@ const manager = new S3BackupManager(
 ### Google Cloud Storage
 
 ```ts
-import type { BackupResult } from 'ts-backups'
+import type { BackupResult } from 'backupx'
 import { Storage } from '@google-cloud/storage'
 
 class GCSBackupManager extends BackupManager {
@@ -443,9 +443,9 @@ class GCSBackupManager extends BackupManager {
 ### Redis/Bull Queue
 
 ```ts
-import type { BackupConfig } from 'ts-backups'
+import type { BackupConfig } from 'backupx'
 import Queue from 'bull'
-import { BackupManager } from 'ts-backups'
+import { BackupManager } from 'backupx'
 
 // Create backup queue
 const backupQueue = new Queue('backup processing', {
@@ -500,7 +500,7 @@ await scheduleBackup(config, '0 2 * * *') // Daily at 2 AM
 ### Custom Event System
 
 ```ts
-import type { BackupResult, BackupSummary } from 'ts-backups'
+import type { BackupResult, BackupSummary } from 'backupx'
 import { EventEmitter } from 'node:events'
 
 interface BackupEvents {
@@ -564,4 +564,4 @@ manager.on('backup:result', (result) => {
 })
 ```
 
-This integration patterns guide provides comprehensive examples for integrating ts-backups with various systems and architectures, enabling robust, monitored, and scalable backup solutions.
+This integration patterns guide provides comprehensive examples for integrating backupx with various systems and architectures, enabling robust, monitored, and scalable backup solutions.

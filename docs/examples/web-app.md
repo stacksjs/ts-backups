@@ -1,15 +1,15 @@
 # Web Application Examples
 
-This guide shows how to integrate ts-backups into web applications for automated database and file backups.
+This guide shows how to integrate backupx into web applications for automated database and file backups.
 
 ## Express.js Integration
 
 ### Basic Backup Route
 
 ```ts
-import type { BackupConfig } from 'ts-backups'
+import type { BackupConfig } from 'backupx'
 import express from 'express'
-import { BackupManager, BackupType } from 'ts-backups'
+import { BackupManager, BackupType } from 'backupx'
 
 const app = express()
 app.use(express.json())
@@ -85,7 +85,7 @@ app.listen(3000)
 
 ```ts
 import cron from 'node-cron'
-import { BackupManager } from 'ts-backups'
+import { BackupManager } from 'backupx'
 
 class BackupScheduler {
   private manager: BackupManager
@@ -198,9 +198,9 @@ process.on('SIGINT', () => {
 
 ```ts
 // app/api/backup/route.ts
-import type { BackupConfig } from 'ts-backups'
+import type { BackupConfig } from 'backupx'
 import { NextRequest, NextResponse } from 'next/server'
-import { BackupManager, BackupType } from 'ts-backups'
+import { BackupManager, BackupType } from 'backupx'
 
 const backupConfig: BackupConfig = {
   verbose: false,
@@ -274,8 +274,8 @@ export async function GET() {
 ```ts
 // pages/api/backup.ts
 import type { NextApiRequest, NextApiResponse } from 'next'
-import type { BackupConfig } from 'ts-backups'
-import { BackupManager, BackupType } from 'ts-backups'
+import type { BackupConfig } from 'backupx'
+import { BackupManager, BackupType } from 'backupx'
 
 const backupConfig: BackupConfig = {
   verbose: process.env.NODE_ENV === 'development',
@@ -538,9 +538,9 @@ export function BackupManager() {
 ### Bull Queue Integration
 
 ```ts
-import type { BackupConfig } from 'ts-backups'
+import type { BackupConfig } from 'backupx'
 import Queue from 'bull'
-import { BackupManager } from 'ts-backups'
+import { BackupManager } from 'backupx'
 
 // Create backup queue
 const backupQueue = new Queue('backup processing', {
@@ -624,4 +624,4 @@ async function notifyUser(userId: string, result: any) {
 }
 ```
 
-This guide provides comprehensive examples for integrating ts-backups into web applications with proper error handling, scheduling, and user interfaces.
+This guide provides comprehensive examples for integrating backupx into web applications with proper error handling, scheduling, and user interfaces.
