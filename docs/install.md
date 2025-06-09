@@ -90,8 +90,8 @@ move backups.exe C:\Windows\System32\backups.exe
 
 ### Runtime Requirements
 
-- **Bun**: v1.0.0 or later (recommended)
-- **Node.js**: v18.0.0 or later (alternative runtime)
+- **Bun**: v1.2.15 or later (recommended)
+- **Node.js**: v24.0.0 or later (coming soon)
 
 ### Database Requirements
 
