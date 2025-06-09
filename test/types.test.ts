@@ -1,4 +1,4 @@
-import type { BackupConfig, BackupResult, DatabaseConfig, MySQLConfig, PostgreSQLConfig, SQLiteConfig } from '../src/types'
+import type { BackupConfig, BackupResult, MySQLConfig, PostgreSQLConfig, SQLiteConfig } from '../src/types'
 import { describe, expect, it } from 'bun:test'
 
 describe('Types', () => {
