@@ -128,29 +128,6 @@ test/
 └── index.test.ts          # Integration tests and exports
 ```
 
-### Writing Tests
-
-The test suite uses Bun's built-in test runner with comprehensive setup/teardown:
-
-```ts
-import { Database } from 'bun:sqlite'
-import { afterEach, beforeEach, describe, expect, it } from 'bun:test'
-
-describe('Custom Tests', () => {
-  beforeEach(async () => {
-    // Setup test databases and directories
-  })
-
-  afterEach(async () => {
-    // Clean up test files
-  })
-
-  it('should backup database successfully', async () => {
-    // Test implementation
-  })
-})
-```
-
 ## Configuration
 
 Create a `backups.config.ts` file:
