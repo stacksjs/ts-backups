@@ -1,24 +1,44 @@
+import process from 'node:process'
 import { CAC } from 'cac'
 import { version } from '../package.json'
+import { BackupManager } from '../src/backups'
+import { config } from '../src/config'
 
 const cli = new CAC('backups')
 
 interface CliOption {
-  from: string
   verbose: boolean
 }
 
 cli
-  .command('start', 'Start the Reverse Proxy Server')
-  .option('--from <from>', 'The URL to proxy from')
+  .command('start', 'Start the Backup Process')
   .option('--verbose', 'Enable verbose logging')
-  .example('reverse-proxy start --from localhost:5173 --to my-project.localhost')
+  .example('backups start --verbose')
   .action(async (options?: CliOption) => {
-    if (!options?.from) {
-      console.error('Missing --from option')
+    try {
+      // Override config verbosity if CLI option is provided
+      const backupConfig = {
+        ...config,
+        verbose: options?.verbose ?? config.verbose,
+      }
+
+      if (backupConfig.databases.length === 0) {
+        console.error('❌ No databases configured for backup.')
+        console.error('💡 Please configure databases in your backup configuration file.')
+        process.exit(1)
+      }
+
+      const manager = new BackupManager(backupConfig)
+      const summary = await manager.createBackup()
+
+      // Exit with error code if any backups failed
+      if (summary.failureCount > 0) {
+        process.exit(1)
+      }
     }
-    else {
-      console.log('Options:', options)
+    catch (error) {
+      console.error('❌ Backup process failed:', error instanceof Error ? error.message : String(error))
+      process.exit(1)
     }
   })
 
