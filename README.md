@@ -273,19 +273,40 @@ const result = await backupSQLite(sqliteConfig, './output')
 const result = await backupPostgreSQL(pgConfig, './output')
 ```
 
+## Changelog
+
+Please see our [releases](https://github.com/stacksjs/stacks/releases) page for more information on what has changed recently.
+
 ## Contributing
 
-We welcome contributions! Please see our [testing guidelines](#testing) for running the test suite.
+Please see the [Contributing Guide](https://github.com/stacksjs/contributing) for details.
 
-1. Fork the repository
-2. Create a feature branch
-3. Add tests for new functionality
-4. Ensure all tests pass: `bun test`
-5. Submit a pull request
+## Community
+
+For help, discussion about best practices, or any other conversation that would benefit from being searchable:
+
+[Discussions on GitHub](https://github.com/stacksjs/stacks/discussions)
+
+For casual chit-chat with others using this package:
+
+[Join the Stacks Discord Server](https://discord.gg/stacksjs)
+
+## Postcardware
+
+“Software that is free, but hopes for a postcard.” We love receiving postcards from around the world showing where Stacks is being used! We showcase them on our website too.
+
+Our address: Stacks.js, 12665 Village Ln #2306, Playa Vista, CA 90094, United States 🌎
+
+## Sponsors
+
+We would like to extend our thanks to the following sponsors for funding Stacks development. If you are interested in becoming a sponsor, please reach out to us.
+
+- [JetBrains](https://www.jetbrains.com/)
+- [The Solana Foundation](https://solana.com/)
 
 ## License
 
-MIT License - see [LICENSE](LICENSE.md) for details.
+The MIT License (MIT). Please see [LICENSE](LICENSE.md) for more information.
 
 Made with 💙
 
