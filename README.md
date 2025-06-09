@@ -313,10 +313,10 @@ MIT License - see [LICENSE](LICENSE.md) for details.
 Made with 💙
 
 <!-- Badges -->
-[npm-version-src]: https://img.shields.io/npm/v/bun-ts-starter?style=flat-square
-[npm-version-href]: https://npmjs.com/package/bun-ts-starter
-[github-actions-src]: https://img.shields.io/github/actions/workflow/status/stacksjs/ts-starter/ci.yml?style=flat-square&branch=main
-[github-actions-href]: https://github.com/stacksjs/ts-starter/actions?query=workflow%3Aci
+[npm-version-src]: https://img.shields.io/npm/v/backupx?style=flat-square
+[npm-version-href]: https://npmjs.com/package/backupx
+[github-actions-src]: https://img.shields.io/github/actions/workflow/status/stacksjs/backupx/ci.yml?style=flat-square&branch=main
+[github-actions-href]: https://github.com/stacksjs/backupx/actions?query=workflow%3Aci
 
-<!-- [codecov-src]: https://img.shields.io/codecov/c/gh/stacksjs/ts-starter/main?style=flat-square
-[codecov-href]: https://codecov.io/gh/stacksjs/ts-starter -->
+<!-- [codecov-src]: https://img.shields.io/codecov/c/gh/stacksjs/backupx/main?style=flat-square
+[codecov-href]: https://codecov.io/gh/stacksjs/backupx -->
