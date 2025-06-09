@@ -1,4 +1,19 @@
 
+## v0.1.1...main
+
+[compare changes](https://github.com/stacksjs/backupx/compare/v0.1.1...main)
+
+### 🏡 Chore
+
+- Adjust readme ([de93bd6](https://github.com/stacksjs/backupx/commit/de93bd6))
+- Adjust wording ([e205488](https://github.com/stacksjs/backupx/commit/e205488))
+- Use icon prop ([b6404e3](https://github.com/stacksjs/backupx/commit/b6404e3))
+- Attach zip files ([2f97222](https://github.com/stacksjs/backupx/commit/2f97222))
+
+### ❤️ Contributors
+
+- Chris ([@chrisbbreuer](https://github.com/chrisbbreuer))
+
 ## v0.1.0...main
 
 [compare changes](https://github.com/stacksjs/backupx/compare/v0.1.0...main)
