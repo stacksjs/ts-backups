@@ -476,9 +476,6 @@ catch (error) {
 - Compression and retention policies
 - CLI interface
 
-### Migration Guides
-
-See the [Migration Guide](/advanced/migration) for upgrading between versions.
 
 ## TypeScript Support
 

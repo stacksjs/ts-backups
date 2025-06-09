@@ -278,7 +278,7 @@ If you encounter issues:
 
 1. Check our [GitHub Issues](https://github.com/stacksjs/ts-backups/issues)
 2. Join our [Discord Community](https://discord.gg/stacksjs)
-3. Review the [Advanced Configuration](/advanced/configuration) guide
+3. Review the [Configuration Reference](/config) guide
 
 ## Next Steps
 
