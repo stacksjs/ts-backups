@@ -43,10 +43,10 @@ jobs:
         uses: stacksjs/action-releaser@v1.1.0
         with:
           files: |
-            bin/backups-linux-x64
-            bin/backups-linux-arm64
-            bin/backups-windows-x64.exe
-            bin/backups-darwin-x64
-            bin/backups-darwin-arm64
+            bin/backupx-linux-x64
+            bin/backupx-linux-arm64
+            bin/backupx-windows-x64.exe
+            bin/backupx-darwin-x64
+            bin/backupx-darwin-arm64
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

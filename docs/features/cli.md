@@ -240,7 +240,7 @@ Type=oneshot
 User=backup
 Group=backup
 WorkingDirectory=/opt/myapp
-ExecStart=/usr/local/bin/backups start --verbose
+ExecStart=/usr/local/bin/backupx start --verbose
 StandardOutput=journal
 StandardError=journal
 

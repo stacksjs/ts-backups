@@ -244,7 +244,7 @@ If you encounter permission errors:
 
 ```sh
 # On macOS/Linux
-sudo chown -R $(whoami) /usr/local/bin/backups
+sudo chown -R $(whoami) /usr/local/bin/backupx
 
 # Or install to user directory
 npm config set prefix ~/.local
