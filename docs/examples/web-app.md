@@ -164,7 +164,7 @@ class BackupScheduler {
 
   private async notifyFailure(error: Error, type = 'daily'): Promise<void> {
     // Implementation would send error notification
-    console.log(`🚨 Sending ${type} backup failure notification`)
+    console.error(`🚨 Sending ${type} backup failure notification:`, error.message)
   }
 
   private async generateBackupReport(summary: any): Promise<void> {

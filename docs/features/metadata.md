@@ -16,7 +16,7 @@ Metadata preservation captures:
 ### Enable Metadata Preservation
 
 ```ts
-{
+const config = {
   name: 'important-document',
   path: './contract.pdf',
   preserveMetadata: true, // Enable metadata preservation
@@ -39,16 +39,16 @@ backups/
 
 For individual files, metadata is stored as JSON:
 
-```json
-{
-  "originalPath": "./contract.pdf",
-  "mtime": 1703175600000,
-  "atime": 1703175550000,
-  "ctime": 1703175600000,
-  "mode": 33188,
-  "uid": 1000,
-  "gid": 1000,
-  "size": 2048576
+```ts
+const config = {
+  originalPath: './contract.pdf',
+  mtime: 1703175600000,
+  atime: 1703175550000,
+  ctime: 1703175600000,
+  mode: 33188,
+  uid: 1000,
+  gid: 1000,
+  size: 2048576
 }
 ```
 
@@ -56,14 +56,14 @@ For individual files, metadata is stored as JSON:
 
 For directories, metadata is embedded in the archive headers:
 
-```json
-{
-  "path": "documents/contract.pdf",
-  "size": 2048576,
-  "mtime": 1703175600000,
-  "mode": 33188,
-  "uid": 1000,
-  "gid": 1000
+```ts
+const config = {
+  path: 'documents/contract.pdf',
+  size: 2048576,
+  mtime: 1703175600000,
+  mode: 33188,
+  uid: 1000,
+  gid: 1000
 }
 ```
 
@@ -505,3 +505,13 @@ function adaptMetadataForPlatform(metadata: any) {
 - Explore [Advanced Filtering](/advanced/filtering) with metadata considerations
 - Review [Integration Patterns](/advanced/integration) for automated metadata handling
 - Check out [Performance Tuning](/advanced/performance) for metadata optimization
+
+Enable metadata preservation for any file backup:
+
+```ts
+const metadataConfig = {
+  name: 'important-docs',
+  path: './documents',
+  preserveMetadata: true,
+}
+```

@@ -34,7 +34,7 @@ bun add ts-backups
 
 ### Programmatic Usage
 
-```typescript
+```ts
 import { createBackup } from 'ts-backups'
 
 const config = {
@@ -132,7 +132,7 @@ test/
 
 The test suite uses Bun's built-in test runner with comprehensive setup/teardown:
 
-```typescript
+```ts
 import { Database } from 'bun:sqlite'
 import { afterEach, beforeEach, describe, expect, it } from 'bun:test'
 
@@ -155,7 +155,7 @@ describe('Custom Tests', () => {
 
 Create a `backups.config.ts` file:
 
-```typescript
+```ts
 import { BackupConfig } from 'ts-backups'
 
 export const config: BackupConfig = {
@@ -282,14 +282,14 @@ Creates backups for all configured databases.
 
 ### `BackupManager`
 
-```typescript
+```ts
 const manager = new BackupManager(config)
 const summary = await manager.createBackup()
 ```
 
 ### Database-Specific Functions
 
-```typescript
+```ts
 import { backupPostgreSQL, backupSQLite } from 'ts-backups'
 
 const result = await backupSQLite(sqliteConfig, './output')

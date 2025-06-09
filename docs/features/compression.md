@@ -16,7 +16,7 @@ Compression in ts-backups is:
 
 ```ts
 // Database compression
-{
+const dbConfig = {
   type: BackupType.SQLITE,
   name: 'app-db',
   path: './database.sqlite',
@@ -24,14 +24,14 @@ Compression in ts-backups is:
 }
 
 // File compression
-{
+const fileConfig = {
   name: 'large-file',
   path: './data.json',
   compress: true,
 }
 
 // Directory compression
-{
+const dirConfig = {
   name: 'source-code',
   path: './src',
   compress: true,
@@ -147,7 +147,7 @@ Compression uses streaming to minimize memory usage:
 
 ```ts
 // Large file compression (streaming)
-{
+const config = {
   name: 'large-database',
   path: './huge-database.sql', // 2GB file
   compress: true, // Uses streaming compression
@@ -342,14 +342,14 @@ This happens with already-compressed content:
 
 ```ts
 // ❌ Problem: Compressing compressed files
-{
+const config = {
   name: 'images',
   path: './photos',
   compress: true, // JPGs won't compress further
 }
 
 // ✅ Solution: Skip compression for media
-{
+const config = {
   name: 'images',
   path: './photos',
   compress: false,
@@ -360,14 +360,14 @@ This happens with already-compressed content:
 
 ```ts
 // ❌ Problem: Very large files might cause memory issues
-{
+const config = {
   name: 'huge-file',
   path: './10gb-file.sql',
   compress: true,
 }
 
 // ✅ Solution: Use file size limits or disable compression
-{
+const config = {
   name: 'huge-file',
   path: './10gb-file.sql',
   compress: false, // Skip compression for very large files

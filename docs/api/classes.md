@@ -23,8 +23,12 @@ import { BackupManager } from 'ts-backups'
 
 const manager = new BackupManager({
   verbose: true,
-  databases: [...],
-  files: [...],
+  databases: [
+    // ...
+  ],
+  files: [
+    // ...
+  ],
   outputPath: './backups',
 })
 ```
@@ -36,7 +40,9 @@ const manager = new BackupManager({
 Executes all configured backups and returns a summary.
 
 ```ts
-async createBackup(): Promise<BackupSummary>
+interface BackupManager {
+  createBackup: () => Promise<BackupSummary>
+}
 ```
 
 **Returns:** `Promise<BackupSummary>` - Summary of all backup operations
@@ -52,7 +58,9 @@ console.log(`Completed: ${summary.successCount}/${summary.results.length}`)
 Validates the backup configuration.
 
 ```ts
-validateConfig(): ValidationResult
+interface BackupManager {
+  validateConfig: () => ValidationResult
+}
 ```
 
 **Returns:** `ValidationResult` - Configuration validation results
@@ -62,7 +70,9 @@ validateConfig(): ValidationResult
 Retrieves history of previous backups.
 
 ```ts
-async getBackupHistory(limit?: number): Promise<BackupResult[]>
+interface BackupManager {
+  getBackupHistory: (limit?: number) => Promise<BackupResult[]>
+}
 ```
 
 **Parameters:**
@@ -82,7 +92,9 @@ class BackupError extends Error {
     code: BackupErrorCode,
     message: string,
     details?: Record<string, any>
-  )
+  ) {
+    super(message)
+  }
 }
 ```
 
@@ -96,7 +108,9 @@ class BackupError extends Error {
 #### code
 
 ```ts
-readonly code: BackupErrorCode
+interface BackupError {
+  readonly code: BackupErrorCode
+}
 ```
 
 The specific error code indicating the type of failure.
@@ -104,7 +118,9 @@ The specific error code indicating the type of failure.
 #### details
 
 ```ts
-readonly details: Record<string, any>
+interface BackupError {
+  readonly details: Record<string, any>
+}
 ```
 
 Additional context about the error.
@@ -112,7 +128,9 @@ Additional context about the error.
 #### recoverable
 
 ```ts
-readonly recoverable: boolean
+interface BackupError {
+  readonly recoverable: boolean
+}
 ```
 
 Whether the error represents a recoverable condition.
@@ -124,7 +142,9 @@ Whether the error represents a recoverable condition.
 Serializes the error to a JSON object.
 
 ```ts
-toJSON(): Record<string, any>
+interface BackupError {
+  toJSON: () => Record<string, any>
+}
 ```
 
 **Example:**
@@ -162,7 +182,9 @@ class RetentionManager {
 Removes old backup files according to the retention policy.
 
 ```ts
-async cleanup(): Promise<CleanupResult>
+interface RetentionManager {
+  cleanup: () => Promise<CleanupResult>
+}
 ```
 
 **Returns:** `Promise<CleanupResult>` - Summary of cleanup operation
@@ -172,7 +194,9 @@ async cleanup(): Promise<CleanupResult>
 Returns files that would be deleted without actually deleting them.
 
 ```ts
-async getFilesToDelete(): Promise<string[]>
+interface RetentionManager {
+  getFilesToDelete: () => Promise<string[]>
+}
 ```
 
 **Returns:** `Promise<string[]>` - Array of file paths to be deleted
@@ -199,7 +223,11 @@ Abstract base class for compression implementations.
 Compresses the input data.
 
 ```ts
-abstract async compress(data: Buffer | string): Promise<Buffer>
+import { Buffer } from 'node:buffer'
+
+abstract class CompressionProvider {
+  abstract compress(data: Buffer | string): Promise<Buffer>
+}
 ```
 
 **Parameters:**
@@ -212,7 +240,11 @@ abstract async compress(data: Buffer | string): Promise<Buffer>
 Decompresses the input data.
 
 ```ts
-abstract async decompress(data: Buffer): Promise<Buffer>
+import { Buffer } from 'node:buffer'
+
+abstract class CompressionProvider {
+  abstract decompress(data: Buffer): Promise<Buffer>
+}
 ```
 
 **Parameters:**
@@ -225,7 +257,9 @@ abstract async decompress(data: Buffer): Promise<Buffer>
 Returns the file extension for this compression type.
 
 ```ts
-abstract getExtension(): string
+abstract class CompressionProvider {
+  abstract getExtension(): string
+}
 ```
 
 **Returns:** `string` - File extension (e.g., '.gz')
@@ -236,7 +270,9 @@ Built-in gzip compression implementation.
 
 ```ts
 class GzipCompressionProvider extends CompressionProvider {
-  constructor(options?: zlib.ZlibOptions)
+  constructor(options?: zlib.ZlibOptions) {
+    super()
+  }
 }
 ```
 
@@ -257,10 +293,12 @@ Abstract base class for database backup implementations.
 Performs the database backup operation.
 
 ```ts
-abstract async backup(
-  config: DatabaseConfig,
-  outputPath: string
-): Promise<BackupResult>
+abstract class DatabaseProvider {
+  abstract backup(
+    config: DatabaseConfig,
+    outputPath: string
+  ): Promise<BackupResult>
+}
 ```
 
 **Parameters:**
@@ -275,7 +313,9 @@ Built-in SQLite backup implementation.
 
 ```ts
 class SQLiteProvider extends DatabaseProvider {
-  async backup(config: SQLiteConfig, outputPath: string): Promise<BackupResult>
+  async backup(config: SQLiteConfig, outputPath: string): Promise<BackupResult> {
+    // Implementation
+  }
 }
 ```
 
@@ -285,7 +325,9 @@ Built-in PostgreSQL backup implementation.
 
 ```ts
 class PostgreSQLProvider extends DatabaseProvider {
-  async backup(config: PostgreSQLConfig, outputPath: string): Promise<BackupResult>
+  async backup(config: PostgreSQLConfig, outputPath: string): Promise<BackupResult> {
+    // Implementation
+  }
 }
 ```
 
@@ -295,7 +337,9 @@ Built-in MySQL backup implementation.
 
 ```ts
 class MySQLProvider extends DatabaseProvider {
-  async backup(config: MySQLConfig, outputPath: string): Promise<BackupResult>
+  async backup(config: MySQLConfig, outputPath: string): Promise<BackupResult> {
+    // Implementation
+  }
 }
 ```
 
@@ -310,7 +354,11 @@ Handles file and directory backup operations.
 Backs up a single file.
 
 ```ts
-async backupFile(config: FileConfig, outputPath: string): Promise<BackupResult>
+class FileProvider {
+  async backupFile(config: FileConfig, outputPath: string): Promise<BackupResult> {
+    // Implementation
+  }
+}
 ```
 
 #### backupDirectory()
@@ -318,7 +366,11 @@ async backupFile(config: FileConfig, outputPath: string): Promise<BackupResult>
 Backs up a directory and its contents.
 
 ```ts
-async backupDirectory(config: FileConfig, outputPath: string): Promise<BackupResult>
+class FileProvider {
+  async backupDirectory(config: FileConfig, outputPath: string): Promise<BackupResult> {
+    // Implementation
+  }
+}
 ```
 
 **Example:**
@@ -342,7 +394,11 @@ Validates backup configurations.
 Validates a complete backup configuration.
 
 ```ts
-validate(config: BackupConfig): ValidationResult
+class ConfigValidator {
+  validate(config: BackupConfig): ValidationResult {
+    // Implementation
+  }
+}
 ```
 
 #### validateDatabase()
@@ -350,7 +406,11 @@ validate(config: BackupConfig): ValidationResult
 Validates a database configuration.
 
 ```ts
-validateDatabase(config: DatabaseConfig): ValidationResult
+class ConfigValidator {
+  validateDatabase(config: DatabaseConfig): ValidationResult {
+    // Implementation
+  }
+}
 ```
 
 #### validateFile()
@@ -358,7 +418,11 @@ validateDatabase(config: DatabaseConfig): ValidationResult
 Validates a file configuration.
 
 ```ts
-validateFile(config: FileConfig): ValidationResult
+class ConfigValidator {
+  validateFile(config: FileConfig): ValidationResult {
+    // Implementation
+  }
+}
 ```
 
 **Example:**
@@ -382,7 +446,11 @@ Manages backup metadata and history.
 Saves metadata for a backup operation.
 
 ```ts
-async saveMetadata(summary: BackupSummary): Promise<void>
+class MetadataManager {
+  async saveMetadata(summary: BackupSummary): Promise<void> {
+    // Implementation
+  }
+}
 ```
 
 #### loadMetadata()
@@ -390,7 +458,11 @@ async saveMetadata(summary: BackupSummary): Promise<void>
 Loads metadata for previous backups.
 
 ```ts
-async loadMetadata(limit?: number): Promise<BackupSummary[]>
+class MetadataManager {
+  async loadMetadata(limit?: number): Promise<BackupSummary[]> {
+    // Implementation
+  }
+}
 ```
 
 #### getBackupInfo()
@@ -398,7 +470,11 @@ async loadMetadata(limit?: number): Promise<BackupSummary[]>
 Gets information about a specific backup file.
 
 ```ts
-async getBackupInfo(filename: string): Promise<BackupMetadata | null>
+class MetadataManager {
+  async getBackupInfo(filename: string): Promise<BackupMetadata | null> {
+    // Implementation
+  }
+}
 ```
 
 **Example:**

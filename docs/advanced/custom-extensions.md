@@ -126,6 +126,8 @@ class FTPStorageProvider implements StorageProvider {
 ### Compression Provider Interface
 
 ```ts
+import { Buffer } from 'node:buffer'
+
 interface CompressionProvider {
   compress: (input: Buffer | string) => Promise<Buffer>
   decompress: (input: Buffer) => Promise<Buffer>

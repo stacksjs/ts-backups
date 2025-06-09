@@ -96,8 +96,8 @@ class MemoryOptimizedBackupManager extends BackupManager {
       await this.processBatch(batch)
 
       // Force garbage collection between batches
-      if (global.gc) {
-        global.gc()
+      if (globalThis.gc) {
+        globalThis.gc()
       }
     }
   }
@@ -176,8 +176,8 @@ const memoryMonitor = new MemoryMonitor()
 memoryMonitor.on('memory:warning', (usage) => {
   console.warn(`⚠️ High memory usage: ${(usage.utilization * 100).toFixed(1)}%`)
   // Trigger garbage collection
-  if (global.gc) {
-    global.gc()
+  if (globalThis.gc) {
+    globalThis.gc()
   }
 })
 

@@ -14,7 +14,7 @@ The file backup system automatically detects whether a path is a file or directo
 ### Single File Backup
 
 ```ts
-{
+const fileConfig = {
   name: 'config-file',
   path: './config.json',
   compress: true,
@@ -25,7 +25,7 @@ The file backup system automatically detects whether a path is a file or directo
 ### Directory Backup
 
 ```ts
-{
+const dirConfig = {
   name: 'source-code',
   path: './src',
   compress: true,
@@ -41,7 +41,7 @@ The file backup system automatically detects whether a path is a file or directo
 Intelligent compression with efficiency reporting:
 
 ```ts
-{
+const compressedConfig = {
   name: 'large-file',
   path: './data.json',
   compress: true, // Uses gzip compression
@@ -59,7 +59,7 @@ Intelligent compression with efficiency reporting:
 Preserve file timestamps, permissions, and ownership:
 
 ```ts
-{
+const metadataConfig = {
   name: 'important-file',
   path: './document.pdf',
   preserveMetadata: true,
@@ -67,15 +67,15 @@ Preserve file timestamps, permissions, and ownership:
 ```
 
 Creates a `.meta` file alongside the backup with:
-```json
-{
-  "originalPath": "./document.pdf",
-  "mtime": 1703175600000,
-  "atime": 1703175600000,
-  "mode": 33188,
-  "uid": 1000,
-  "gid": 1000,
-  "size": 2048576
+```ts
+const config = {
+  originalPath: './document.pdf',
+  mtime: 1703175600000,
+  atime: 1703175600000,
+  mode: 33188,
+  uid: 1000,
+  gid: 1000,
+  size: 2048576
 }
 ```
 
@@ -106,7 +106,7 @@ const fileBackups = [
 Use glob patterns for precise file selection:
 
 ```ts
-{
+const webAssetsConfig = {
   name: 'web-assets',
   path: './public',
   compress: true,
@@ -137,7 +137,7 @@ Use glob patterns for precise file selection:
 Control which files are included based on size:
 
 ```ts
-{
+const sizeLimitConfig = {
   name: 'user-uploads',
   path: './uploads',
   compress: true,
@@ -151,14 +151,14 @@ Control which files are included based on size:
 Choose whether to follow symbolic links:
 
 ```ts
-{
+const withSymlinksConfig = {
   name: 'with-symlinks',
   path: './project',
   followSymlinks: true, // Follow symbolic links
   exclude: ['node_modules/**'],
 }
 
-{
+const noSymlinksConfig = {
   name: 'no-symlinks',
   path: './project',
   followSymlinks: false, // Skip symbolic links (default)
@@ -212,52 +212,24 @@ const webAppFiles: FileConfig[] = [
     path: './storage/uploads',
     compress: true,
     maxFileSize: 100 * 1024 * 1024, // 100MB limit
-    exclude: [
-      '*.tmp',
-      'cache/**',
-      'thumbnails/**', // These can be regenerated
-    ],
-    preserveMetadata: true,
+    exclude: ['*.tmp', '*.processing'],
   },
 
   // Configuration files
   {
     name: 'config',
     path: './config',
+    preserveMetadata: true,
+    include: ['*.json', '*.yaml', '*.env*'],
+    exclude: ['*.example*', '*.template*'],
+  },
+
+  // Documentation
+  {
+    name: 'docs',
+    path: './docs',
     compress: true,
-    preserveMetadata: true,
-  },
-
-  // Individual important files
-  {
-    name: 'package-json',
-    path: './package.json',
-    preserveMetadata: true,
-  },
-
-  {
-    name: 'env-example',
-    path: './.env.example',
-    preserveMetadata: true,
-  },
-
-  // Public assets (selective)
-  {
-    name: 'public-assets',
-    path: './public',
-    compress: true,
-    include: [
-      '**/*.css',
-      '**/*.js',
-      '**/*.png',
-      '**/*.jpg',
-      '**/*.svg',
-      '**/*.ico',
-    ],
-    exclude: [
-      'cache/**',
-      'temp/**',
-    ],
+    include: ['*.md', '*.txt', 'images/**'],
   },
 ]
 ```
@@ -268,38 +240,16 @@ Backup development files:
 
 ```ts
 const devFiles: FileConfig[] = [
-  // Source code only
   {
-    name: 'src',
+    name: 'dev-source',
     path: './src',
-    compress: true,
-    exclude: [
-      'node_modules/**',
-      '*.log',
-      'dist/**',
-    ],
+    compress: false, // Faster for frequent backups
+    exclude: ['node_modules/**', 'dist/**', '*.log'],
   },
-
-  // Important config files
   {
-    name: 'configs',
-    path: './',
-    compress: true,
-    include: [
-      'package.json',
-      'tsconfig.json',
-      'vite.config.ts',
-      'tailwind.config.js',
-      '.env.example',
-    ],
-  },
-
-  // Documentation
-  {
-    name: 'docs',
-    path: './docs',
-    compress: true,
-    include: ['**/*.md', '**/*.mdx'],
+    name: 'dev-config',
+    path: './config',
+    preserveMetadata: true,
   },
 ]
 ```
@@ -309,7 +259,7 @@ const devFiles: FileConfig[] = [
 Handle large projects efficiently:
 
 ```ts
-{
+const config = {
   name: 'large-project',
   path: './monorepo',
   compress: true,
@@ -372,7 +322,7 @@ const textFiles = {
 For very large directories:
 
 ```ts
-{
+const config = {
   name: 'large-data',
   path: './data',
   compress: true,
@@ -449,7 +399,7 @@ path: path.resolve(__dirname, '../config.json')
 **Large File Handling:**
 ```ts
 // For very large files, disable compression to save memory
-{
+const config = {
   name: 'huge-file',
   path: './huge-database.sql',
   compress: false, // Skip compression for very large files
@@ -479,14 +429,15 @@ Archive File Structure:
 ### Header Format
 
 Each file header contains:
-```json
-{
-  "path": "relative/path/to/file.txt",
-  "size": 1024,
-  "mtime": 1703175600000,
-  "mode": 33188,
-  "uid": 1000,
-  "gid": 1000
+
+```ts
+const config = {
+  path: 'relative/path/to/file.txt',
+  size: 1024,
+  mtime: 1703175600000,
+  mode: 33188,
+  uid: 1000,
+  gid: 1000
 }
 ```
 

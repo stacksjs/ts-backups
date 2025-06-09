@@ -9,7 +9,7 @@ ts-backups provides comprehensive database backup support for SQLite, PostgreSQL
 SQLite support is built directly into Bun, providing fast and reliable backups:
 
 ```ts
-{
+const sqliteConfig = {
   type: BackupType.SQLITE,
   name: 'app-database',
   path: './database.sqlite',
@@ -30,7 +30,7 @@ Full PostgreSQL support with flexible connection options:
 
 ```ts
 // Connection string
-{
+const postgresConfig1 = {
   type: BackupType.POSTGRESQL,
   name: 'main-db',
   connection: 'postgres://user:pass@localhost:5432/myapp',
@@ -39,7 +39,7 @@ Full PostgreSQL support with flexible connection options:
 }
 
 // Connection object
-{
+const postgresConfig2 = {
   type: BackupType.POSTGRESQL,
   name: 'analytics',
   connection: {
@@ -65,7 +65,7 @@ Full PostgreSQL support with flexible connection options:
 Complete MySQL and MariaDB compatibility:
 
 ```ts
-{
+const mysqlConfig = {
   type: BackupType.MYSQL,
   name: 'legacy-app',
   connection: {
@@ -95,7 +95,7 @@ Complete MySQL and MariaDB compatibility:
 Control which tables are included in your backups:
 
 ```ts
-{
+const filterConfig = {
   type: BackupType.POSTGRESQL,
   name: 'user-data',
   connection: process.env.DATABASE_URL,
@@ -117,7 +117,7 @@ Choose what to include in your backups:
 
 ```ts
 // Schema only (structure, no data)
-{
+const schemaOnlyConfig = {
   type: BackupType.MYSQL,
   name: 'schema-backup',
   connection: connectionConfig,
@@ -126,7 +126,7 @@ Choose what to include in your backups:
 }
 
 // Data only (no schema)
-{
+const dataOnlyConfig = {
   type: BackupType.MYSQL,
   name: 'data-backup',
   connection: connectionConfig,
@@ -135,7 +135,7 @@ Choose what to include in your backups:
 }
 
 // Complete backup (default)
-{
+const fullBackupConfig = {
   type: BackupType.MYSQL,
   name: 'full-backup',
   connection: connectionConfig,
@@ -150,7 +150,7 @@ Secure your database connections:
 
 ```ts
 // PostgreSQL with SSL
-{
+const securePostgresConfig = {
   type: BackupType.POSTGRESQL,
   name: 'secure-db',
   connection: {
@@ -164,7 +164,7 @@ Secure your database connections:
 }
 
 // MySQL with SSL
-{
+const secureMySQLConfig = {
   type: BackupType.MYSQL,
   name: 'secure-mysql',
   connection: {
@@ -183,7 +183,7 @@ Secure your database connections:
 Control backup file naming:
 
 ```ts
-{
+const customNameConfig = {
   type: BackupType.SQLITE,
   name: 'app-db',
   path: './app.sqlite',
@@ -331,10 +331,14 @@ for (const failure of dbFailures) {
 **Connection Failures:**
 ```ts
 // ❌ Bad: Hardcoded localhost
-connection: 'postgres://user:pass@localhost:5432/db'
+const badConfig = {
+  connection: 'postgres://user:pass@localhost:5432/db'
+}
 
 // ✅ Good: Environment-based
-connection: process.env.DATABASE_URL || 'postgres://localhost:5432/dev_db'
+const goodConfig = {
+  connection: process.env.DATABASE_URL || 'postgres://localhost:5432/dev_db'
+}
 ```
 
 **Permission Issues:**
@@ -350,12 +354,14 @@ GRANT SELECT ON database_name.* TO 'backup_user'@'%';
 **SSL Certificate Problems:**
 ```ts
 // For development with self-signed certificates
-connection: {
-  hostname: 'localhost',
-  database: 'myapp',
-  username: 'user',
-  password: 'pass',
-  ssl: false, // Disable SSL for development
+const devConnectionConfig = {
+  connection: {
+    hostname: 'localhost',
+    database: 'myapp',
+    username: 'user',
+    password: 'pass',
+    ssl: false, // Disable SSL for development
+  }
 }
 ```
 
@@ -366,7 +372,7 @@ connection: {
 For large databases, consider these optimizations:
 
 ```ts
-{
+const largeDbConfig = {
   type: BackupType.POSTGRESQL,
   name: 'large-db',
   connection: connectionConfig,
@@ -388,7 +394,7 @@ For large databases, consider these optimizations:
 }
 
 // Separate data-only backup for frequently changing data
-{
+const dataOnlyLargeConfig = {
   type: BackupType.POSTGRESQL,
   name: 'large-db-data-only',
   connection: connectionConfig,

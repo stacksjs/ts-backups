@@ -413,11 +413,13 @@ const TIME_UNITS = {
 ### Using Presets
 
 ```ts
-import { PRESET_CONFIGS, COMMON_EXCLUDE_PATTERNS } from 'ts-backups'
+import { COMMON_EXCLUDE_PATTERNS, PRESET_CONFIGS } from 'ts-backups'
 
 const config = {
   ...PRESET_CONFIGS.PRODUCTION,
-  databases: [...],
+  databases: [
+    // ...
+  ],
   files: [{
     name: 'source',
     path: './src',
@@ -439,3 +441,10 @@ const config = {
 ```
 
 All constants are exported from the main package and provide sensible defaults for most use cases while allowing full customization when needed.
+
+**Example usage:**
+
+```ts
+const config = createDefaultConfig()
+const manager = new BackupManager(config)
+```

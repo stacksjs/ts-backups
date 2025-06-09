@@ -538,7 +538,7 @@ class DebugBackupManager extends ResilientBackupManager {
       level: 'debug',
       message,
       data,
-      stack: this.debugConfig.includeStackTrace ? new Error().stack : undefined,
+      stack: this.debugConfig.includeStackTrace ? new Error('Stack trace').stack : undefined,
     }
 
     this.debugLog.push(entry)

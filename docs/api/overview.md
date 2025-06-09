@@ -293,11 +293,14 @@ Custom error class for backup-related errors:
 
 ```ts
 class BackupError extends Error {
-  constructor(
-    message: string,
-    public readonly code: string,
-    public readonly details?: any
-  )
+  public readonly code: string
+  public readonly details?: any
+
+  constructor(message: string, code: string, details?: any) {
+    super(message)
+    this.code = code
+    this.details = details
+  }
 }
 ```
 
@@ -451,19 +454,15 @@ const fileResult = await backupFile({
 ### Error Handling
 
 ```ts
-import { BackupError, BackupManager } from 'ts-backups'
+import { BackupError, BackupErrorCode } from 'ts-backups'
 
 try {
-  const manager = new BackupManager(config)
-  const summary = await manager.createBackup()
+  await manager.createBackup()
 }
 catch (error) {
   if (error instanceof BackupError) {
-    console.error(`Backup error [${error.code}]:`, error.message)
+    console.error(`Backup failed: ${error.code} - ${error.message}`)
     console.error('Details:', error.details)
-  }
-  else {
-    console.error('Unexpected error:', error)
   }
 }
 ```
@@ -475,7 +474,6 @@ catch (error) {
 - File and directory backup capabilities
 - Compression and retention policies
 - CLI interface
-
 
 ## TypeScript Support
 

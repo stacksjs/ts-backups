@@ -18,7 +18,7 @@ Retention policies automatically:
 Keep only the most recent backups:
 
 ```ts
-{
+const config = {
   retention: {
     count: 7, // Keep only the 7 most recent backups
   }
@@ -30,7 +30,7 @@ Keep only the most recent backups:
 Delete backups older than a specified age:
 
 ```ts
-{
+const config = {
   retention: {
     maxAge: 30, // Delete backups older than 30 days
   }
@@ -42,10 +42,10 @@ Delete backups older than a specified age:
 Use both count and age limits together:
 
 ```ts
-{
+const config = {
   retention: {
-    count: 10,   // Keep at least 10 backups
-    maxAge: 90,  // But delete anything older than 90 days
+    count: 10, // Keep at least 10 backups
+    maxAge: 90, // But delete anything older than 90 days
   }
 }
 ```
@@ -113,12 +113,16 @@ const stagingRetention: BackupConfig = {
   verbose: true,
   outputPath: './staging-backups',
 
-  databases: [...],
-  files: [...],
+  databases: [
+    // ...
+  ],
+  files: [
+    // ...
+  ],
 
   retention: {
-    count: 14,   // Keep 2 weeks of backups
-    maxAge: 30,  // Delete anything older than 30 days
+    count: 14, // Keep 2 weeks of backups
+    maxAge: 30, // Delete anything older than 30 days
   }
 }
 ```
@@ -544,12 +548,12 @@ async function calculateStorageCosts(outputPath: string) {
 
 ```ts
 // ❌ Problem: No retention configured
-{
+const config = {
   // retention property missing
 }
 
 // ✅ Solution: Add retention configuration
-{
+const config = {
   retention: {
     count: 7,
     maxAge: 30,
@@ -596,3 +600,69 @@ const testConfig = {
 - Explore [CLI Interface](/features/cli) for retention management
 - Review [Performance Tuning](/advanced/performance) for large-scale retention
 - Check out [Integration Patterns](/advanced/integration) for automated retention
+
+## Retention Configuration
+
+Configure automatic cleanup of old backups:
+
+```ts
+const retentionConfig = {
+  retention: {
+    count: 10, // Keep last 10 backups
+    maxAge: 30, // Delete backups older than 30 days
+  },
+}
+```
+
+### Count-Based Retention
+
+```ts
+const countBasedConfig = {
+  retention: {
+    count: 5, // Keep only the 5 most recent backups
+  },
+}
+```
+
+### Age-Based Retention
+
+```ts
+const ageBasedConfig = {
+  retention: {
+    maxAge: 7, // Delete backups older than 7 days
+  },
+}
+```
+
+For production systems:
+
+```ts
+const productionRetention = {
+  retention: {
+    count: 30, // Keep last 30 backups
+    maxAge: 90, // But delete anything older than 90 days
+  },
+}
+```
+
+For development:
+
+```ts
+const devRetention = {
+  retention: {
+    count: 3, // Keep only last 3 backups
+  },
+}
+```
+
+Manual cleanup:
+
+```ts
+const retentionManager = new RetentionManager(
+  { count: 5, maxAge: 30 },
+  './backups'
+)
+
+const result = await retentionManager.cleanup()
+console.log(`Deleted ${result.deletedCount} old backups`)
+```

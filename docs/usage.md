@@ -18,30 +18,23 @@ const config: BackupConfig = {
   databases: [
     {
       type: BackupType.SQLITE,
-      name: 'my-database',
-      path: './database.sqlite',
-      compress: true,
+      name: 'app-db',
+      path: './app.sqlite',
     }
   ],
   files: [
     {
-      name: 'uploads',
-      path: './public/uploads',
-      compress: true,
+      name: 'config',
+      path: './config.json',
     }
   ],
-  retention: {
-    count: 5, // Keep 5 recent backups
-    maxAge: 30 // Delete backups older than 30 days
-  }
 }
 
 // Create and run backup
 const manager = new BackupManager(config)
 const summary = await manager.createBackup()
 
-console.log(`Created ${summary.successCount} backups`)
-console.log(`Failed: ${summary.failureCount}`)
+console.log(`Backup completed: ${summary.successCount}/${summary.results.length} successful`)
 ```
 
 ### Database-Only Backup
@@ -278,7 +271,7 @@ interface BackupConfig {
 
 ```ts
 // SQLite
-{
+const config = {
   type: BackupType.SQLITE,
   name: 'unique-name',
   path: './database.sqlite',
@@ -287,7 +280,7 @@ interface BackupConfig {
 }
 
 // PostgreSQL
-{
+const config = {
   type: BackupType.POSTGRESQL,
   name: 'pg-db',
   connection: 'postgres://user:pass@host:port/db',
@@ -307,7 +300,7 @@ interface BackupConfig {
 }
 
 // MySQL
-{
+const config = {
   type: BackupType.MYSQL,
   name: 'mysql-db',
   connection: {
@@ -324,7 +317,7 @@ interface BackupConfig {
 ### File Configuration
 
 ```ts
-{
+const config = {
   name: 'unique-name',
   path: './directory-or-file',
   compress: true,
@@ -341,10 +334,10 @@ interface BackupConfig {
 ### Retention Configuration
 
 ```ts
-{
+const config = {
   retention: {
-    count: 10,     // Keep 10 most recent backups
-    maxAge: 30,    // Delete backups older than 30 days
+    count: 10, // Keep 10 most recent backups
+    maxAge: 30, // Delete backups older than 30 days
   }
 }
 ```

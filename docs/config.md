@@ -30,7 +30,7 @@ interface BackupConfig {
 
   /** Retention policy for automatic cleanup */
   retention?: RetentionConfig
-}
+};
 ```
 
 ### Basic Example
@@ -42,9 +42,15 @@ import { BackupConfig, BackupType } from 'ts-backups'
 const config: BackupConfig = {
   verbose: true,
   outputPath: './backups',
-  databases: [...],
-  files: [...],
-  retention: {...}
+  databases: [
+    // ...
+  ],
+  files: [
+    // ...
+  ],
+  retention: {
+    // ...
+  },
 }
 
 export default config
@@ -73,13 +79,13 @@ interface SQLiteConfig {
 
   /** Custom output filename (without extension) */
   filename?: string
-}
+};
 ```
 
 **Example:**
 
 ```ts
-{
+const sqliteConfig = {
   type: BackupType.SQLITE,
   name: 'app-database',
   path: './app.sqlite',
@@ -121,7 +127,7 @@ interface PostgreSQLConfig {
 
   /** Custom output filename (without extension) */
   filename?: string
-}
+};
 
 interface PostgreSQLConnection {
   hostname?: string
@@ -130,13 +136,13 @@ interface PostgreSQLConnection {
   username?: string
   password?: string
   ssl?: boolean
-}
+};
 ```
 
 **Connection String Example:**
 
 ```ts
-{
+const postgresConfig = {
   type: BackupType.POSTGRESQL,
   name: 'main-db',
   connection: 'postgres://user:password@localhost:5432/myapp',
@@ -149,7 +155,7 @@ interface PostgreSQLConnection {
 **Connection Object Example:**
 
 ```ts
-{
+const analyticsConfig = {
   type: BackupType.POSTGRESQL,
   name: 'analytics-db',
   connection: {
@@ -197,7 +203,7 @@ interface MySQLConfig {
 
   /** Custom output filename (without extension) */
   filename?: string
-}
+};
 
 interface MySQLConnection {
   hostname?: string
@@ -206,13 +212,13 @@ interface MySQLConnection {
   username?: string
   password?: string
   ssl?: boolean
-}
+};
 ```
 
 **Example:**
 
 ```ts
-{
+const mysqlConfig = {
   type: BackupType.MYSQL,
   name: 'legacy-app',
   connection: {
@@ -266,13 +272,13 @@ interface FileConfig {
 
   /** Maximum file size to include in bytes */
   maxFileSize?: number
-}
+};
 ```
 
 ### Single File Backup
 
 ```ts
-{
+const fileConfig = {
   name: 'app-config',
   path: './config.json',
   preserveMetadata: true,
@@ -283,7 +289,7 @@ interface FileConfig {
 ### Directory Backup
 
 ```ts
-{
+const directoryConfig = {
   name: 'source-code',
   path: './src',
   compress: true,
@@ -308,7 +314,7 @@ interface FileConfig {
 ### Large Directory with Filtering
 
 ```ts
-{
+const largeDirectoryConfig = {
   name: 'user-uploads',
   path: './public/uploads',
   compress: true,
@@ -333,7 +339,7 @@ interface RetentionConfig {
 
   /** Maximum age in days (deletes older backups) */
   maxAge?: number
-}
+};
 ```
 
 ### Examples
@@ -341,7 +347,7 @@ interface RetentionConfig {
 **Keep Only Recent Backups:**
 
 ```ts
-{
+const countRetention = {
   retention: {
     count: 5, // Keep only the 5 most recent backups
   }
@@ -351,7 +357,7 @@ interface RetentionConfig {
 **Age-Based Retention:**
 
 ```ts
-{
+const ageRetention = {
   retention: {
     maxAge: 30, // Delete backups older than 30 days
   }
@@ -361,10 +367,10 @@ interface RetentionConfig {
 **Combined Retention:**
 
 ```ts
-{
+const combinedRetention = {
   retention: {
-    count: 10,   // Keep at least 10 backups
-    maxAge: 90,  // But delete anything older than 90 days
+    count: 10, // Keep at least 10 backups
+    maxAge: 90, // But delete anything older than 90 days
   }
 }
 ```
@@ -384,34 +390,36 @@ File filtering uses glob patterns for include/exclude rules:
 ### Common Patterns
 
 ```ts
-// Development files
-exclude: [
-  'node_modules/**', // All of node_modules
-  '*.log', // Log files
-  '*.tmp', // Temporary files
-  'dist/**', // Build output
-  '.git/**', // Git directory
-  'coverage/**', // Test coverage
-]
+const commonPatterns = {
+  // Development files
+  exclude: [
+    'node_modules/**', // All of node_modules
+    '*.log', // Log files
+    '*.tmp', // Temporary files
+    'dist/**', // Build output
+    '.git/**', // Git directory
+    'coverage/**', // Test coverage
+  ],
 
-// Source code only
-include: [
-  '**/*.ts', // TypeScript files
-  '**/*.js', // JavaScript files
-  '**/*.json', // JSON files
-  '**/*.md', // Markdown files
-  'package.json', // Specific file
-]
+  // Source code only
+  include: [
+    '**/*.ts', // TypeScript files
+    '**/*.js', // JavaScript files
+    '**/*.json', // JSON files
+    '**/*.md', // Markdown files
+    'package.json', // Specific file
+  ],
 
-// Images and media
-include: [
-  '**/*.jpg',
-  '**/*.jpeg',
-  '**/*.png',
-  '**/*.gif',
-  '**/*.mp4',
-  '**/*.pdf',
-]
+  // Images and media
+  media: [
+    '**/*.jpg',
+    '**/*.jpeg',
+    '**/*.png',
+    '**/*.gif',
+    '**/*.mp4',
+    '**/*.pdf',
+  ]
+}
 ```
 
 ## Environment Variables
@@ -437,7 +445,7 @@ const config: BackupConfig = {
         username: process.env.DB_USER!,
         password: process.env.DB_PASSWORD!,
         ssl: process.env.DB_SSL === 'true',
-      },
+      }
     }
   ],
 
@@ -481,13 +489,13 @@ const configs = {
   development: {
     ...baseConfig,
     outputPath: './dev-backups',
-    retention: { count: 3 },
+    retention: { count: 3 }
   },
 
   staging: {
     ...baseConfig,
     outputPath: './staging-backups',
-    retention: { count: 7, maxAge: 14 },
+    retention: { count: 7, maxAge: 14 }
   },
 
   production: {
@@ -497,7 +505,7 @@ const configs = {
     databases: [
       {
         type: BackupType.POSTGRESQL,
-        name: 'prod-db',
+        name: 'production-db',
         connection: process.env.DATABASE_URL!,
         compress: true,
       }
@@ -563,13 +571,13 @@ const config = {
 
 ```ts
 // ✅ Good
-connection: {
+const connection = {
   username: process.env.DB_USER!,
   password: process.env.DB_PASSWORD!,
 }
 
 // ❌ Never hardcode secrets
-connection: {
+const connection = {
   username: 'admin',
   password: 'secret123',
 }
@@ -579,13 +587,17 @@ connection: {
 
 ```ts
 // ✅ Good - Split into logical sections
-const databaseConfigs = [...]
-const fileConfigs = [...]
+const databaseConfigs = [
+  // ...
+]
+const fileConfigs = [
+  // ...
+]
 
 const config: BackupConfig = {
   databases: databaseConfigs,
   files: fileConfigs,
-  ...
+  // ...
 }
 ```
 
