@@ -264,7 +264,7 @@ export async function backupPostgreSQL(
     }
 
     return {
-      database: config.name,
+      name: config.name,
       type: 'postgresql',
       filename,
       size: stats.size,
@@ -283,7 +283,7 @@ export async function backupPostgreSQL(
     }
 
     return {
-      database: config.name,
+      name: config.name,
       type: 'postgresql',
       filename: '',
       size: 0,

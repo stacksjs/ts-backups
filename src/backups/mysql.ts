@@ -74,7 +74,7 @@ export async function backupMySQL(
     }
 
     return {
-      database: config.name,
+      name: config.name,
       type: 'mysql',
       filename,
       size: stats.size,
@@ -93,7 +93,7 @@ export async function backupMySQL(
     }
 
     return {
-      database: config.name,
+      name: config.name,
       type: 'mysql',
       filename: '',
       size: 0,

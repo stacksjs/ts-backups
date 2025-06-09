@@ -22,9 +22,10 @@ cli
         verbose: options?.verbose ?? config.verbose,
       }
 
-      if (backupConfig.databases.length === 0) {
-        console.error('❌ No databases configured for backup.')
-        console.error('💡 Please configure databases in your backup configuration file.')
+      if (backupConfig.databases.length === 0 && backupConfig.files.length === 0) {
+        console.error('❌ No databases or files configured for backup.')
+        console.error('💡 Please configure databases and/or files in your backup configuration file.')
+        console.error('   Example: databases for SQLite/PostgreSQL/MySQL or files for directory/file backups.')
         process.exit(1)
       }
 

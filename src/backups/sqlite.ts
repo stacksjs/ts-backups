@@ -143,7 +143,7 @@ export async function backupSQLite(
     }
 
     return {
-      database: config.name,
+      name: config.name,
       type: 'sqlite',
       filename,
       size: stats.size,
@@ -162,7 +162,7 @@ export async function backupSQLite(
     }
 
     return {
-      database: config.name,
+      name: config.name,
       type: 'sqlite',
       filename: '',
       size: 0,

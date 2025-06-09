@@ -8,11 +8,14 @@
 
 # ts-backups
 
-A TypeScript library for creating database backups with native Bun support for SQLite, PostgreSQL, and MySQL.
+A comprehensive TypeScript backup library with native Bun support for databases, files, and directories.
 
 ## Features
 
 - 🗄️ **Multi-Database Support** - SQLite, PostgreSQL, and MySQL (via Bun's native drivers)
+- 📁 **File & Directory Backups** - Backup individual files or entire directories with filtering
+- 🗜️ **Compression Support** - Optional gzip compression for all backup types
+- 🎯 **Advanced Filtering** - Include/exclude patterns with glob support for directory backups
 - 🔄 **Retention Policies** - Configure backup retention by count or age
 - 📁 **Flexible Output** - Customizable backup file naming and output directories
 - ⚡ **Performance** - Built with Bun for fast execution
@@ -49,6 +52,20 @@ const config = {
       connection: 'postgres://user:pass@localhost:5432/myapp'
     }
   ],
+  files: [
+    {
+      name: 'uploads',
+      path: './public/uploads', // Automatically detected as directory
+      compress: true,
+      include: ['*.jpg', '*.png', '*.pdf'],
+      exclude: ['temp/*']
+    },
+    {
+      name: 'config',
+      path: './config/app.json', // Automatically detected as file
+      compress: false
+    }
+  ],
   retention: {
     count: 5, // Keep 5 most recent backups
     maxAge: 30 // Delete backups older than 30 days
@@ -57,6 +74,8 @@ const config = {
 
 const summary = await createBackup(config)
 console.log(`✅ ${summary.successCount} backups completed`)
+console.log(`📊 Database backups: ${summary.databaseBackups.length}`)
+console.log(`📁 File backups: ${summary.fileBackups.length}`)
 ```
 
 ### CLI Usage
@@ -72,9 +91,11 @@ The library includes a comprehensive test suite covering:
 
 - ✅ **Type Safety** - TypeScript configuration validation
 - ✅ **SQLite Backups** - Schema extraction, data export, special characters
-- ✅ **Backup Manager** - Multi-database coordination, error handling
-- ✅ **Retention Policies** - Count-based and age-based cleanup
-- ✅ **Error Scenarios** - Database connection failures, permission issues
+- ✅ **File Backups** - Individual file backup with compression and metadata preservation
+- ✅ **Directory Backups** - Full directory backup with glob filtering and size limits
+- ✅ **Backup Manager** - Multi-database and file coordination, error handling
+- ✅ **Retention Policies** - Count-based and age-based cleanup for all backup types
+- ✅ **Error Scenarios** - Database connection failures, permission issues, missing files
 - ✅ **CLI Integration** - Command-line interface functionality
 
 ### Running Tests
@@ -101,7 +122,9 @@ test/
 ├── types.test.ts          # Type definitions and configurations
 ├── config.test.ts         # Default configuration validation
 ├── sqlite.test.ts         # SQLite backup functionality
-├── backup-manager.test.ts # Multi-database backup coordination
+├── file.test.ts           # Individual file backup functionality
+├── directory.test.ts      # Directory backup with filtering
+├── backup-manager.test.ts # Multi-database and file coordination
 └── index.test.ts          # Integration tests and exports
 ```
 
@@ -174,27 +197,89 @@ export const config: BackupConfig = {
       connection: 'mysql://user:pass@localhost:3306/analytics',
       excludeTables: ['temp_logs', 'cache']
     }
+  ],
+
+  files: [
+    // Directory backups (automatically detected from path)
+    {
+      name: 'app-uploads',
+      path: './public/uploads',
+      compress: true,
+      include: ['*.jpg', '*.png', '*.pdf', '*.doc*'],
+      exclude: ['temp/*', '*.tmp'],
+      maxFileSize: 50 * 1024 * 1024, // 50MB max file size
+      preserveMetadata: true,
+      followSymlinks: false
+    },
+
+    {
+      name: 'user-data',
+      path: './data/users',
+      compress: false,
+      exclude: ['*.cache', 'temp/*', '*.log'],
+      preserveMetadata: true
+    },
+
+    // Individual file backups (automatically detected from path)
+    {
+      name: 'app-config',
+      path: './config/app.json',
+      compress: false,
+      preserveMetadata: true
+    },
+
+    {
+      name: 'env-file',
+      path: './.env.production',
+      compress: true,
+      filename: 'production-env' // Custom filename
+    }
   ]
 }
 ```
 
-## Database Support
+## Backup Support
 
-### SQLite ✅ Fully Supported
+### Database Backups
+
+#### SQLite ✅ Fully Supported
 - Native `bun:sqlite` driver
 - Complete schema export (tables, indexes, triggers, views)
 - Efficient data export with proper escaping
 - Binary data support (BLOB fields)
 
-### PostgreSQL ✅ Fully Supported
+#### PostgreSQL ✅ Fully Supported
 - Native Bun SQL class
 - Connection strings or configuration objects
 - Schema extraction and data export
 - Batch processing for large datasets
 
-### MySQL ⏳ Coming Soon
+#### MySQL ⏳ Coming Soon
 - Waiting for Bun's native MySQL driver
 - Placeholder implementation ready
+
+### File & Directory Backups
+
+#### Automatic Type Detection ✨
+- **No type field required** - the library automatically detects whether a path is a file or directory
+- Uses Node.js `fs.stat()` to determine type programmatically
+- Simplified configuration - just specify `name` and `path`
+- Directory-specific options (include/exclude patterns, etc.) are ignored for files
+- Graceful error handling if path cannot be accessed
+
+#### Directory Backups ✅ Fully Supported
+- Recursive directory scanning with configurable depth
+- Advanced glob pattern filtering (include/exclude)
+- File size limits and symbolic link handling
+- Metadata preservation (timestamps, permissions)
+- Custom archive format with compression support
+
+#### Individual File Backups ✅ Fully Supported
+- Single file backup with original extension preservation
+- Optional gzip compression for any file type
+- Metadata preservation in separate `.meta` files
+- Binary and text file support
+- Custom filename and output path configuration
 
 ## API Reference
 

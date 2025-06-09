@@ -5,6 +5,7 @@ import { loadConfig } from 'bunfig'
 export const defaultConfig: BackupConfig = {
   verbose: true,
   databases: [],
+  files: [],
   outputPath: './backups',
   retention: {
     count: 5,

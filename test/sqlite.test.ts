@@ -96,7 +96,7 @@ describe('SQLite Backup', () => {
       const result = await backupSQLite(config, testOutputDir)
 
       expect(result.success).toBe(true)
-      expect(result.database).toBe('test-database')
+      expect(result.name).toBe('test-database')
       expect(result.type).toBe('sqlite')
       expect(result.filename).toMatch(/test-database_\d{4}-\d{2}-\d{2}T\d{2}-\d{2}-\d{2}.*\.sql/)
       expect(result.size).toBeGreaterThan(0)
