@@ -4,7 +4,7 @@ layout: home
 
 hero:
   name: "backupx"
-  text: "TypeScript Backup Library"
+  text: "TypeScript Backups"
   tagline: "Comprehensive database and file backup solution built for Bun runtime with TypeScript-first design."
   image: /images/logo-white.png
   actions:

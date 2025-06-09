@@ -100,7 +100,7 @@ const sidebar = [
   },
 ]
 
-const description = 'A comprehensive TypeScript backup library for databases and files, built for Bun runtime.'
+const description = 'A comprehensive TypeScript backup library for databases and files, built for performance and reliability.'
 const title = 'backupx | TypeScript Backup Library for Databases & Files'
 
 export default withPwa(
