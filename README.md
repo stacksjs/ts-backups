@@ -8,7 +8,7 @@
 
 # backupx
 
-A comprehensive TypeScript backup library with native Bun support for databases, files, and directories.
+> A comprehensive TypeScript backup library for databases, files, and directories.
 
 ## Features
 
