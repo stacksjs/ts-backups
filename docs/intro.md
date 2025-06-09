@@ -1,9 +1,4 @@
-<p align="center"><img src="https://github.com/stacksjs/rpx/blob/main/.github/art/cover.jpg?raw=true" alt="Social Card of this repo"></p>
-
-<!-- Badges -->
-
-<!-- [codecov-src]: https://img.shields.io/codecov/c/gh/stacksjs/rpx/main?style=flat-square
-[codecov-href]: https://codecov.io/gh/stacksjs/rpx -->
+<p align="center"><img src="https://github.com/stacksjs/backupx/blob/main/.github/art/cover.jpg?raw=true" alt="Social Card of this repo"></p>
 
 # Introduction
 
