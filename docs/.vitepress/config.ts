@@ -19,30 +19,27 @@ const analyticsHead: HeadConfig[] = [
 ]
 
 const nav = [
-  { text: 'News', link: 'https://stacksjs.org/news' },
+  { text: 'Guide', link: '/intro' },
+  { text: 'API', link: '/api/overview' },
   {
     text: 'Changelog',
-    link: 'https://github.com/stacksjs/ts-starter/blob/main/CHANGELOG.md',
+    link: 'https://github.com/stacksjs/ts-backups/blob/main/CHANGELOG.md',
   },
-  // { text: 'Blog', link: 'https://updates.ow3.org' },
   {
     text: 'Resources',
     items: [
-      { text: 'Team', link: '/team' },
-      { text: 'Sponsors', link: '/sponsors' },
-      { text: 'Partners', link: '/partners' },
-      { text: 'Postcardware', link: '/postcardware' },
-      { text: 'Stargazers', link: '/stargazers' },
-      { text: 'License', link: '/license' },
+      { text: 'Examples', link: '/examples' },
+      { text: 'CLI Reference', link: '/cli' },
+      { text: 'Configuration', link: '/config' },
       {
         items: [
           {
-            text: 'Awesome Stacks',
-            link: 'https://github.com/stacksjs/awesome-stacks',
+            text: 'Contributing',
+            link: 'https://github.com/stacksjs/ts-backups/blob/main/.github/CONTRIBUTING.md',
           },
           {
-            text: 'Contributing',
-            link: 'https://github.com/stacksjs/stacks/blob/main/.github/CONTRIBUTING.md',
+            text: 'Issues',
+            link: 'https://github.com/stacksjs/ts-backups/issues',
           },
         ],
       },
@@ -54,21 +51,63 @@ const sidebar = [
   {
     text: 'Get Started',
     items: [
-      { text: 'Intro', link: '/intro' },
-      { text: 'Install', link: '/install' },
-      { text: 'Usage', link: '/usage' },
-      { text: 'Config', link: '/config' },
+      { text: 'Introduction', link: '/intro' },
+      { text: 'Installation', link: '/install' },
+      { text: 'Quick Start', link: '/usage' },
+      { text: 'Configuration', link: '/config' },
     ],
   },
-  { text: 'Showcase', link: '/Showcase' },
+  {
+    text: 'Features',
+    items: [
+      { text: 'Database Backups', link: '/features/database-backups' },
+      { text: 'File & Directory Backups', link: '/features/file-backups' },
+      { text: 'Compression', link: '/features/compression' },
+      { text: 'Retention Policies', link: '/features/retention' },
+      { text: 'Metadata Preservation', link: '/features/metadata' },
+      { text: 'CLI Interface', link: '/features/cli' },
+    ],
+  },
+  {
+    text: 'Advanced',
+    items: [
+      { text: 'Programmatic Usage', link: '/advanced/programmatic' },
+      { text: 'Integration Patterns', link: '/advanced/integration' },
+      { text: 'Performance Tuning', link: '/advanced/performance' },
+      { text: 'Error Handling', link: '/advanced/error-handling' },
+      { text: 'Custom Filtering', link: '/advanced/filtering' },
+      { text: 'Custom Extensions', link: '/advanced/custom-extensions' },
+    ],
+  },
+  {
+    text: 'API Reference',
+    items: [
+      { text: 'Overview', link: '/api/overview' },
+      { text: 'Classes', link: '/api/classes' },
+      { text: 'Types', link: '/api/types' },
+      { text: 'Functions', link: '/api/functions' },
+      { text: 'Constants', link: '/api/constants' },
+    ],
+  },
+  {
+    text: 'Examples',
+    items: [
+      { text: 'Common Patterns', link: '/examples/' },
+      { text: 'Web Applications', link: '/examples/web-app' },
+      { text: 'CLI Scripts', link: '/examples/cli-scripts' },
+      { text: 'Docker & CI/CD', link: '/examples/docker-cicd' },
+      { text: 'Production Setup', link: '/examples/production' },
+    ],
+  },
 ]
-const description = 'A TypeScript Starter Kit. For a better Development Experience.'
-const title = 'ts-starter | A TypeScript Starter Kit. For a better Development Experience.'
+
+const description = 'A comprehensive TypeScript backup library for databases and files, built for Bun runtime.'
+const title = 'ts-backups | TypeScript Backup Library for Databases & Files'
 
 export default withPwa(
   defineConfig({
     lang: 'en-US',
-    title: 'ts-starter',
+    title: 'ts-backups',
     description,
     metaChunk: true,
     cleanUrls: true,
@@ -83,7 +122,7 @@ export default withPwa(
       ['meta', { name: 'author', content: 'Stacks.js, Inc.' }],
       ['meta', {
         name: 'tags',
-        content: 'ts-starter, stacksjs, reverse proxy, modern, lightweight, zero-config, local development',
+        content: 'typescript, database backup, file backup, bun, sqlite, postgresql, mysql, compression, retention',
       }],
 
       ['meta', { property: 'og:type', content: 'website' }],
@@ -91,10 +130,9 @@ export default withPwa(
       ['meta', { property: 'og:title', content: title }],
       ['meta', { property: 'og:description', content: description }],
 
-      ['meta', { property: 'og:site_name', content: 'ts-starter' }],
+      ['meta', { property: 'og:site_name', content: 'ts-backups' }],
       ['meta', { property: 'og:image', content: './images/og-image.jpg' }],
-      ['meta', { property: 'og:url', content: 'https://reverse-proxy.sh/' }],
-      // ['script', { 'src': 'https://cdn.usefathom.com/script.js', 'data-site': '', 'data-spa': 'auto', 'defer': '' }],
+      ['meta', { property: 'og:url', content: 'https://ts-backups.dev/' }],
       ...analyticsHead,
     ],
 
@@ -111,7 +149,7 @@ export default withPwa(
       sidebar,
 
       editLink: {
-        pattern: 'https://github.com/stacksjs/stacks/edit/main/docs/docs/:path',
+        pattern: 'https://github.com/stacksjs/ts-backups/edit/main/docs/:path',
         text: 'Edit this page on GitHub',
       },
 
@@ -123,16 +161,9 @@ export default withPwa(
       socialLinks: [
         { icon: 'twitter', link: 'https://twitter.com/stacksjs' },
         { icon: 'bluesky', link: 'https://bsky.app/profile/chrisbreuer.dev' },
-        { icon: 'github', link: 'https://github.com/stacksjs/ts-starter' },
+        { icon: 'github', link: 'https://github.com/stacksjs/ts-backups' },
         { icon: 'discord', link: 'https://discord.gg/stacksjs' },
       ],
-
-      // algolia: services.algolia,
-
-      // carbonAds: {
-      //   code: '',
-      //   placement: '',
-      // },
     },
 
     pwa: {
@@ -147,9 +178,9 @@ export default withPwa(
         dark: 'github-dark',
       },
 
-      codeTransformers: [
-        transformerTwoslash(),
-      ],
+      // codeTransformers: [
+      //   transformerTwoslash(),
+      // ],
     },
 
     vite: viteConfig,
