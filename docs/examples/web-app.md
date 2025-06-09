@@ -8,8 +8,8 @@ This guide shows how to integrate backupx into web applications for automated da
 
 ```ts
 import type { BackupConfig } from 'backupx'
-import express from 'express'
 import { BackupManager, BackupType } from 'backupx'
+import express from 'express'
 
 const app = express()
 app.use(express.json())
@@ -84,8 +84,8 @@ app.listen(3000)
 ### Scheduled Backups with Cron
 
 ```ts
-import cron from 'node-cron'
 import { BackupManager } from 'backupx'
+import cron from 'node-cron'
 
 class BackupScheduler {
   private manager: BackupManager
@@ -199,8 +199,8 @@ process.on('SIGINT', () => {
 ```ts
 // app/api/backup/route.ts
 import type { BackupConfig } from 'backupx'
-import { NextRequest, NextResponse } from 'next/server'
 import { BackupManager, BackupType } from 'backupx'
+import { NextRequest, NextResponse } from 'next/server'
 
 const backupConfig: BackupConfig = {
   verbose: false,
@@ -272,9 +272,9 @@ export async function GET() {
 ### Pages Router API Route
 
 ```ts
+import type { BackupConfig } from 'backupx'
 // pages/api/backup.ts
 import type { NextApiRequest, NextApiResponse } from 'next'
-import type { BackupConfig } from 'backupx'
 import { BackupManager, BackupType } from 'backupx'
 
 const backupConfig: BackupConfig = {
@@ -539,8 +539,8 @@ export function BackupManager() {
 
 ```ts
 import type { BackupConfig } from 'backupx'
-import Queue from 'bull'
 import { BackupManager } from 'backupx'
+import Queue from 'bull'
 
 // Create backup queue
 const backupQueue = new Queue('backup processing', {

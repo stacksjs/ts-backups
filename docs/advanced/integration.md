@@ -8,11 +8,11 @@ This guide covers advanced integration patterns for backupx, including monitorin
 
 ```ts
 import type { BackupResult, BackupSummary } from 'backupx'
+import { BackupManager } from 'backupx'
 // Expose metrics endpoint
 import express from 'express'
-import { Counter, Gauge, Histogram, register } from 'prom-client'
 
-import { BackupManager } from 'backupx'
+import { Counter, Gauge, Histogram, register } from 'prom-client'
 
 // Define metrics
 const backupCounter = new Counter({
@@ -150,8 +150,8 @@ await notifier.notify(summary)
 
 ```ts
 import type { BackupConfig } from 'backupx'
-import express from 'express'
 import { BackupManager } from 'backupx'
+import express from 'express'
 
 const app = express()
 app.use(express.json())
@@ -243,10 +243,10 @@ app.listen(3000)
 ### Fastify Integration
 
 ```ts
-import type { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify'
 import type { BackupConfig } from 'backupx'
-import fastify from 'fastify'
+import type { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify'
 import { BackupManager } from 'backupx'
+import fastify from 'fastify'
 
 // Plugin for backup functionality
 async function backupPlugin(fastify: FastifyInstance) {
@@ -444,8 +444,8 @@ class GCSBackupManager extends BackupManager {
 
 ```ts
 import type { BackupConfig } from 'backupx'
-import Queue from 'bull'
 import { BackupManager } from 'backupx'
+import Queue from 'bull'
 
 // Create backup queue
 const backupQueue = new Queue('backup processing', {
