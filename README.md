@@ -260,13 +260,6 @@ export const config: BackupConfig = {
 
 ### File & Directory Backups
 
-#### Automatic Type Detection ✨
-- **No type field required** - the library automatically detects whether a path is a file or directory
-- Uses Node.js `fs.stat()` to determine type programmatically
-- Simplified configuration - just specify `name` and `path`
-- Directory-specific options (include/exclude patterns, etc.) are ignored for files
-- Graceful error handling if path cannot be accessed
-
 #### Directory Backups ✅ Fully Supported
 - Recursive directory scanning with configurable depth
 - Advanced glob pattern filtering (include/exclude)

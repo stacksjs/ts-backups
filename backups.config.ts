@@ -58,6 +58,7 @@ const config: BackupConfig = {
       excludeTables: ['sessions', 'cache'],
     },
   ],
+  files: [],
 }
 
 export default config

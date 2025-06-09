@@ -2,7 +2,7 @@ import type { BackupConfig } from '../src/types'
 import { Database } from 'bun:sqlite'
 import { afterEach, beforeEach, describe, expect, it } from 'bun:test'
 import { existsSync } from 'node:fs'
-import { mkdir, readdir, rmdir, stat, unlink, writeFile } from 'node:fs/promises'
+import { mkdir, readdir, rmdir, unlink, writeFile } from 'node:fs/promises'
 import { join } from 'node:path'
 import { BackupManager, createBackup } from '../src/backups'
 

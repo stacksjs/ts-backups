@@ -89,6 +89,7 @@ describe('Types', () => {
             connection: 'postgres://user:pass@localhost/app',
           },
         ],
+        files: [],
         outputPath: './backups',
         retention: {
           count: 5,
@@ -107,6 +108,7 @@ describe('Types', () => {
       const config: BackupConfig = {
         verbose: false,
         databases: [],
+        files: [],
       }
 
       expect(config.verbose).toBe(false)
@@ -119,7 +121,7 @@ describe('Types', () => {
   describe('BackupResult', () => {
     it('should represent successful backup result', () => {
       const result: BackupResult = {
-        database: 'test-db',
+        name: 'test-db',
         type: 'sqlite',
         filename: 'test-db_2023-12-01.sql',
         size: 1024,
@@ -134,7 +136,7 @@ describe('Types', () => {
 
     it('should represent failed backup result', () => {
       const result: BackupResult = {
-        database: 'test-db',
+        name: 'test-db',
         type: 'postgresql',
         filename: '',
         size: 0,

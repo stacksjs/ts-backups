@@ -2,7 +2,7 @@ import type { BackupResult, FileConfig } from '../types'
 import { Buffer } from 'node:buffer'
 import { createWriteStream, existsSync } from 'node:fs'
 import { mkdir, readdir, readFile, stat } from 'node:fs/promises'
-import { dirname, extname, join, relative } from 'node:path'
+import { dirname, join, relative } from 'node:path'
 import { createGzip } from 'node:zlib'
 
 export async function backupDirectory(config: FileConfig, outputPath: string): Promise<BackupResult> {

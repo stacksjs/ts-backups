@@ -1,8 +1,7 @@
 import type { BackupResult, FileConfig } from '../types'
-import { Buffer } from 'node:buffer'
 import { createReadStream, createWriteStream, existsSync } from 'node:fs'
-import { copyFile, mkdir, readFile, stat, writeFile } from 'node:fs/promises'
-import { basename, dirname, extname, join } from 'node:path'
+import { copyFile, mkdir, stat, writeFile } from 'node:fs/promises'
+import { dirname, extname, join } from 'node:path'
 import { createGzip } from 'node:zlib'
 
 export async function backupFile(config: FileConfig, outputPath: string): Promise<BackupResult> {
