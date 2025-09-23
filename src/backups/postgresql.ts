@@ -3,6 +3,9 @@ import { SQL } from 'bun'
 import { writeFile } from 'node:fs/promises'
 import { join } from 'node:path'
 import { BackupType } from '../types'
+import { createLogger } from '../logger'
+
+const logger = createLogger('backupx:postgresql')
 
 function createConnectionString(connection: PostgreSQLConfig['connection']): string {
   if (typeof connection === 'string') {
@@ -43,8 +46,8 @@ export async function backupPostgreSQL(
     const outputFile = join(outputPath, filename)
 
     if (config.verbose) {
-      console.warn(`📦 Starting PostgreSQL backup for: ${config.name}`)
-      console.warn(`💾 Output: ${outputFile}`)
+      logger.warn(`📦 Starting PostgreSQL backup for: ${config.name}`)
+      logger.warn(`💾 Output: ${outputFile}`)
     }
 
     const includeSchema = config.includeSchema !== false
@@ -120,7 +123,7 @@ export async function backupPostgreSQL(
       // Create tables
       for (const table of tables) {
         if (config.verbose) {
-          console.warn(`  📋 Backing up schema for table: ${table.table_schema}.${table.table_name}`)
+          logger.warn(`  📋 Backing up schema for table: ${table.table_schema}.${table.table_name}`)
         }
 
         // Get table definition using a simpler approach
@@ -175,7 +178,7 @@ export async function backupPostgreSQL(
 
       for (const table of tables) {
         if (config.verbose) {
-          console.warn(`  📊 Backing up data for table: ${table.table_schema}.${table.table_name}`)
+          logger.warn(`  📊 Backing up data for table: ${table.table_schema}.${table.table_name}`)
         }
 
         // Get row count
@@ -260,8 +263,8 @@ export async function backupPostgreSQL(
     const stats = await Bun.file(outputFile).stat()
 
     if (config.verbose) {
-      console.warn(`✅ PostgreSQL backup completed in ${duration.toFixed(2)}ms`)
-      console.warn(`📊 File size: ${(stats.size / 1024 / 1024).toFixed(2)} MB`)
+      logger.warn(`✅ PostgreSQL backup completed in ${duration.toFixed(2)}ms`)
+      logger.warn(`📊 File size: ${(stats.size / 1024 / 1024).toFixed(2)} MB`)
     }
 
     return {
@@ -280,7 +283,7 @@ export async function backupPostgreSQL(
     const errorMessage = error instanceof Error ? error.message : String(error)
 
     if (config.verbose) {
-      console.error(`❌ PostgreSQL backup failed: ${errorMessage}`)
+      logger.error(`❌ PostgreSQL backup failed: ${errorMessage}`)
     }
 
     return {

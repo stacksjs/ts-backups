@@ -3,6 +3,9 @@ import { Database } from 'bun:sqlite'
 import { writeFile } from 'node:fs/promises'
 import { join } from 'node:path'
 import { BackupType } from '../types'
+import { Logger } from '@stacksjs/clarity'
+
+const logger = new Logger('backupx:sqlite')
 
 export async function backupSQLite(
   config: SQLiteConfig,
@@ -19,9 +22,9 @@ export async function backupSQLite(
     const outputFile = join(outputPath, filename)
 
     if (config.verbose) {
-      console.warn(`📦 Starting SQLite backup for: ${config.name}`)
-      console.warn(`📄 Database: ${config.path}`)
-      console.warn(`💾 Output: ${outputFile}`)
+      logger.warn(`📦 Starting SQLite backup for: ${config.name}`)
+      logger.warn(`📄 Database: ${config.path}`)
+      logger.warn(`💾 Output: ${outputFile}`)
     }
 
     // Get all table names
@@ -45,7 +48,7 @@ export async function backupSQLite(
 
     for (const table of tables) {
       if (config.verbose) {
-        console.warn(`  📋 Backing up table: ${table.name}`)
+        logger.warn(`  📋 Backing up table: ${table.name}`)
       }
 
       // Get table schema
@@ -139,8 +142,8 @@ export async function backupSQLite(
     const stats = await Bun.file(outputFile).stat()
 
     if (config.verbose) {
-      console.warn(`✅ SQLite backup completed in ${duration.toFixed(2)}ms`)
-      console.warn(`📊 File size: ${(stats.size / 1024 / 1024).toFixed(2)} MB`)
+      logger.warn(`✅ SQLite backup completed in ${duration.toFixed(2)}ms`)
+      logger.warn(`📊 File size: ${(stats.size / 1024 / 1024).toFixed(2)} MB`)
     }
 
     return {
@@ -159,7 +162,7 @@ export async function backupSQLite(
     const errorMessage = error instanceof Error ? error.message : String(error)
 
     if (config.verbose) {
-      console.error(`❌ SQLite backup failed: ${errorMessage}`)
+      logger.error(`❌ SQLite backup failed: ${errorMessage}`)
     }
 
     return {

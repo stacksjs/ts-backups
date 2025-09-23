@@ -5,6 +5,9 @@ import { mkdir, readdir, readFile, stat } from 'node:fs/promises'
 import { dirname, join, relative } from 'node:path'
 import { createGzip } from 'node:zlib'
 import { BackupType } from '../types'
+import { createLogger } from '../logger'
+
+const logger = createLogger('backupx:directory')
 
 export async function backupDirectory(config: FileConfig, outputPath: string): Promise<BackupResult> {
   const startTime = Date.now()
@@ -15,8 +18,8 @@ export async function backupDirectory(config: FileConfig, outputPath: string): P
   const fullPath = join(outputPath, filename)
 
   if (config.verbose) {
-    console.warn(`📁 Starting directory backup for: ${config.path}`)
-    console.warn(`   Output: ${fullPath}`)
+    logger.warn(`📁 Starting directory backup for: ${config.path}`)
+    logger.warn(`   Output: ${fullPath}`)
   }
 
   try {
@@ -32,7 +35,7 @@ export async function backupDirectory(config: FileConfig, outputPath: string): P
     const filesToBackup = await getFilesToBackup(config)
 
     if (config.verbose) {
-      console.warn(`   Found ${filesToBackup.length} files to backup`)
+      logger.warn(`   Found ${filesToBackup.length} files to backup`)
     }
 
     // Create backup archive
@@ -41,9 +44,9 @@ export async function backupDirectory(config: FileConfig, outputPath: string): P
     const duration = Date.now() - startTime
 
     if (config.verbose) {
-      console.warn(`✅ Directory backup completed in ${duration}ms`)
-      console.warn(`   Size: ${formatBytes(size)}`)
-      console.warn(`   Files: ${filesToBackup.length}`)
+      logger.warn(`✅ Directory backup completed in ${duration}ms`)
+      logger.warn(`   Size: ${formatBytes(size)}`)
+      logger.warn(`   Files: ${filesToBackup.length}`)
     }
 
     return {
@@ -61,7 +64,7 @@ export async function backupDirectory(config: FileConfig, outputPath: string): P
     const errorMessage = error instanceof Error ? error.message : String(error)
 
     if (config.verbose) {
-      console.warn(`❌ Directory backup failed: ${errorMessage}`)
+      logger.error(`❌ Directory backup failed: ${errorMessage}`)
     }
 
     return {
