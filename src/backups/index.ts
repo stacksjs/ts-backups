@@ -1,6 +1,7 @@
 import type { BackupConfig, BackupResult, BackupSummary, DatabaseConfig, FileConfig } from '../types'
 import { mkdir, readdir, stat, unlink } from 'node:fs/promises'
 import { join } from 'node:path'
+import { Logger } from '@stacksjs/clarity'
 import { BackupType } from '../types'
 import { backupDirectory } from './directory'
 import { backupFile } from './file'
@@ -13,9 +14,10 @@ export class BackupManager {
 
   async createBackup(): Promise<BackupSummary> {
     const startTime = performance.now()
+    const logger = new Logger('backupx:manager')
 
     if (this.config.verbose) {
-      console.warn('🚀 Starting backup process...')
+      logger.warn('🚀 Starting backup process...')
     }
 
     // Ensure output directory exists
@@ -28,7 +30,7 @@ export class BackupManager {
     // Process database backups
     for (const dbConfig of this.config.databases) {
       if (this.config.verbose) {
-        console.warn(`\n📋 Processing database: ${dbConfig.name} (${dbConfig.type})`)
+        logger.warn(`\n📋 Processing database: ${dbConfig.name} (${dbConfig.type})`)
       }
 
       try {
@@ -49,7 +51,7 @@ export class BackupManager {
         })
 
         if (this.config.verbose) {
-          console.error(`❌ Failed to backup ${dbConfig.name}: ${errorMessage}`)
+          logger.error(`❌ Failed to backup ${dbConfig.name}: ${errorMessage}`)
         }
       }
     }
@@ -68,7 +70,7 @@ export class BackupManager {
       }
 
       if (this.config.verbose) {
-        console.warn(`\n📁 Processing ${fileType}: ${fileConfig.name}`)
+        logger.warn(`\n📁 Processing ${fileType}: ${fileConfig.name}`)
       }
 
       try {
@@ -89,7 +91,7 @@ export class BackupManager {
         })
 
         if (this.config.verbose) {
-          console.error(`❌ Failed to backup ${fileConfig.name}: ${errorMessage}`)
+          logger.error(`❌ Failed to backup ${fileConfig.name}: ${errorMessage}`)
         }
       }
     }
@@ -179,6 +181,7 @@ export class BackupManager {
     if (!this.config.retention)
       return
 
+    const logger = new Logger('backupx:retention')
     try {
       const files = await readdir(outputPath)
       const backupFiles: Array<{ name: string, path: string, stats: any, age: number }> = []
@@ -241,60 +244,59 @@ export class BackupManager {
       // Delete the files
       for (const filePath of filesToDelete) {
         await unlink(filePath)
-        if (this.config.verbose) {
-          console.warn(`🗑️  Removed old backup: ${filePath}`)
-        }
+        logger.warn(`🗑️  Removed old backup: ${filePath}`)
       }
 
-      if (filesToDelete.length > 0 && this.config.verbose) {
-        console.warn(`🧹 Cleaned up ${filesToDelete.length} old backup files`)
+      if (filesToDelete.length > 0) {
+        logger.warn(`🧹 Cleaned up ${filesToDelete.length} old backup files`)
       }
     }
     catch (error) {
       if (this.config.verbose) {
-        console.error(`⚠️  Failed to cleanup old backups: ${error}`)
+        logger.error(`⚠️  Failed to cleanup old backups: ${error}`)
       }
     }
   }
 
   private printSummary(summary: BackupSummary): void {
-    console.warn('\n📊 Backup Summary:')
-    console.warn(`⏱️  Total duration: ${summary.totalDuration.toFixed(2)}ms`)
-    console.warn(`✅ Successful: ${summary.successCount}`)
-    console.warn(`❌ Failed: ${summary.failureCount}`)
+    const logger = new Logger('backupx:summary')
+    logger.warn('\n📊 Backup Summary:')
+    logger.warn(`⏱️  Total duration: ${summary.totalDuration.toFixed(2)}ms`)
+    logger.warn(`✅ Successful: ${summary.successCount}`)
+    logger.warn(`❌ Failed: ${summary.failureCount}`)
 
     if (summary.databaseBackups.length > 0) {
-      console.warn('\n🗄️  Database Backups:')
+      logger.warn('\n🗄️  Database Backups:')
       for (const result of summary.databaseBackups) {
         const status = result.success ? '✅' : '❌'
         const size = result.success ? `${(result.size / 1024 / 1024).toFixed(2)} MB` : 'N/A'
         const duration = `${result.duration.toFixed(2)}ms`
 
-        console.warn(`${status} ${result.name} (${result.type}): ${size} in ${duration}`)
+        logger.warn(`${status} ${result.name} (${result.type}): ${size} in ${duration}`)
 
         if (!result.success && result.error) {
-          console.warn(`   Error: ${result.error}`)
+          logger.warn(`   Error: ${result.error}`)
         }
       }
     }
 
     if (summary.fileBackups.length > 0) {
-      console.warn('\n📁 File Backups:')
+      logger.warn('\n📁 File Backups:')
       for (const result of summary.fileBackups) {
         const status = result.success ? '✅' : '❌'
         const size = result.success ? `${(result.size / 1024 / 1024).toFixed(2)} MB` : 'N/A'
         const duration = `${result.duration.toFixed(2)}ms`
         const fileCount = result.fileCount ? ` (${result.fileCount} files)` : ''
 
-        console.warn(`${status} ${result.name} (${result.type}): ${size} in ${duration}${fileCount}`)
+        logger.warn(`${status} ${result.name} (${result.type}): ${size} in ${duration}${fileCount}`)
 
         if (!result.success && result.error) {
-          console.warn(`   Error: ${result.error}`)
+          logger.warn(`   Error: ${result.error}`)
         }
       }
     }
 
-    console.warn('')
+    logger.warn('')
   }
 }
 

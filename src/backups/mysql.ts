@@ -2,6 +2,9 @@ import type { BackupResult, MySQLConfig } from '../types'
 import { writeFile } from 'node:fs/promises'
 import { join } from 'node:path'
 import { BackupType } from '../types'
+import { Logger } from '@stacksjs/clarity'
+
+const logger = new Logger('backupx:mysql')
 
 // Note: Bun's MySQL support is still in development
 // For now, we'll use a placeholder implementation that shows the structure
@@ -42,9 +45,9 @@ export async function backupMySQL(
     const outputFile = join(outputPath, filename)
 
     if (config.verbose) {
-      console.warn(`📦 Starting MySQL backup for: ${config.name}`)
-      console.warn(`💾 Output: ${outputFile}`)
-      console.warn(`⚠️  MySQL support is coming soon to Bun!`)
+      logger.warn(`📦 Starting MySQL backup for: ${config.name}`)
+      logger.warn(`💾 Output: ${outputFile}`)
+      logger.warn(`⚠️  MySQL support is coming soon to Bun!`)
     }
 
     // Placeholder SQL dump
@@ -70,8 +73,8 @@ export async function backupMySQL(
     const stats = await Bun.file(outputFile).stat()
 
     if (config.verbose) {
-      console.warn(`⚠️  MySQL backup placeholder completed in ${duration.toFixed(2)}ms`)
-      console.warn(`📊 File size: ${(stats.size / 1024).toFixed(2)} KB`)
+      logger.warn(`⚠️  MySQL backup placeholder completed in ${duration.toFixed(2)}ms`)
+      logger.warn(`📊 File size: ${(stats.size / 1024).toFixed(2)} KB`)
     }
 
     return {
@@ -90,7 +93,7 @@ export async function backupMySQL(
     const errorMessage = error instanceof Error ? error.message : String(error)
 
     if (config.verbose) {
-      console.error(`❌ MySQL backup failed: ${errorMessage}`)
+      logger.error(`❌ MySQL backup failed: ${errorMessage}`)
     }
 
     return {

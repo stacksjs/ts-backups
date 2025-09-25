@@ -4,6 +4,9 @@ import { copyFile, mkdir, stat, writeFile } from 'node:fs/promises'
 import { dirname, extname, join } from 'node:path'
 import { createGzip } from 'node:zlib'
 import { BackupType } from '../types'
+import { Logger } from '@stacksjs/clarity'
+
+const logger = new Logger('backupx:file')
 
 export async function backupFile(config: FileConfig, outputPath: string): Promise<BackupResult> {
   const startTime = Date.now()
@@ -15,8 +18,8 @@ export async function backupFile(config: FileConfig, outputPath: string): Promis
   const fullPath = join(outputPath, filename)
 
   if (config.verbose) {
-    console.warn(`📄 Starting file backup for: ${config.path}`)
-    console.warn(`   Output: ${fullPath}`)
+    logger.warn(`📄 Starting file backup for: ${config.path}`)
+    logger.warn(`   Output: ${fullPath}`)
   }
 
   try {
@@ -32,7 +35,7 @@ export async function backupFile(config: FileConfig, outputPath: string): Promis
     const fileStats = await stat(config.path)
 
     if (config.verbose) {
-      console.warn(`   File size: ${formatBytes(fileStats.size)}`)
+      logger.warn(`   File size: ${formatBytes(fileStats.size)}`)
     }
 
     let actualSize: number
@@ -53,11 +56,11 @@ export async function backupFile(config: FileConfig, outputPath: string): Promis
     const duration = Date.now() - startTime
 
     if (config.verbose) {
-      console.warn(`✅ File backup completed in ${duration}ms`)
-      console.warn(`   Size: ${formatBytes(actualSize)}`)
+      logger.warn(`✅ File backup completed in ${duration}ms`)
+      logger.warn(`   Size: ${formatBytes(actualSize)}`)
       if (config.compress) {
         const compressionRatio = ((fileStats.size - actualSize) / fileStats.size * 100).toFixed(1)
-        console.warn(`   Compression: ${compressionRatio}% reduction`)
+        logger.warn(`   Compression: ${compressionRatio}% reduction`)
       }
     }
 
@@ -76,7 +79,7 @@ export async function backupFile(config: FileConfig, outputPath: string): Promis
     const errorMessage = error instanceof Error ? error.message : String(error)
 
     if (config.verbose) {
-      console.warn(`❌ File backup failed: ${errorMessage}`)
+      logger.warn(`❌ File backup failed: ${errorMessage}`)
     }
 
     return {
