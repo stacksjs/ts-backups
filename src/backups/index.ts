@@ -291,7 +291,7 @@ export class BackupManager {
         logger.warn(`${status} ${result.name} (${result.type}): ${size} in ${duration}${fileCount}`)
 
         if (!result.success && result.error) {
-          Logger.warn(`   Error: ${result.error}`)
+          logger.warn(`   Error: ${result.error}`)
         }
       }
     }

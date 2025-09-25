@@ -2,9 +2,9 @@ import type { BackupResult, MySQLConfig } from '../types'
 import { writeFile } from 'node:fs/promises'
 import { join } from 'node:path'
 import { BackupType } from '../types'
-import { createLogger } from '../logger'
+import { Logger } from '@stacksjs/clarity'
 
-const logger = createLogger('backupx:mysql')
+const logger = new Logger('backupx:mysql')
 
 // Note: Bun's MySQL support is still in development
 // For now, we'll use a placeholder implementation that shows the structure

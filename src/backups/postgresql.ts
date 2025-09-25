@@ -3,9 +3,9 @@ import { SQL } from 'bun'
 import { writeFile } from 'node:fs/promises'
 import { join } from 'node:path'
 import { BackupType } from '../types'
-import { createLogger } from '../logger'
+import { Logger } from '@stacksjs/clarity'
 
-const logger = createLogger('backupx:postgresql')
+const logger = new Logger('backupx:postgresql')
 
 function createConnectionString(connection: PostgreSQLConfig['connection']): string {
   if (typeof connection === 'string') {

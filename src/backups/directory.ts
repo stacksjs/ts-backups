@@ -5,9 +5,9 @@ import { mkdir, readdir, readFile, stat } from 'node:fs/promises'
 import { dirname, join, relative } from 'node:path'
 import { createGzip } from 'node:zlib'
 import { BackupType } from '../types'
-import { createLogger } from '../logger'
+import { Logger } from '@stacksjs/clarity'
 
-const logger = createLogger('backupx:directory')
+const logger = new Logger('backupx:directory')
 
 export async function backupDirectory(config: FileConfig, outputPath: string): Promise<BackupResult> {
   const startTime = Date.now()
