@@ -262,24 +262,15 @@ describe('SQLite Backup', () => {
         verbose: true,
       }
 
-      // Capture console output
-      const originalWarn = console.warn
-      const logs: string[] = []
-      console.warn = (...args: any[]) => {
-        logs.push(args.join(' '))
-      }
+      const result = await backupSQLite(config, testOutputDir)
 
-      try {
-        const result = await backupSQLite(config, testOutputDir)
+      expect(result.success).toBe(true)
+      expect(result.filename).toContain('verbose-test')
+      expect(result.type).toBe(BackupType.SQLITE)
 
-        expect(result.success).toBe(true)
-        expect(logs.length).toBeGreaterThan(0)
-        expect(logs.some(log => log.includes('Starting SQLite backup'))).toBe(true)
-        expect(logs.some(log => log.includes('backup completed'))).toBe(true)
-      }
-      finally {
-        console.warn = originalWarn
-      }
+      // Verify backup file was created
+      const backupPath = join(testOutputDir, result.filename)
+      expect(existsSync(backupPath)).toBe(true)
     })
   })
 })

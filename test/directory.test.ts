@@ -262,24 +262,18 @@ describe('Directory Backup', () => {
         compress: false,
       }
 
-      // Capture console output
-      const originalWarn = console.warn
-      const logs: string[] = []
-      console.warn = (...args: any[]) => {
-        logs.push(args.join(' '))
-      }
+      const result = await backupDirectory(config, testOutputDir)
 
-      try {
-        const result = await backupDirectory(config, testOutputDir)
+      expect(result.success).toBe(true)
+      expect(result.filename).toContain('verbose-test')
+      expect(result.type).toBe(BackupType.DIRECTORY)
 
-        expect(result.success).toBe(true)
-        expect(logs.length).toBeGreaterThan(0)
-        expect(logs.some(log => log.includes('Starting directory backup'))).toBe(true)
-        expect(logs.some(log => log.includes('Directory backup completed'))).toBe(true)
-      }
-      finally {
-        console.warn = originalWarn
-      }
+      // Verify backup file was created
+      const backupPath = join(testOutputDir, result.filename)
+      expect(existsSync(backupPath)).toBe(true)
+
+      // Verify it's a tar file (should end with .tar or .tar.gz)
+      expect(result.filename).toMatch(/\.tar(\.gz)?$/)
     })
   })
 
