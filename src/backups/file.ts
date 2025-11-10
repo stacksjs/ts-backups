@@ -3,8 +3,8 @@ import { createReadStream, createWriteStream, existsSync } from 'node:fs'
 import { copyFile, mkdir, stat, writeFile } from 'node:fs/promises'
 import { dirname, extname, join } from 'node:path'
 import { createGzip } from 'node:zlib'
-import { BackupType } from '../types'
 import { Logger } from '@stacksjs/clarity'
+import { BackupType } from '../types'
 
 const logger = new Logger('backupx:file')
 

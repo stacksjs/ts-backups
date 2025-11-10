@@ -1,5 +1,4 @@
 import type { BackupConfig } from './types'
-// @ts-expect-error - bunfig is not typed
 import { loadConfig } from 'bunfig'
 import { DEFAULT_CONFIG } from './constants'
 

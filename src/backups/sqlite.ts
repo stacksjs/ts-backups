@@ -2,8 +2,8 @@ import type { BackupResult, SQLiteConfig } from '../types'
 import { Database } from 'bun:sqlite'
 import { writeFile } from 'node:fs/promises'
 import { join } from 'node:path'
-import { BackupType } from '../types'
 import { Logger } from '@stacksjs/clarity'
+import { BackupType } from '../types'
 
 const logger = new Logger('backupx:sqlite')
 
