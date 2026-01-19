@@ -13,8 +13,18 @@ export const defaultConfig: BackupConfig = {
   },
 }
 
-// eslint-disable-next-line antfu/no-top-level-await
-export const config: BackupConfig = await loadConfig({
+// Lazy-loaded config to avoid top-level await (enables bun --compile)
+let _config: BackupConfig | null = null
+
+export async function getConfig(): Promise<BackupConfig> {
+  if (!_config) {
+    _config = await loadConfig({
   name: 'backup',
   defaultConfig,
 })
+  }
+  return _config
+}
+
+// For backwards compatibility - synchronous access with default fallback
+export const config: BackupConfig = defaultConfig
