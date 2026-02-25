@@ -220,24 +220,28 @@ export const config: BackupConfig = {
 ### Database Backups
 
 #### SQLite ✅ Fully Supported
+
 - Native `bun:sqlite` driver
 - Complete schema export (tables, indexes, triggers, views)
 - Efficient data export with proper escaping
 - Binary data support (BLOB fields)
 
 #### PostgreSQL ✅ Fully Supported
+
 - Native Bun SQL class
 - Connection strings or configuration objects
 - Schema extraction and data export
 - Batch processing for large datasets
 
 #### MySQL ⏳ Coming Soon
+
 - Waiting for Bun's native MySQL driver
 - Placeholder implementation ready
 
 ### File & Directory Backups
 
 #### Directory Backups ✅ Fully Supported
+
 - Recursive directory scanning with configurable depth
 - Advanced glob pattern filtering (include/exclude)
 - File size limits and symbolic link handling
@@ -245,6 +249,7 @@ export const config: BackupConfig = {
 - Custom archive format with compression support
 
 #### Individual File Backups ✅ Fully Supported
+
 - Single file backup with original extension preservation
 - Optional gzip compression for any file type
 - Metadata preservation in separate `.meta` files

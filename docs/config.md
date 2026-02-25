@@ -301,12 +301,12 @@ const directoryConfig = {
   ],
   exclude: [
     'node_modules/**',
-    '*.log',
-    '*.tmp',
+    '_.log',
+    '_.tmp',
     'dist/**',
     'coverage/**'
   ],
-  maxFileSize: 10 * 1024 * 1024, // 10MB limit
+  maxFileSize: 10 _ 1024 _ 1024, // 10MB limit
   followSymlinks: false,
 }
 ```
@@ -323,7 +323,7 @@ const largeDirectoryConfig = {
     'cache/**',
     'thumbnails/**',
   ],
-  maxFileSize: 50 * 1024 * 1024, // 50MB limit
+  maxFileSize: 50 _ 1024 _ 1024, // 50MB limit
   preserveMetadata: true,
 }
 ```
@@ -381,10 +381,10 @@ File filtering uses glob patterns for include/exclude rules:
 
 | Pattern | Description | Example |
 |---------|-------------|---------|
-| `*` | Match any characters except `/` | `*.js` matches all JS files |
-| `**` | Match any characters including `/` | `**/*.js` matches JS files in any subdirectory |
+| `_` | Match any characters except `/` | `_.js` matches all JS files |
+| `**` | Match any characters including `/` | `**/_.js` matches JS files in any subdirectory |
 | `?` | Match single character | `file?.txt` matches `file1.txt`, `filea.txt` |
-| `[]` | Character class | `[0-9]*.txt` matches files starting with digits |
+| `[]` | Character class | `[0-9]_.txt` matches files starting with digits |
 | `!` | Negation (in exclude patterns) | `!important.log` excludes this specific file |
 
 ### Common Patterns
@@ -394,8 +394,8 @@ const commonPatterns = {
   // Development files
   exclude: [
     'node_modules/**', // All of node_modules
-    '*.log', // Log files
-    '*.tmp', // Temporary files
+    '_.log', // Log files
+    '_.tmp', // Temporary files
     'dist/**', // Build output
     '.git/**', // Git directory
     'coverage/**', // Test coverage
@@ -524,24 +524,28 @@ backupx automatically validates your configuration and will provide helpful erro
 ### Common Validation Errors
 
 **Missing Required Fields:**
+
 ```
 ❌ Database configuration missing required field: name
 ❌ File configuration missing required field: path
 ```
 
 **Invalid Types:**
+
 ```
 ❌ Database type must be one of: sqlite, postgresql, mysql
 ❌ Retention count must be a positive integer
 ```
 
 **Invalid Paths:**
+
 ```
 ❌ SQLite database file not found: ./missing.sqlite
 ❌ File path does not exist: ./missing-directory
 ```
 
 **Duplicate Names:**
+
 ```
 ❌ Duplicate backup name found: 'app-db'
    Each backup must have a unique name

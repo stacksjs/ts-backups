@@ -25,7 +25,7 @@ const config = {
 }
 
 // Run backup every hour
-const HOUR_MS = 60 * 60 * 1000
+const HOUR_MS = 60 _ 60 _ 1000
 
 setInterval(async () => {
   console.log(`[${new Date().toISOString()}] Starting scheduled backup...`)
@@ -70,7 +70,7 @@ const config = {
 }
 
 // Daily backup at 2:00 AM
-const dailyBackup = new CronJob('0 2 * * *', async () => {
+const dailyBackup = new CronJob('0 2 _ _ _', async () => {
   console.log('Running daily backup...')
   try {
     const summary = await createBackup(config)
@@ -82,7 +82,7 @@ const dailyBackup = new CronJob('0 2 * * *', async () => {
 })
 
 // Hourly backup during business hours (9 AM - 6 PM)
-const hourlyBackup = new CronJob('0 9-18 * * 1-5', async () => {
+const hourlyBackup = new CronJob('0 9-18 _ _ 1-5', async () => {
   console.log('Running hourly backup...')
   await createBackup({
     ...config,
@@ -105,7 +105,7 @@ console.log('Backup scheduler started')
 Create a backup script and schedule it with cron:
 
 ```bash
-#!/bin/bash
+# !/bin/bash
 # backup.sh
 
 cd /path/to/your/project
@@ -114,13 +114,13 @@ bun run backup:scheduled
 
 ```bash
 # Run daily at 2:00 AM
-0 2 * * * /path/to/backup.sh >> /var/log/backupx.log 2>&1
+0 2 _ _ _ /path/to/backup.sh >> /var/log/backupx.log 2>&1
 
 # Run every 6 hours
-0 */6 * * * /path/to/backup.sh >> /var/log/backupx.log 2>&1
+0 _/6 _ _ _ /path/to/backup.sh >> /var/log/backupx.log 2>&1
 
 # Run at 1:00 AM on weekdays
-0 1 * * 1-5 /path/to/backup.sh >> /var/log/backupx.log 2>&1
+0 1 _ _ 1-5 /path/to/backup.sh >> /var/log/backupx.log 2>&1
 ```
 
 ### systemd Timer (Linux)
@@ -151,7 +151,7 @@ WantedBy=multi-user.target
 Description=Run backupx daily
 
 [Timer]
-OnCalendar=*-*-* 02:00:00
+OnCalendar=_-_-_ 02:00:00
 Persistent=true
 
 [Install]
@@ -227,7 +227,7 @@ export const config: BackupConfig = {
 // Schedule definitions (for use with scheduler)
 export const schedules = {
   hourly: {
-    cron: '0 * * * *',
+    cron: '0 _ _ _ _',
     config: {
       ...config,
       outputPath: './backups/hourly',
@@ -235,7 +235,7 @@ export const schedules = {
     },
   },
   daily: {
-    cron: '0 2 * * *',
+    cron: '0 2 _ _ _',
     config: {
       ...config,
       outputPath: './backups/daily',
@@ -243,7 +243,7 @@ export const schedules = {
     },
   },
   weekly: {
-    cron: '0 3 * * 0',
+    cron: '0 3 _ _ 0',
     config: {
       ...config,
       outputPath: './backups/weekly',
@@ -251,7 +251,7 @@ export const schedules = {
     },
   },
   monthly: {
-    cron: '0 4 1 * *',
+    cron: '0 4 1 _ _',
     config: {
       ...config,
       outputPath: './backups/monthly',
@@ -410,7 +410,7 @@ async function checkBackupHealth(backupDir: string): Promise<BackupHealth> {
   }
 
   const lastBackup = new Date(latestTime)
-  const lastBackupAge = (Date.now() - latestTime) / (1000 * 60 * 60) // hours
+  const lastBackupAge = (Date.now() - latestTime) / (1000 _ 60 _ 60) // hours
 
   // Consider unhealthy if last backup is more than 25 hours old (for daily backups)
   const healthy = lastBackupAge < 25

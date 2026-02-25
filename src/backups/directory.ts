@@ -135,6 +135,7 @@ async function getFilesToBackup(config: FileConfig): Promise<string[]> {
   return files
 }
 
+// eslint-disable pickier/no-unused-vars
 function matchesPatterns(path: string, patterns: string[]): boolean {
   return patterns.some((pattern) => {
     // Simple glob pattern matching
@@ -148,6 +149,7 @@ function matchesPatterns(path: string, patterns: string[]): boolean {
     return regex.test(path) || regex.test(path.replace(/\\/g, '/'))
   })
 }
+// eslint-enable pickier/no-unused-vars
 
 async function createArchive(
   config: FileConfig,

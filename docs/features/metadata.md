@@ -5,6 +5,7 @@ backupx can preserve file metadata including timestamps, permissions, ownership,
 ## Overview
 
 Metadata preservation captures:
+
 - **Timestamps**: Creation, modification, and access times
 - **Permissions**: File mode and access rights
 - **Ownership**: User and group IDs

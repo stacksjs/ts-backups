@@ -19,8 +19,8 @@ const commonPatterns = {
   // Development files
   development: [
     'node_modules/**',
-    '*.log',
-    '*.tmp',
+    '_.log',
+    '_.tmp',
     '.git/**',
     'dist/**',
     'build/**',
@@ -55,7 +55,7 @@ const commonPatterns = {
     '**/*.xls',
     '**/*.xlsx',
     '**/*.ppt',
-    '**/*.pptx',
+    '**/_.pptx',
   ],
 }
 
@@ -98,8 +98,8 @@ class AdvancedFilter {
     // Convert glob pattern to regex
     let regexPattern = pattern
       .replace(/\./g, '\\.') // Escape dots
-      .replace(/\*\*/g, '§DOUBLESTAR§') // Temporary placeholder
-      .replace(/\*/g, '[^/]*') // Single * matches anything except /
+      .replace(/\_\_/g, '§DOUBLESTAR§') // Temporary placeholder
+      .replace(/\_/g, '[^/]_') // Single _ matches anything except /
       .replace(/§DOUBLESTAR§/g, '.*') // ** matches anything including /
       .replace(/\?/g, '[^/]') // ? matches single character except /
       .replace(/\//g, '[\\/\\\\]') // Handle both / and \ path separators
@@ -281,15 +281,15 @@ class ContentBasedFilter {
 
 // Example: Filter large images and files with secrets
 const contentFilter = new ContentBasedFilter({
-  maxSize: 10 * 1024 * 1024, // 10MB max
+  maxSize: 10 _ 1024 _ 1024, // 10MB max
   mimeTypes: {
     exclude: ['image/jpeg', 'image/png'], // No images
   },
   contentPatterns: {
     exclude: [
-      /password\s*=\s*["'].*["']/i,
-      /api[_-]?key\s*=\s*["'].*["']/i,
-      /secret\s*=\s*["'].*["']/i,
+      /password\s_=\s_["']._["']/i,
+      /api[_-]?key\s_=\s_["']._["']/i,
+      /secret\s_=\s_["']._["']/i,
     ],
   },
 })
@@ -351,7 +351,7 @@ class TimeBasedFilter {
 
 // Example: Only files modified in the last week
 const recentFilter = new TimeBasedFilter({
-  modifiedAfter: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
+  modifiedAfter: new Date(Date.now() - 7 _ 24 _ 60 _ 60 * 1000),
 })
 ```
 
@@ -438,8 +438,8 @@ const sourceCodeFilter = new CompositeFilter({
   pathFilter: {
     include: [
       'src/**/*.ts',
-      'src/**/*.js',
-      '*.md',
+      'src/**/_.js',
+      '_.md',
       'package.json',
       'tsconfig.json',
     ],
@@ -453,7 +453,7 @@ const sourceCodeFilter = new CompositeFilter({
   },
 
   contentFilter: {
-    maxSize: 1024 * 1024, // 1MB max per file
+    maxSize: 1024 _ 1024, // 1MB max per file
     contentPatterns: {
       exclude: [
         /console\.log\(/g, // Exclude files with console.log
@@ -463,7 +463,7 @@ const sourceCodeFilter = new CompositeFilter({
   },
 
   timeFilter: {
-    modifiedAfter: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000), // Last 30 days
+    modifiedAfter: new Date(Date.now() - 30 _ 24 _ 60 _ 60 * 1000), // Last 30 days
   },
 
   customFilters: [

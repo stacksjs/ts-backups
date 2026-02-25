@@ -18,6 +18,7 @@ const sqliteConfig = {
 ```
 
 **Features:**
+
 - ✅ Direct file-based backup
 - ✅ No additional dependencies
 - ✅ Complete schema and data export
@@ -54,6 +55,7 @@ const postgresConfig2 = {
 ```
 
 **Features:**
+
 - ✅ Connection strings and objects
 - ✅ SSL/TLS support
 - ✅ Schema-only or data-only backups
@@ -82,6 +84,7 @@ const mysqlConfig = {
 ```
 
 **Features:**
+
 - ✅ MySQL 5.7+ and MariaDB support
 - ✅ SSL connection support
 - ✅ Custom authentication methods
@@ -329,6 +332,7 @@ for (const failure of dbFailures) {
 ### Common Issues
 
 **Connection Failures:**
+
 ```ts
 // ❌ Bad: Hardcoded localhost
 const badConfig = {
@@ -342,6 +346,7 @@ const goodConfig = {
 ```
 
 **Permission Issues:**
+
 ```sql
 -- Grant backup permissions for PostgreSQL
 GRANT SELECT ON ALL TABLES IN SCHEMA public TO backup_user;
@@ -352,6 +357,7 @@ GRANT SELECT ON database_name.* TO 'backup_user'@'%';
 ```
 
 **SSL Certificate Problems:**
+
 ```ts
 // For development with self-signed certificates
 const devConnectionConfig = {

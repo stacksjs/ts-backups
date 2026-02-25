@@ -5,6 +5,7 @@ backupx provides a powerful command-line interface for running backups, managing
 ## Overview
 
 The CLI offers:
+
 - **Simple Commands**: Easy-to-use backup commands
 - **Verbose Output**: Detailed progress and error reporting
 - **Configuration Auto-discovery**: Automatic config file detection
@@ -68,15 +69,18 @@ backups -v
 Runs the backup process using your configuration file.
 
 **Syntax:**
+
 ```bash
 backups start [options]
 ```
 
 **Options:**
+
 - `--verbose`, `-v`: Enable verbose logging output
 - `--help`, `-h`: Show command help
 
 **Examples:**
+
 ```bash
 # Basic backup with default config
 backups start
@@ -198,15 +202,15 @@ $ echo $?
 ### Exit Code Handling
 
 ```bash
-#!/bin/bash
+# !/bin/bash
 
 # Run backup and capture exit code
 if backups start --verbose; then
     echo "Backup successful"
-    # Continue with other tasks
+# Continue with other tasks
 else
     echo "Backup failed - exit code: $?"
-    # Handle failure (send alert, retry, etc.)
+# Handle failure (send alert, retry, etc.)
     exit 1
 fi
 ```
@@ -215,13 +219,13 @@ fi
 
 ```bash
 # Daily backup at 2 AM
-0 2 * * * cd /path/to/project && backups start
+0 2 _ _ _ cd /path/to/project && backups start
 
 # Weekly backup with full verbose output logged
-0 3 * * 0 cd /path/to/project && backups start --verbose >> backup.log 2>&1
+0 3 _ _ 0 cd /path/to/project && backups start --verbose >> backup.log 2>&1
 
 # Backup every 6 hours with error-only logging
-0 */6 * * * cd /path/to/project && backups start 2>> backup-errors.log
+0 _/6 _ _ _ cd /path/to/project && backups start 2>> backup-errors.log
 ```
 
 ### Systemd Service
@@ -283,15 +287,18 @@ services:
   app:
     image: my-app:latest
     volumes:
+
       - ./data:/app/data
       - ./backups:/app/backups
 
   backup:
     image: oven/bun:1
     volumes:
+
       - ./data:/app/data
       - ./backups:/app/backups
       - ./backups.config.ts:/app/backups.config.ts
+
     working_dir: /app
     command: |
       sh -c "
@@ -299,7 +306,9 @@ services:
         backups start --verbose
       "
     depends_on:
+
       - app
+
 ```
 
 ### Kubernetes CronJob
@@ -311,37 +320,53 @@ kind: CronJob
 metadata:
   name: app-backup
 spec:
-  schedule: '0 2 * * *' # Daily at 2 AM
+  schedule: '0 2 _ _ _' # Daily at 2 AM
   jobTemplate:
     spec:
       template:
         spec:
           containers:
+
             - name: backup
+
               image: oven/bun:1
               command:
+
                 - /bin/sh
                 - -c
                 - |
+
                   bun add -g backupx
                   backups start --verbose
               volumeMounts:
+
                 - name: data
+
                   mountPath: /app/data
+
                 - name: backup-storage
+
                   mountPath: /app/backups
+
                 - name: config
+
                   mountPath: /app/backups.config.ts
                   subPath: backups.config.ts
               workingDir: /app
           volumes:
+
             - name: data
+
               persistentVolumeClaim:
                 claimName: app-data
+
             - name: backup-storage
+
               persistentVolumeClaim:
                 claimName: backup-storage
+
             - name: config
+
               configMap:
                 name: backup-config
           restartPolicy: OnFailure
@@ -357,7 +382,9 @@ name: Database Backup
 
 on:
   schedule:
-    - cron: '0 2 * * *' # Daily at 2 AM UTC
+
+    - cron: '0 2 _ _ _' # Daily at 2 AM UTC
+
   workflow_dispatch: # Allow manual trigger
 
 jobs:
@@ -365,23 +392,29 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+
       - name: Checkout code
+
         uses: actions/checkout@v4
 
       - name: Setup Bun
+
         uses: oven-sh/setup-bun@v1
         with:
           bun-version: latest
 
       - name: Install backupx
+
         run: bun add -g backupx
 
       - name: Run backup
+
         run: backups start --verbose
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
 
       - name: Upload backup artifacts
+
         uses: actions/upload-artifact@v3
         if: always()
         with:
@@ -398,18 +431,26 @@ backup:
   image: oven/bun:1
   stage: deploy
   rules:
+
     - if: $CI_PIPELINE_SOURCE == "schedule"
     - if: $CI_PIPELINE_SOURCE == "web"
+
   script:
+
     - bun add -g backupx
     - backups start --verbose
+
   artifacts:
     paths:
+
       - backups/
+
     expire_in: 30 days
   only:
     variables:
+
       - $BACKUP_ENABLED == "true"
+
 ```
 
 ## Environment Variables
@@ -427,13 +468,13 @@ export DATABASE_URL=postgres://user:pass@localhost/db
 export BACKUP_OUTPUT_PATH=/var/backups
 
 # Enable debug logging
-export DEBUG=backupx:*
+export DEBUG=backupx:_
 ```
 
 ### Production Example
 
 ```bash
-#!/bin/bash
+# !/bin/bash
 # production-backup.sh
 
 # Set environment
@@ -449,12 +490,12 @@ export ANALYTICS_DB_URL="mysql://analytics:$ANALYTICS_PASSWORD@analytics.example
 if backups start --verbose 2>&1 | tee -a backup.log; then
     echo "$(date): Backup completed successfully" >> backup.log
 
-    # Optional: Upload to cloud storage
+# Optional: Upload to cloud storage
     aws s3 sync /var/backups/myapp s3://company-backups/myapp/
 else
     echo "$(date): Backup failed with exit code $?" >> backup.log
 
-    # Send alert
+# Send alert
     curl -X POST "$SLACK_WEBHOOK" \
         -H 'Content-type: application/json' \
         --data '{"text":"🚨 Production backup failed!"}'
@@ -468,33 +509,36 @@ fi
 ### Common Issues
 
 **Config Not Found:**
+
 ```bash
 $ backups start
 ❌ No databases or files configured for backup.
 💡 Please configure databases and/or files in your backup configuration file.
 
-# Solutions:
+# Solutions
 # 1. Create backups.config.ts
 # 2. Ensure you're in the correct directory
 # 3. Check file permissions
 ```
 
 **Permission Errors:**
+
 ```bash
 $ backups start
 ❌ Backup process failed: EACCES: permission denied
 
-# Solutions:
+# Solutions
 chmod 755 ./backups           # Fix output directory permissions
 sudo chown -R $USER ./backups # Fix ownership
 ```
 
 **Binary Not Found:**
+
 ```bash
 $ backups start
 bash: backups: command not found
 
-# Solutions:
+# Solutions
 npm install -g backupx     # Install globally
 which backups                 # Check if installed
 echo $PATH                    # Check PATH includes npm globals
@@ -506,7 +550,7 @@ Enable detailed debugging:
 
 ```bash
 # Enable all debug output
-DEBUG=backupx:* backups start --verbose
+DEBUG=backupx:_ backups start --verbose
 
 # Enable specific module debugging
 DEBUG=backupx:database backups start
@@ -519,7 +563,7 @@ DEBUG=backupx:files backups start
 |------|---------|-------------|
 | Normal | Production use | Minimal output |
 | Verbose (`--verbose`) | Detailed progress | Progress + results |
-| Debug (`DEBUG=*`) | Development | All internal operations |
+| Debug (`DEBUG=_`) | Development | All internal operations |
 
 ## Best Practices
 
@@ -536,7 +580,7 @@ backups start
 ### 2. Implement Proper Error Handling
 
 ```bash
-#!/bin/bash
+# !/bin/bash
 set -e  # Exit on any error
 
 # Capture output and exit code
@@ -577,11 +621,11 @@ backup_start_time=$(date +%s)
 if backups start --verbose; then
     backup_duration=$(($(date +%s) - backup_start_time))
 
-    # Send success metric
+# Send success metric
     curl -X POST "http://monitoring.example.com/metrics" \
         -d "backup.success=1&backup.duration=$backup_duration"
 else
-    # Send failure metric
+# Send failure metric
     curl -X POST "http://monitoring.example.com/metrics" \
         -d "backup.failure=1"
 fi

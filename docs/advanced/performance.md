@@ -63,8 +63,8 @@ import { pipeline } from 'node:stream/promises'
 import { createGzip } from 'node:zlib'
 
 class MemoryOptimizedBackupManager extends BackupManager {
-  private readonly CHUNK_SIZE = 64 * 1024 // 64KB chunks
-  private readonly MAX_MEMORY_USAGE = 100 * 1024 * 1024 // 100MB limit
+  private readonly CHUNK_SIZE = 64 _ 1024 // 64KB chunks
+  private readonly MAX_MEMORY_USAGE = 100 _ 1024 _ 1024 // 100MB limit
 
   async backupLargeFile(filePath: string, outputPath: string): Promise<void> {
     // Use streaming to avoid loading entire file into memory
@@ -111,7 +111,7 @@ class MemoryOptimizedBackupManager extends BackupManager {
   private estimateAverageFileSize(files: string[]): number {
     // Sample first 10 files to estimate average size
     // Implementation would stat() first few files
-    return 1024 * 1024 // 1MB default estimate
+    return 1024 _ 1024 // 1MB default estimate
   }
 }
 ```
@@ -174,7 +174,7 @@ class MemoryMonitor extends EventEmitter {
 const memoryMonitor = new MemoryMonitor()
 
 memoryMonitor.on('memory:warning', (usage) => {
-  console.warn(`⚠️ High memory usage: ${(usage.utilization * 100).toFixed(1)}%`)
+  console.warn(`⚠️ High memory usage: ${(usage.utilization _ 100).toFixed(1)}%`)
   // Trigger garbage collection
   if (globalThis.gc) {
     globalThis.gc()
@@ -182,7 +182,7 @@ memoryMonitor.on('memory:warning', (usage) => {
 })
 
 memoryMonitor.on('memory:critical', (usage) => {
-  console.error(`🚨 Critical memory usage: ${(usage.utilization * 100).toFixed(1)}%`)
+  console.error(`🚨 Critical memory usage: ${(usage.utilization _ 100).toFixed(1)}%`)
   // Consider pausing backup operations
 })
 
@@ -447,7 +447,7 @@ class IOOptimizedBackupManager extends BackupManager {
       case 'large-file-backup':
         return {
           pattern: 'sequential',
-          bufferSize: 1024 * 1024, // 1MB buffer
+          bufferSize: 1024 _ 1024, // 1MB buffer
           syncWrites: false, // Use OS caching
           directIO: false,
         }
@@ -455,7 +455,7 @@ class IOOptimizedBackupManager extends BackupManager {
       case 'many-small-files':
         return {
           pattern: 'random',
-          bufferSize: 64 * 1024, // 64KB buffer
+          bufferSize: 64 _ 1024, // 64KB buffer
           syncWrites: true, // Ensure data persistence
           directIO: false,
         }
@@ -463,7 +463,7 @@ class IOOptimizedBackupManager extends BackupManager {
       case 'database-dump':
         return {
           pattern: 'sequential',
-          bufferSize: 256 * 1024, // 256KB buffer
+          bufferSize: 256 _ 1024, // 256KB buffer
           syncWrites: true, // Critical data
           directIO: false,
         }
@@ -471,7 +471,7 @@ class IOOptimizedBackupManager extends BackupManager {
       default:
         return {
           pattern: 'mixed',
-          bufferSize: 128 * 1024,
+          bufferSize: 128 _ 1024,
           syncWrites: false,
           directIO: false,
         }
@@ -516,7 +516,7 @@ class NetworkOptimizedBackupManager extends BackupManager {
 
     // Use COPY for faster data transfer
     const copyQuery = `
-      COPY (SELECT * FROM ${tableName})
+      COPY (SELECT _ FROM ${tableName})
       TO STDOUT
       WITH (FORMAT csv, HEADER true, DELIMITER ',')
     `
@@ -641,7 +641,7 @@ class MonitoredBackupManager extends BackupManager {
   }
 
   private formatThroughput(bytesPerSecond: number): string {
-    const mbps = bytesPerSecond / (1024 * 1024)
+    const mbps = bytesPerSecond / (1024 _ 1024)
     return `${mbps.toFixed(2)} MB/s`
   }
 
@@ -698,8 +698,8 @@ class PerformanceProfiler {
         min: sorted[0],
         max: sorted[sorted.length - 1],
         median: sorted[Math.floor(sorted.length / 2)],
-        p95: sorted[Math.floor(sorted.length * 0.95)],
-        p99: sorted[Math.floor(sorted.length * 0.99)],
+        p95: sorted[Math.floor(sorted.length _ 0.95)],
+        p99: sorted[Math.floor(sorted.length _ 0.99)],
       }
     }
 

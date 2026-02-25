@@ -15,9 +15,11 @@ class BackupManager {
 ```
 
 **Parameters:**
+
 - `config` - The backup configuration object
 
 **Example:**
+
 ```ts
 import { BackupManager } from 'backupx'
 
@@ -48,6 +50,7 @@ interface BackupManager {
 **Returns:** `Promise<BackupSummary>` - Summary of all backup operations
 
 **Example:**
+
 ```ts
 const summary = await manager.createBackup()
 console.log(`Completed: ${summary.successCount}/${summary.results.length}`)
@@ -76,6 +79,7 @@ interface BackupManager {
 ```
 
 **Parameters:**
+
 - `limit` - Maximum number of results to return (default: 10)
 
 **Returns:** `Promise<BackupResult[]>` - Array of previous backup results
@@ -99,6 +103,7 @@ class BackupError extends Error {
 ```
 
 **Parameters:**
+
 - `code` - Error code from BackupErrorCode enum
 - `message` - Human-readable error message
 - `details` - Additional error context (optional)
@@ -148,6 +153,7 @@ interface BackupError {
 ```
 
 **Example:**
+
 ```ts
 try {
   await manager.createBackup()
@@ -172,6 +178,7 @@ class RetentionManager {
 ```
 
 **Parameters:**
+
 - `config` - Retention policy configuration
 - `outputPath` - Directory containing backup files
 
@@ -202,6 +209,7 @@ interface RetentionManager {
 **Returns:** `Promise<string[]>` - Array of file paths to be deleted
 
 **Example:**
+
 ```ts
 const retentionManager = new RetentionManager(
   { count: 5, maxAge: 30 },
@@ -231,6 +239,7 @@ abstract class CompressionProvider {
 ```
 
 **Parameters:**
+
 - `data` - Data to compress
 
 **Returns:** `Promise<Buffer>` - Compressed data
@@ -248,6 +257,7 @@ abstract class CompressionProvider {
 ```
 
 **Parameters:**
+
 - `data` - Compressed data to decompress
 
 **Returns:** `Promise<Buffer>` - Decompressed data
@@ -277,6 +287,7 @@ class GzipCompressionProvider extends CompressionProvider {
 ```
 
 **Example:**
+
 ```ts
 const compressor = new GzipCompressionProvider({ level: 6 })
 const compressed = await compressor.compress(data)
@@ -302,6 +313,7 @@ abstract class DatabaseProvider {
 ```
 
 **Parameters:**
+
 - `config` - Database-specific configuration
 - `outputPath` - Directory to save backup files
 
@@ -374,6 +386,7 @@ class FileProvider {
 ```
 
 **Example:**
+
 ```ts
 const fileProvider = new FileProvider()
 const result = await fileProvider.backupFile({
@@ -426,6 +439,7 @@ class ConfigValidator {
 ```
 
 **Example:**
+
 ```ts
 const validator = new ConfigValidator()
 const result = validator.validate(backupConfig)
@@ -478,6 +492,7 @@ class MetadataManager {
 ```
 
 **Example:**
+
 ```ts
 const metadataManager = new MetadataManager('./backups')
 await metadataManager.saveMetadata(summary)

@@ -41,5 +41,3 @@ features:
     icon: 🎯
     details: "Comprehensive error handling, verbose logging, and battle-tested with extensive test suite."
 ---
-
-<Home />

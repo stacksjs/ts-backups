@@ -5,6 +5,7 @@ backupx is designed to be used programmatically in your applications, allowing f
 ## Overview
 
 Programmatic usage enables:
+
 - **Custom Integration**: Embed backups in your application logic
 - **Dynamic Configuration**: Generate backup configs at runtime
 - **Event-Driven Backups**: Trigger backups based on application events
@@ -131,7 +132,7 @@ async function createDynamicBackupConfig(): Promise<BackupConfig> {
       name: 'uploads',
       path: './uploads',
       compress: true,
-      maxFileSize: 50 * 1024 * 1024, // 50MB
+      maxFileSize: 50 _ 1024 _ 1024, // 50MB
     })
   }
 
@@ -324,7 +325,7 @@ class ScheduledBackupService {
 
   start() {
     // Daily full backup at 2 AM
-    this.addJob('0 2 * * *', 'full', async () => {
+    this.addJob('0 2 _ _ _', 'full', async () => {
       const manager = new BackupManager(this.configs.full)
       const summary = await manager.createBackup()
 
@@ -332,7 +333,7 @@ class ScheduledBackupService {
     })
 
     // Hourly incremental backup (files only)
-    this.addJob('0 * * * *', 'incremental', async () => {
+    this.addJob('0 _ _ _ _', 'incremental', async () => {
       const manager = new BackupManager(this.configs.incremental)
       const summary = await manager.createBackup()
 
@@ -342,7 +343,7 @@ class ScheduledBackupService {
     })
 
     // Weekly deep backup (everything + older retention)
-    this.addJob('0 1 * * 0', 'weekly', async () => {
+    this.addJob('0 1 _ _ 0', 'weekly', async () => {
       const manager = new BackupManager(this.configs.weekly)
       const summary = await manager.createBackup()
 
@@ -415,7 +416,7 @@ class RobustBackupManager {
         console.error(`❌ Backup attempt ${attempt} failed:`, error)
 
         if (attempt < this.retryOptions.maxRetries) {
-          const delay = this.retryOptions.delay * this.retryOptions.backoff ** (attempt - 1)
+          const delay = this.retryOptions.delay _ this.retryOptions.backoff ** (attempt - 1)
           console.log(`⏳ Retrying in ${delay}ms...`)
           await this.sleep(delay)
         }
@@ -632,7 +633,7 @@ class ProgressAwareBackupManager {
 // Usage with progress tracking
 const progressManager = new ProgressAwareBackupManager(config, (progress) => {
   const elapsed = Date.now() - progress.startTime
-  const percentage = Math.round((progress.current / progress.total) * 100)
+  const percentage = Math.round((progress.current / progress.total) _ 100)
 
   console.log(`📊 ${progress.stage} backup: ${percentage}% (${progress.current}/${progress.total})`)
   console.log(`   Current: ${progress.currentItem}`)
@@ -736,7 +737,7 @@ class MockBackupManager {
         type: db.type,
         name: db.name,
         filename: `${db.name}_mock.sql`,
-        size: Math.floor(Math.random() * 1000000),
+        size: Math.floor(Math.random() _ 1000000),
         success: Math.random() > 0.1, // 90% success rate
         error: Math.random() > 0.9 ? 'Mock error' : undefined,
       })
@@ -748,9 +749,9 @@ class MockBackupManager {
         type: BackupType.FILE,
         name: file.name,
         filename: `${file.name}_mock.tar`,
-        size: Math.floor(Math.random() * 5000000),
+        size: Math.floor(Math.random() _ 5000000),
         success: Math.random() > 0.05, // 95% success rate
-        fileCount: Math.floor(Math.random() * 100),
+        fileCount: Math.floor(Math.random() _ 100),
       })
     }
 

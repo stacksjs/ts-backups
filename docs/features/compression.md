@@ -5,6 +5,7 @@ backupx provides intelligent compression capabilities to reduce backup size whil
 ## Overview
 
 Compression in backupx is:
+
 - **Optional**: Enable per backup or globally
 - **Intelligent**: Automatic compression ratio reporting
 - **Streaming**: Memory-efficient for large files
@@ -57,6 +58,7 @@ When compression is enabled, you'll see detailed statistics:
 ### Gzip Algorithm
 
 backupx uses gzip compression, which provides:
+
 - **Good compression ratios** for text-based content
 - **Fast compression/decompression** speeds
 - **Wide compatibility** with standard tools
@@ -312,8 +314,8 @@ const productionConfig: BackupConfig = {
       name: 'essential-data',
       path: './data',
       compress: true,
-      include: ['**/*.json', '**/*.csv'],
-      maxFileSize: 100 * 1024 * 1024, // 100MB limit
+      include: ['**/*.json', '**/_.csv'],
+      maxFileSize: 100 _ 1024 * 1024, // 100MB limit
     },
 
     // Skip compression for already optimized content

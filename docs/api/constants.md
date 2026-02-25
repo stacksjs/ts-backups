@@ -19,6 +19,7 @@ const BackupType = {
 ```
 
 **Usage:**
+
 ```ts
 import { BackupType } from 'backupx'
 
@@ -171,7 +172,7 @@ const COMMON_EXCLUDE_PATTERNS = {
   TEMP_FILES: ['**/*.tmp', '**/*.temp', '**/tmp/**'],
   CACHE: ['**/.cache/**', '**/cache/**'],
   OS_FILES: ['.DS_Store', 'Thumbs.db', '*.swp'],
-  IDE: ['.vscode/**', '.idea/**', '*.sublime-*'],
+  IDE: ['.vscode/**', '.idea/**', '_.sublime-_'],
 
   // Combined patterns
   DEVELOPMENT: [
@@ -250,7 +251,7 @@ const COMMON_INCLUDE_PATTERNS = {
     '**/*.png',
     '**/*.gif',
     '**/*.webp',
-    '**/*.svg'
+    '**/_.svg'
   ]
 } as const
 ```
@@ -263,11 +264,11 @@ Memory usage limits for different operations.
 
 ```ts
 const MEMORY_LIMITS = {
-  SMALL_FILE: 1024 * 1024, // 1MB
-  MEDIUM_FILE: 10 * 1024 * 1024, // 10MB
-  LARGE_FILE: 100 * 1024 * 1024, // 100MB
-  MAX_MEMORY_USAGE: 512 * 1024 * 1024, // 512MB
-  CHUNK_SIZE: 64 * 1024, // 64KB
+  SMALL_FILE: 1024 _ 1024, // 1MB
+  MEDIUM_FILE: 10 _ 1024 _ 1024, // 10MB
+  LARGE_FILE: 100 _ 1024 _ 1024, // 100MB
+  MAX_MEMORY_USAGE: 512 _ 1024 _ 1024, // 512MB
+  CHUNK_SIZE: 64 _ 1024, // 64KB
 } as const
 ```
 
@@ -358,7 +359,7 @@ const VALIDATION_RULES = {
   MIN_RETENTION_DAYS: 1,
   MAX_RETENTION_DAYS: 3650, // 10 years
 
-  MAX_FILE_SIZE: 1024 * 1024 * 1024 * 100, // 100GB
+  MAX_FILE_SIZE: 1024 _ 1024 _ 1024 _ 100, // 100GB
   MAX_FILENAME_LENGTH: 255,
   MAX_PATH_LENGTH: 4096,
 
@@ -402,9 +403,9 @@ Units for formatting durations.
 const TIME_UNITS = {
   MILLISECOND: 1,
   SECOND: 1000,
-  MINUTE: 60 * 1000,
-  HOUR: 60 * 60 * 1000,
-  DAY: 24 * 60 * 60 * 1000,
+  MINUTE: 60 _ 1000,
+  HOUR: 60 _ 60 _ 1000,
+  DAY: 24 _ 60 _ 60 _ 1000,
 } as const
 ```
 

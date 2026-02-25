@@ -5,6 +5,7 @@ backupx provides intelligent retention policies to automatically clean up old ba
 ## Overview
 
 Retention policies automatically:
+
 - ✅ **Delete old backups** based on count or age
 - ✅ **Preserve recent backups** for quick recovery
 - ✅ **Handle mixed backup types** (databases and files)
@@ -66,6 +67,7 @@ Retention cleanup happens automatically after each backup:
 ### File Identification
 
 backupx recognizes backup files by:
+
 - **Extensions**: `.sql`, `.tar`, `.tar.gz`, `.gz`
 - **Patterns**: Files containing backup-related patterns
 - **Timestamps**: Files with timestamp patterns in names
@@ -283,11 +285,13 @@ With verbose mode enabled, see detailed cleanup information:
    Found 12 backup files
    Keeping 7 most recent files
    Deleting 5 old backup files:
+
    - old_backup_2023-11-15T10-30-00.sql (18 days old)
    - old_backup_2023-11-14T10-30-00.sql (19 days old)
    - old_backup_2023-11-13T10-30-00.sql (20 days old)
    - old_backup_2023-11-12T10-30-00.sql (21 days old)
    - old_backup_2023-11-11T10-30-00.sql (22 days old)
+
 ✅ Cleanup completed: 5 files deleted
 ```
 
@@ -366,7 +370,7 @@ function formatBytes(bytes: number): string {
 }
 
 function formatDate(date: Date): string {
-  return date.toISOString().split('T')[0]
+  return date.toISOString().split['T'](0)
 }
 ```
 

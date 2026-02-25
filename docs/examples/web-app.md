@@ -28,7 +28,7 @@ const backupConfig: BackupConfig = {
     {
       name: 'uploads',
       path: './uploads',
-      exclude: ['**/*.tmp'],
+      exclude: ['**/_.tmp'],
       compress: true,
     },
   ],
@@ -96,7 +96,7 @@ class BackupScheduler {
   }
 
   scheduleDaily(hour = 2, minute = 0): void {
-    const cronExpression = `${minute} ${hour} * * *`
+    const cronExpression = `${minute} ${hour} _ _ _`
 
     const task = cron.schedule(cronExpression, async () => {
       console.log('🕐 Starting scheduled backup...')
@@ -119,7 +119,7 @@ class BackupScheduler {
   }
 
   scheduleWeekly(dayOfWeek = 0, hour = 1, minute = 0): void {
-    const cronExpression = `${minute} ${hour} * * ${dayOfWeek}`
+    const cronExpression = `${minute} ${hour} _ _ ${dayOfWeek}`
 
     const task = cron.schedule(cronExpression, async () => {
       console.log('🗓️ Starting weekly backup...')
@@ -428,7 +428,7 @@ export function BackupManager() {
     if (bytes === 0)
       return '0 Bytes'
     const i = Math.floor(Math.log(bytes) / Math.log(1024))
-    return `${Math.round(bytes / 1024 ** i * 100) / 100} ${sizes[i]}`
+    return `${Math.round(bytes / 1024 ** i _ 100) / 100} ${sizes[i]}`
   }
 
   const formatDuration = (ms: number): string => {
@@ -447,7 +447,7 @@ export function BackupManager() {
     <div className="backup-manager">
       <h2>Backup Management</h2>
 
-      {/* Current Status */}
+      {/_ Current Status _/}
       <div className="status-card">
         <h3>Current Status</h3>
         {lastBackup
@@ -478,7 +478,7 @@ export function BackupManager() {
             )}
       </div>
 
-      {/* Actions */}
+      {/_ Actions _/}
       <div className="actions">
         <button
           onClick={triggerBackup}
@@ -496,7 +496,7 @@ export function BackupManager() {
         </button>
       </div>
 
-      {/* History */}
+      {/_ History */}
       {history && (
         <div className="history">
           <h3>Recent Backups</h3>

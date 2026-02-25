@@ -19,6 +19,7 @@ interface BackupConfig {
 ```
 
 **Properties:**
+
 - `verbose` - Enable detailed logging output
 - `databases` - Array of database configurations to backup
 - `files` - Array of file/directory configurations to backup
@@ -40,6 +41,7 @@ interface DatabaseConfig {
 ```
 
 **Properties:**
+
 - `type` - Type of database (SQLite, PostgreSQL, MySQL)
 - `name` - Unique identifier for this backup
 - `verbose` - Override global verbose setting (optional)
@@ -58,6 +60,7 @@ interface SQLiteConfig extends DatabaseConfig {
 ```
 
 **Properties:**
+
 - `path` - File system path to the SQLite database file
 
 ### PostgreSQLConfig
@@ -76,6 +79,7 @@ interface PostgreSQLConfig extends DatabaseConfig {
 ```
 
 **Properties:**
+
 - `connection` - Connection string or connection object
 - `tables` - Specific tables to backup (optional, defaults to all)
 - `excludeTables` - Tables to exclude from backup (optional)
@@ -147,6 +151,7 @@ interface FileConfig {
 ```
 
 **Properties:**
+
 - `name` - Unique identifier for this backup
 - `path` - File system path to backup
 - `verbose` - Override global verbose setting (optional)
@@ -170,6 +175,7 @@ interface RetentionConfig {
 ```
 
 **Properties:**
+
 - `count` - Maximum number of backups to keep (optional)
 - `maxAge` - Maximum age of backups in days (optional)
 
@@ -192,6 +198,7 @@ interface BackupSummary {
 ```
 
 **Properties:**
+
 - `startTime` - When the backup process started
 - `endTime` - When the backup process completed
 - `duration` - Total duration in milliseconds
@@ -218,6 +225,7 @@ interface BackupResult {
 ```
 
 **Properties:**
+
 - `name` - Name identifier of the backup
 - `type` - Type of backup performed
 - `filename` - Name of the created backup file
@@ -241,6 +249,7 @@ interface CleanupResult {
 ```
 
 **Properties:**
+
 - `deletedCount` - Number of files deleted
 - `deletedFiles` - Array of deleted file names
 - `freedSpace` - Amount of disk space freed in bytes
@@ -263,6 +272,7 @@ enum BackupType {
 ```
 
 **Values:**
+
 - `SQLITE` - SQLite database backup
 - `POSTGRESQL` - PostgreSQL database backup
 - `MYSQL` - MySQL database backup
@@ -301,6 +311,7 @@ interface ValidationResult {
 ```
 
 **Properties:**
+
 - `isValid` - Whether the configuration is valid
 - `errors` - Array of validation errors
 - `warnings` - Array of validation warnings
@@ -322,6 +333,7 @@ interface BackupMetadata {
 ```
 
 **Properties:**
+
 - `filename` - Name of the backup file
 - `type` - Type of backup
 - `name` - Backup identifier
@@ -344,6 +356,7 @@ interface ProgressInfo {
 ```
 
 **Properties:**
+
 - `current` - Current progress count
 - `total` - Total operations to complete
 - `currentOperation` - Description of current operation

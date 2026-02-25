@@ -61,7 +61,7 @@ const config: BackupConfig = {
         'cache/**',
         'thumbnails/**', // Can be regenerated
       ],
-      maxFileSize: 100 * 1024 * 1024, // 100MB limit
+      maxFileSize: 100 _ 1024 _ 1024, // 100MB limit
       preserveMetadata: true,
     },
 
@@ -181,7 +181,7 @@ class ProductionBackupService {
         path: '/app/data',
         compress: true,
         exclude: ['temp/**', 'cache/**'],
-        maxFileSize: 500 * 1024 * 1024, // 500MB limit
+        maxFileSize: 500 _ 1024 _ 1024, // 500MB limit
       },
 
       // Configuration backup
@@ -226,6 +226,7 @@ class ProductionBackupService {
 
   private async reportSuccess(summary: BackupSummary, duration: number) {
     const message = `✅ Backup completed successfully in ${Math.round(duration / 1000)}s\n`
+
       + `📊 ${summary.successCount}/${summary.totalCount} items backed up`
 
     console.log(message)
@@ -244,6 +245,7 @@ class ProductionBackupService {
 
   private async reportPartialFailure(summary: BackupSummary, duration: number) {
     const message = `⚠️ Backup completed with failures in ${Math.round(duration / 1000)}s\n`
+
       + `📊 ${summary.successCount}/${summary.totalCount} items backed up\n`
       + `❌ ${summary.failureCount} failures`
 
@@ -262,6 +264,7 @@ class ProductionBackupService {
 
   private async reportFailure(error: Error, duration: number) {
     const message = `❌ Backup failed after ${Math.round(duration / 1000)}s\n`
+
       + `Error: ${error.message}`
 
     console.error(message)
@@ -360,7 +363,7 @@ function createEnvironmentConfig(): BackupConfig {
       {
         name: 'source-code',
         path: './src',
-        exclude: ['node_modules/**', '*.log'],
+        exclude: ['node_modules/**', '_.log'],
         compress: envConfig.compression,
       },
 
@@ -370,7 +373,7 @@ function createEnvironmentConfig(): BackupConfig {
             name: 'uploads',
             path: './uploads',
             compress: envConfig.compression,
-            maxFileSize: 100 * 1024 * 1024,
+            maxFileSize: 100 _ 1024 _ 1024,
           }]
         : []),
     ],
@@ -396,7 +399,7 @@ class EventDrivenBackupService extends EventEmitter {
   private backupManager: BackupManager
   private backupTimeout?: NodeJS.Timeout
   private lastBackupTime = 0
-  private readonly BACKUP_COOLDOWN = 5 * 60 * 1000 // 5 minutes
+  private readonly BACKUP_COOLDOWN = 5 _ 60 _ 1000 // 5 minutes
 
   constructor(config: BackupConfig) {
     super()
@@ -414,7 +417,7 @@ class EventDrivenBackupService extends EventEmitter {
     // Periodic backup
     setInterval(() => {
       this.scheduleBackup('periodic')
-    }, 24 * 60 * 60 * 1000) // Daily
+    }, 24 _ 60 _ 60 _ 1000) // Daily
   }
 
   private scheduleBackup(reason: string) {
@@ -534,56 +537,76 @@ services:
   app:
     build: .
     environment:
+
       - DATABASE_URL=postgres://user:pass@db:5432/myapp
+
     volumes:
+
       - ./data:/app/data
+
     depends_on:
+
       - db
 
   backup:
     build: .
     environment:
+
       - DATABASE_URL=postgres://user:pass@db:5432/myapp
       - NODE_ENV=production
+
     volumes:
+
       - ./backups:/var/backups
       - ./data:/app/data:ro
+
     depends_on:
+
       - db
+
     command: |
       sh -c "
-        # Wait for database to be ready
+# Wait for database to be ready
         sleep 30
-        # Run backup
+# Run backup
         bun run backup
       "
 
   backup-cron:
     build: .
     environment:
+
       - DATABASE_URL=postgres://user:pass@db:5432/myapp
+
     volumes:
+
       - ./backups:/var/backups
       - ./data:/app/data:ro
+
     depends_on:
+
       - db
+
     command: |
       sh -c "
-        # Install cron
+# Install cron
         apt-get update && apt-get install -y cron
-        # Add cron job
-        echo '0 2 * * * cd /app && bun run backup' | crontab -
-        # Start cron
+# Add cron job
+        echo '0 2 _ _ * cd /app && bun run backup' | crontab -
+# Start cron
         cron -f
       "
 
   db:
     image: postgres:15
     environment:
+
       - POSTGRES_DB=myapp
       - POSTGRES_USER=user
       - POSTGRES_PASSWORD=pass
+
     volumes:
+
       - db_data:/var/lib/postgresql/data
 
 volumes:
@@ -592,7 +615,7 @@ volumes:
 
 ## Next Steps
 
-- Check out more [Configuration Examples](/config) for specific scenarios
-- Learn about [Advanced Integration Patterns](/advanced/integration)
-- Explore [Performance Optimization](/advanced/performance) for large-scale backups
-- Review [Error Handling Strategies](/advanced/error-handling) for production use
++ Check out more [Configuration Examples](/config) for specific scenarios
++ Learn about [Advanced Integration Patterns](/advanced/integration)
++ Explore [Performance Optimization](/advanced/performance) for large-scale backups
++ Review [Error Handling Strategies](/advanced/error-handling) for production use

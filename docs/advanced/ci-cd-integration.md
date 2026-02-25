@@ -13,16 +13,19 @@ name: Database Backup
 
 on:
   schedule:
-    # Run daily at 2:00 AM UTC
+# Run daily at 2:00 AM UTC
+
     - cron: '0 2 * * *'
-  workflow_dispatch:
+
+  workflow*dispatch:
     inputs:
-      backup_type:
+      backup*type:
         description: 'Backup type'
         required: true
         default: 'full'
         type: choice
         options:
+
           - full
           - schema-only
           - data-only
@@ -32,38 +35,44 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+
       - uses: actions/checkout@v4
 
       - name: Setup Bun
+
         uses: oven-sh/setup-bun@v1
         with:
           bun-version: latest
 
       - name: Install dependencies
+
         run: bun install
 
       - name: Run database backup
+
         env:
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}
-          BACKUP_ENCRYPTION_KEY: ${{ secrets.BACKUP_ENCRYPTION_KEY }}
+          DATABASE*URL: ${{ secrets.DATABASE*URL }}
+          BACKUP*ENCRYPTION*KEY: ${{ secrets.BACKUP*ENCRYPTION*KEY }}
         run: |
           bun run backupx start --verbose
 
       - name: Upload backup artifacts
+
         uses: actions/upload-artifact@v4
         with:
-          name: database-backup-${{ github.run_number }}
+          name: database-backup-${{ github.run*number }}
           path: backups/
           retention-days: 30
 
       - name: Upload to S3
+
         if: success()
         env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_REGION: us-east-1
+          AWS*ACCESS*KEY*ID: ${{ secrets.AWS*ACCESS*KEY*ID }}
+          AWS*SECRET*ACCESS*KEY: ${{ secrets.AWS*SECRET*ACCESS*KEY }}
+          AWS*REGION: us-east-1
         run: |
-          aws s3 sync backups/ s3://${{ secrets.S3_BUCKET }}/backups/$(date +%Y-%m-%d)/
+          aws s3 sync backups/ s3://${{ secrets.S3*BUCKET }}/backups/$(date +%Y-%m-%d)/
 ```
 
 ### Pre-Deployment Backup
@@ -82,52 +91,61 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+
       - uses: actions/checkout@v4
 
       - name: Setup Bun
+
         uses: oven-sh/setup-bun@v1
 
       - name: Install dependencies
+
         run: bun install
 
       - name: Create pre-deployment backup
+
         env:
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          DATABASE*URL: ${{ secrets.DATABASE*URL }}
         run: |
           bun run backupx start --verbose
-          echo "BACKUP_FILE=$(ls -t backups/*.sql* | head -1)" >> $GITHUB_ENV
+          echo "BACKUP*FILE=$(ls -t backups/*.sql* | head -1)" >> $GITHUB*ENV
 
       - name: Upload backup
+
         uses: actions/upload-artifact@v4
         with:
           name: pre-deploy-backup-${{ github.sha }}
           path: backups/
 
       - name: Run migrations
+
         env:
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          DATABASE*URL: ${{ secrets.DATABASE*URL }}
         run: bun run db:migrate
 
       - name: Deploy application
+
         run: |
-          # Your deployment commands
+# Your deployment commands
           echo "Deploying..."
 
       - name: Verify deployment
+
         id: verify
         continue-on-error: true
         run: |
-          # Health check
+# Health check
           curl -f https://your-app.com/health || exit 1
 
       - name: Rollback on failure
+
         if: steps.verify.outcome == 'failure'
         env:
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          DATABASE*URL: ${{ secrets.DATABASE*URL }}
         run: |
           echo "Deployment verification failed, initiating rollback..."
-          # Restore from backup
-          # psql $DATABASE_URL < ${{ env.BACKUP_FILE }}
+# Restore from backup
+# psql $DATABASE*URL < ${{ env.BACKUP*FILE }}
 ```
 
 ### Test Data Snapshot
@@ -138,7 +156,7 @@ Create and restore test data snapshots:
 name: Test with Database Snapshot
 
 on:
-  pull_request:
+  pull*request:
     branches: [main]
 
 jobs:
@@ -149,46 +167,54 @@ jobs:
       postgres:
         image: postgres:15
         env:
-          POSTGRES_USER: test
-          POSTGRES_PASSWORD: test
-          POSTGRES_DB: test_db
+          POSTGRES*USER: test
+          POSTGRES*PASSWORD: test
+          POSTGRES*DB: test*db
         ports:
+
           - 5432:5432
+
         options: >-
-          --health-cmd pg_isready
+          --health-cmd pg*isready
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
 
     steps:
+
       - uses: actions/checkout@v4
 
       - name: Setup Bun
+
         uses: oven-sh/setup-bun@v1
 
       - name: Install dependencies
+
         run: bun install
 
       - name: Restore test data snapshot
+
         env:
-          DATABASE_URL: postgres://test:test@localhost:5432/test_db
+          DATABASE*URL: postgres://test:test@localhost:5432/test*db
         run: |
-          # Download snapshot from cache or artifact
+# Download snapshot from cache or artifact
           if [ -f test-fixtures/snapshot.sql ]; then
-            psql $DATABASE_URL < test-fixtures/snapshot.sql
+            psql $DATABASE*URL < test-fixtures/snapshot.sql
           else
             bun run db:seed
           fi
 
       - name: Run tests
+
         env:
-          DATABASE_URL: postgres://test:test@localhost:5432/test_db
+          DATABASE*URL: postgres://test:test@localhost:5432/test*db
         run: bun test
 
       - name: Create snapshot after test
+
         if: always()
         env:
-          DATABASE_URL: postgres://test:test@localhost:5432/test_db
+          DATABASE*URL: postgres://test:test@localhost:5432/test*db
         run: |
           bun run backupx start --output test-fixtures
 ```
@@ -200,50 +226,64 @@ jobs:
 ```yaml
 # .gitlab-ci.yml
 stages:
+
   - backup
   - upload
   - cleanup
 
 variables:
-  BACKUP_DIR: ./backups
+  BACKUP*DIR: ./backups
 
 daily-backup:
   stage: backup
   image: oven/bun:latest
   rules:
-    - if: $CI_PIPELINE_SOURCE == "schedule"
+
+    - if: $CI*PIPELINE*SOURCE == "schedule"
+
   script:
+
     - bun install
     - bun run backupx start --verbose
+
   artifacts:
     paths:
-      - $BACKUP_DIR/
-    expire_in: 30 days
+
+      - $BACKUP*DIR/
+
+    expire*in: 30 days
 
 upload-to-cloud:
   stage: upload
   image: amazon/aws-cli:latest
   needs: ['daily-backup']
   rules:
-    - if: $CI_PIPELINE_SOURCE == "schedule"
+
+    - if: $CI*PIPELINE*SOURCE == "schedule"
+
   script:
-    - aws s3 sync $BACKUP_DIR/ s3://$S3_BUCKET/backups/$(date +%Y-%m-%d)/
+
+    - aws s3 sync $BACKUP*DIR/ s3://$S3*BUCKET/backups/$(date +%Y-%m-%d)/
 
 cleanup-old-backups:
   stage: cleanup
   image: amazon/aws-cli:latest
   rules:
-    - if: $CI_PIPELINE_SOURCE == "schedule"
+
+    - if: $CI*PIPELINE*SOURCE == "schedule"
+
   script:
-    # Delete backups older than 30 days
+# Delete backups older than 30 days
+
     - |
-      aws s3 ls s3://$S3_BUCKET/backups/ | while read -r line; do
+
+      aws s3 ls s3://$S3*BUCKET/backups/ | while read -r line; do
         createDate=$(echo $line | awk '{print $1" "$2}')
         createDate=$(date -d "$createDate" +%s)
         olderThan=$(date -d "30 days ago" +%s)
         if [[ $createDate -lt $olderThan ]]; then
           folder=$(echo $line | awk '{print $4}')
-          aws s3 rm s3://$S3_BUCKET/backups/$folder --recursive
+          aws s3 rm s3://$S3*BUCKET/backups/$folder --recursive
         fi
       done
 ```
@@ -270,8 +310,8 @@ COPY . .
 RUN mkdir -p /backups
 
 # Set environment
-ENV NODE_ENV=production
-ENV BACKUP_OUTPUT_PATH=/backups
+ENV NODE*ENV=production
+ENV BACKUP*OUTPUT*PATH=/backups
 
 # Default command
 CMD ["bun", "run", "backupx", "start", "--verbose"]
@@ -287,23 +327,31 @@ services:
   backup:
     build: .
     environment:
-      - DATABASE_URL=${DATABASE_URL}
-      - BACKUP_OUTPUT_PATH=/backups
-      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
-      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
-      - S3_BUCKET=${S3_BUCKET}
+
+      - DATABASE*URL=${DATABASE*URL}
+      - BACKUP*OUTPUT*PATH=/backups
+      - AWS*ACCESS*KEY*ID=${AWS*ACCESS*KEY*ID}
+      - AWS*SECRET*ACCESS*KEY=${AWS*SECRET*ACCESS*KEY}
+      - S3*BUCKET=${S3*BUCKET}
+
     volumes:
+
       - backup-data:/backups
+
     restart: unless-stopped
 
-  # Cron scheduler for backups
+# Cron scheduler for backups
   scheduler:
     image: mcuadros/ofelia:latest
-    depends_on:
+    depends*on:
+
       - backup
+
     command: daemon --docker
     volumes:
+
       - /var/run/docker.sock:/var/run/docker.sock:ro
+
     labels:
       ofelia.job-run.backup.schedule: "0 2 * * *"
       ofelia.job-run.backup.container: "backup"
@@ -328,35 +376,49 @@ spec:
       template:
         spec:
           containers:
+
             - name: backup
+
               image: your-registry/backupx:latest
               env:
-                - name: DATABASE_URL
+
+                - name: DATABASE*URL
+
                   valueFrom:
                     secretKeyRef:
                       name: database-secrets
                       key: url
-                - name: AWS_ACCESS_KEY_ID
+
+                - name: AWS*ACCESS*KEY*ID
+
                   valueFrom:
                     secretKeyRef:
                       name: aws-secrets
                       key: access-key-id
-                - name: AWS_SECRET_ACCESS_KEY
+
+                - name: AWS*SECRET*ACCESS*KEY
+
                   valueFrom:
                     secretKeyRef:
                       name: aws-secrets
                       key: secret-access-key
               command:
+
                 - bun
                 - run
                 - backupx
                 - start
                 - --verbose
+
               volumeMounts:
+
                 - name: backup-storage
+
                   mountPath: /backups
           volumes:
+
             - name: backup-storage
+
               persistentVolumeClaim:
                 claimName: backup-pvc
           restartPolicy: OnFailure
@@ -394,7 +456,7 @@ async function runBackup(): Promise<BackupResult> {
         {
           type: 'postgresql',
           name: 'production',
-          connection: process.env.DATABASE_URL!,
+          connection: process.env.DATABASE*URL!,
           compress: true,
         },
       ],
@@ -419,12 +481,12 @@ async function runBackup(): Promise<BackupResult> {
     }
 
     // Upload to S3
-    const s3Client = new S3Client({ region: process.env.AWS_REGION })
+    const s3Client = new S3Client({ region: process.env.AWS*REGION })
     const fileContent = await readFile(join('./backups', latestBackup))
-    const remotePath = `backups/${new Date().toISOString().split('T')[0]}/${latestBackup}`
+    const remotePath = `backups/${new Date().toISOString().split['T'](0)}/${latestBackup}`
 
     await s3Client.send(new PutObjectCommand({
-      Bucket: process.env.S3_BUCKET!,
+      Bucket: process.env.S3*BUCKET!,
       Key: remotePath,
       Body: fileContent,
       ServerSideEncryption: 'AES256',
@@ -433,12 +495,12 @@ async function runBackup(): Promise<BackupResult> {
     const duration = Date.now() - startTime
     console.log(`Backup completed in ${duration}ms`)
     console.log(`Local: ./backups/${latestBackup}`)
-    console.log(`Remote: s3://${process.env.S3_BUCKET}/${remotePath}`)
+    console.log(`Remote: s3://${process.env.S3*BUCKET}/${remotePath}`)
 
     return {
       success: true,
       localPath: `./backups/${latestBackup}`,
-      remotePath: `s3://${process.env.S3_BUCKET}/${remotePath}`,
+      remotePath: `s3://${process.env.S3*BUCKET}/${remotePath}`,
     }
   }
   catch (error) {
@@ -447,7 +509,7 @@ async function runBackup(): Promise<BackupResult> {
 
     // Send alert
     await sendAlert({
-      type: 'backup_failed',
+      type: 'backup*failed',
       message: errorMessage,
       timestamp: new Date().toISOString(),
     })
@@ -461,8 +523,8 @@ async function runBackup(): Promise<BackupResult> {
 
 async function sendAlert(alert: any): Promise<void> {
   // Send to Slack, PagerDuty, etc.
-  if (process.env.SLACK_WEBHOOK) {
-    await fetch(process.env.SLACK_WEBHOOK, {
+  if (process.env.SLACK*WEBHOOK) {
+    await fetch(process.env.SLACK*WEBHOOK, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({

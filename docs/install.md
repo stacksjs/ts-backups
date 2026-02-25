@@ -98,15 +98,18 @@ move backups.exe C:\Windows\System32\backups.exe
 The following databases are supported with their respective requirements:
 
 #### SQLite
+
 - No additional requirements (built into Bun)
 - Database file must be accessible
 
 #### PostgreSQL
+
 - PostgreSQL server running (any supported version)
 - Network access to the database
 - Valid credentials
 
 #### MySQL
+
 - MySQL/MariaDB server running
 - Network access to the database
 - Valid credentials

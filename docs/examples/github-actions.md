@@ -12,41 +12,50 @@ name: Daily Database Backup
 
 on:
   schedule:
+
     - cron: '0 2 * * *' # Daily at 2 AM UTC
-  workflow_dispatch: # Manual trigger
+
+  workflow*dispatch: # Manual trigger
 
 jobs:
   backup:
     runs-on: ubuntu-latest
 
     steps:
+
       - name: Checkout code
+
         uses: actions/checkout@v4
 
       - name: Setup Bun
+
         uses: oven-sh/setup-bun@v1
         with:
           bun-version: latest
 
       - name: Install dependencies
+
         run: bun install
 
       - name: Run backup
+
         env:
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}
-          BACKUP_OUTPUT_PATH: ./backups
+          DATABASE*URL: ${{ secrets.DATABASE*URL }}
+          BACKUP*OUTPUT*PATH: ./backups
         run: bun run bin/cli.ts
 
       - name: Upload backup to S3
+
         uses: aws-actions/configure-aws-credentials@v3
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-access-key-id: ${{ secrets.AWS*ACCESS*KEY*ID }}
+          aws-secret-access-key: ${{ secrets.AWS*SECRET*ACCESS*KEY }}
           aws-region: us-east-1
 
       - name: Sync backups to S3
+
         run: |
-          aws s3 sync ./backups s3://${{ secrets.BACKUP_BUCKET }}/daily/ \
+          aws s3 sync ./backups s3://${{ secrets.BACKUP*BUCKET }}/daily/ \
             --delete \
             --exclude "*.tmp"
 ```
@@ -61,15 +70,18 @@ name: Production Backup
 
 on:
   schedule:
+
     - cron: '0 */6 * * *' # Every 6 hours
-  workflow_dispatch:
+
+  workflow*dispatch:
     inputs:
-      backup_type:
+      backup*type:
         description: Type of backup to perform
         required: true
         default: full
         type: choice
         options:
+
           - full
           - incremental
           - schema-only
@@ -80,16 +92,21 @@ jobs:
     environment: production
 
     steps:
+
       - name: Checkout code
+
         uses: actions/checkout@v4
 
       - name: Setup Bun
+
         uses: oven-sh/setup-bun@v1
 
       - name: Install dependencies
+
         run: bun install
 
       - name: Create backup configuration
+
         run: |
           cat > backup-config.json << EOF
           {
@@ -98,9 +115,9 @@ jobs:
               {
                 "type": "POSTGRESQL",
                 "name": "production-db",
-                "connection": "${{ secrets.PROD_DATABASE_URL }}",
+                "connection": "${{ secrets.PROD*DATABASE*URL }}",
                 "includeSchema": true,
-                "includeData": ${{ github.event.inputs.backup_type != 'schema-only' }}
+                "includeData": ${{ github.event.inputs.backup*type != 'schema-only' }}
               }
             ],
             "outputPath": "./backups",
@@ -112,19 +129,21 @@ jobs:
           EOF
 
       - name: Run backup
+
         env:
-          BACKUP_CONFIG_PATH: ./backup-config.json
+          BACKUP*CONFIG*PATH: ./backup-config.json
         run: bun run bin/cli.ts --config ./backup-config.json
 
       - name: Verify backup integrity
+
         run: |
-          # Check if backup files were created
+# Check if backup files were created
           if [ ! "$(ls -A ./backups)" ]; then
             echo "No backup files found!"
             exit 1
           fi
 
-          # Verify file sizes
+# Verify file sizes
           for file in ./backups/*.sql*; do
             if [ -f "$file" ] && [ ! -s "$file" ]; then
               echo "Empty backup file: $file"
@@ -133,21 +152,23 @@ jobs:
           done
 
       - name: Upload to multiple locations
-        run: |
-          # Upload to primary S3 bucket
-          aws s3 sync ./backups s3://${{ secrets.PRIMARY_BACKUP_BUCKET }}/production/ \
-            --storage-class STANDARD_IA
 
-          # Upload to secondary bucket for redundancy
-          aws s3 sync ./backups s3://${{ secrets.SECONDARY_BACKUP_BUCKET }}/production/ \
+        run: |
+# Upload to primary S3 bucket
+          aws s3 sync ./backups s3://${{ secrets.PRIMARY*BACKUP*BUCKET }}/production/ \
+            --storage-class STANDARD*IA
+
+# Upload to secondary bucket for redundancy
+          aws s3 sync ./backups s3://${{ secrets.SECONDARY*BACKUP*BUCKET }}/production/ \
             --storage-class GLACIER
 
       - name: Notify on failure
+
         if: failure()
         uses: 8398a7/action-slack@v3
         with:
           status: failure
-          webhook_url: ${{ secrets.SLACK_WEBHOOK }}
+          webhook*url: ${{ secrets.SLACK*WEBHOOK }}
           text: Production backup failed! Check the workflow logs.
 ```
 
@@ -161,8 +182,10 @@ name: Containerized Backup
 
 on:
   schedule:
+
     - cron: '0 3 * * *'
-  workflow_dispatch:
+
+  workflow*dispatch:
 
 jobs:
   backup:
@@ -172,34 +195,40 @@ jobs:
       postgres:
         image: postgres:15
         env:
-          POSTGRES_PASSWORD: testpass
-          POSTGRES_DB: testdb
+          POSTGRES*PASSWORD: testpass
+          POSTGRES*DB: testdb
         options: >-
-          --health-cmd pg_isready
+          --health-cmd pg*isready
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
         ports:
+
           - 5432:5432
 
     steps:
+
       - name: Checkout code
+
         uses: actions/checkout@v4
 
       - name: Build backup container
+
         run: |
           docker build -t backup-runner -f Dockerfile.backup .
 
       - name: Run backup in container
+
         run: |
           docker run \
             --network host \
             -v $(pwd)/backups:/app/backups \
-            -e DATABASE_URL="postgres://postgres:testpass@localhost:5432/testdb" \
-            -e BACKUP_VERBOSE=true \
+            -e DATABASE*URL="postgres://postgres:testpass@localhost:5432/testdb" \
+            -e BACKUP*VERBOSE=true \
             backup-runner
 
       - name: Archive backup artifacts
+
         uses: actions/upload-artifact@v3
         with:
           name: database-backups
@@ -217,8 +246,10 @@ name: Backup and Restore Test
 
 on:
   schedule:
+
     - cron: '0 4 * * 0' # Weekly on Sunday
-  workflow_dispatch:
+
+  workflow*dispatch:
 
 jobs:
   backup-and-test:
@@ -228,32 +259,39 @@ jobs:
       postgres-source:
         image: postgres:15
         env:
-          POSTGRES_PASSWORD: sourcepass
-          POSTGRES_DB: sourcedb
+          POSTGRES*PASSWORD: sourcepass
+          POSTGRES*DB: sourcedb
         ports:
+
           - 5432:5432
 
       postgres-target:
         image: postgres:15
         env:
-          POSTGRES_PASSWORD: targetpass
-          POSTGRES_DB: targetdb
+          POSTGRES*PASSWORD: targetpass
+          POSTGRES*DB: targetdb
         ports:
+
           - 5433:5432
 
     steps:
+
       - name: Checkout code
+
         uses: actions/checkout@v4
 
       - name: Setup Bun
+
         uses: oven-sh/setup-bun@v1
 
       - name: Install dependencies
+
         run: bun install
 
       - name: Setup test data
+
         run: |
-          # Create test data in source database
+# Create test data in source database
           PGPASSWORD=sourcepass psql -h localhost -p 5432 -U postgres -d sourcedb << EOF
           CREATE TABLE users (id SERIAL PRIMARY KEY, name TEXT, email TEXT);
           INSERT INTO users (name, email) VALUES
@@ -262,21 +300,23 @@ jobs:
           EOF
 
       - name: Create backup
+
         env:
-          DATABASE_URL: postgres://postgres:sourcepass@localhost:5432/sourcedb
+          DATABASE*URL: postgres://postgres:sourcepass@localhost:5432/sourcedb
         run: bun run bin/cli.ts
 
       - name: Verify backup file
+
         run: |
-          # Check backup was created
-          BACKUP_FILE=$(ls ./backups/*.sql | head -1)
-          if [ ! -f "$BACKUP_FILE" ]; then
+# Check backup was created
+          BACKUP*FILE=$(ls ./backups/*.sql | head -1)
+          if [ ! -f "$BACKUP*FILE" ]; then
             echo "Backup file not found!"
             exit 1
           fi
 
-          # Check backup contains expected data
-          if ! grep -q "users" "$BACKUP_FILE"; then
+# Check backup contains expected data
+          if ! grep -q "users" "$BACKUP*FILE"; then
             echo "Backup doesn't contain expected table!"
             exit 1
           fi
@@ -284,29 +324,31 @@ jobs:
           echo "Backup verification passed"
 
       - name: Test restore
+
         run: |
-          # Restore backup to target database
-          BACKUP_FILE=$(ls ./backups/*.sql | head -1)
-          PGPASSWORD=targetpass psql -h localhost -p 5433 -U postgres -d targetdb < "$BACKUP_FILE"
+# Restore backup to target database
+          BACKUP*FILE=$(ls ./backups/*.sql | head -1)
+          PGPASSWORD=targetpass psql -h localhost -p 5433 -U postgres -d targetdb < "$BACKUP*FILE"
 
-          # Verify restored data
-          RESTORED_COUNT=$(PGPASSWORD=targetpass psql -h localhost -p 5433 -U postgres -d targetdb -t -c "SELECT COUNT(*) FROM users;")
+# Verify restored data
+          RESTORED*COUNT=$(PGPASSWORD=targetpass psql -h localhost -p 5433 -U postgres -d targetdb -t -c "SELECT COUNT(*) FROM users;")
 
-          if [ "$RESTORED_COUNT" -ne 2 ]; then
-            echo "Restore verification failed! Expected 2 users, got $RESTORED_COUNT"
+          if [ "$RESTORED*COUNT" -ne 2 ]; then
+            echo "Restore verification failed! Expected 2 users, got $RESTORED*COUNT"
             exit 1
           fi
 
           echo "Restore verification passed"
 
       - name: Performance benchmark
+
         run: |
-          # Benchmark backup performance
+# Benchmark backup performance
           time bun run bin/cli.ts
 
-          # Check backup size
-          BACKUP_SIZE=$(du -sh ./backups | cut -f1)
-          echo "Backup size: $BACKUP_SIZE"
+# Check backup size
+          BACKUP*SIZE=$(du -sh ./backups | cut -f1)
+          echo "Backup size: $BACKUP*SIZE"
 ```
 
 ## Multi-Database Backup
@@ -319,8 +361,10 @@ name: Multi-Database Backup
 
 on:
   schedule:
+
     - cron: '0 1 * * *'
-  workflow_dispatch:
+
+  workflow*dispatch:
 
 jobs:
   backup:
@@ -328,27 +372,38 @@ jobs:
     strategy:
       matrix:
         database:
+
           - name: users-db
-            url: ${{ secrets.USERS_DB_URL }}
-            retention_days: 90
+
+            url: ${{ secrets.USERS*DB*URL }}
+            retention*days: 90
+
           - name: analytics-db
-            url: ${{ secrets.ANALYTICS_DB_URL }}
-            retention_days: 30
+
+            url: ${{ secrets.ANALYTICS*DB*URL }}
+            retention*days: 30
+
           - name: logs-db
-            url: ${{ secrets.LOGS_DB_URL }}
-            retention_days: 7
+
+            url: ${{ secrets.LOGS*DB*URL }}
+            retention*days: 7
 
     steps:
+
       - name: Checkout code
+
         uses: actions/checkout@v4
 
       - name: Setup Bun
+
         uses: oven-sh/setup-bun@v1
 
       - name: Install dependencies
+
         run: bun install
 
       - name: Create database-specific config
+
         run: |
           cat > backup-config.json << EOF
           {
@@ -363,19 +418,21 @@ jobs:
             ],
             "outputPath": "./backups/${{ matrix.database.name }}",
             "retention": {
-              "maxAge": ${{ matrix.database.retention_days }}
+              "maxAge": ${{ matrix.database.retention*days }}
             }
           }
           EOF
 
       - name: Run backup for ${{ matrix.database.name }}
+
         run: bun run bin/cli.ts --config ./backup-config.json
 
       - name: Upload to S3 with lifecycle policy
+
         run: |
           aws s3 sync ./backups/${{ matrix.database.name }} \
-            s3://${{ secrets.BACKUP_BUCKET }}/${{ matrix.database.name }}/ \
-            --storage-class STANDARD_IA
+            s3://${{ secrets.BACKUP*BUCKET }}/${{ matrix.database.name }}/ \
+            --storage-class STANDARD*IA
 ```
 
 ## Notification Integration
@@ -388,6 +445,7 @@ name: Backup with Notifications
 
 on:
   schedule:
+
     - cron: '0 2 * * *'
 
 jobs:
@@ -395,56 +453,63 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+
       - name: Checkout code
+
         uses: actions/checkout@v4
 
       - name: Setup Bun
+
         uses: oven-sh/setup-bun@v1
 
       - name: Install dependencies
+
         run: bun install
 
       - name: Run backup
+
         id: backup
         env:
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          DATABASE*URL: ${{ secrets.DATABASE*URL }}
         run: |
-          # Capture backup output
+# Capture backup output
           OUTPUT=$(bun run bin/cli.ts 2>&1)
           echo "$OUTPUT"
 
-          # Extract metrics
-          SUCCESS_COUNT=$(echo "$OUTPUT" | grep -o 'successful: [0-9]*' | grep -o '[0-9]*' || echo "0")
-          TOTAL_SIZE=$(du -sh ./backups | cut -f1)
+# Extract metrics
+          SUCCESS*COUNT=$(echo "$OUTPUT" | grep -o 'successful: [0-9]*' | grep -o '[0-9]*' || echo "0")
+          TOTAL*SIZE=$(du -sh ./backups | cut -f1)
 
-          echo "success_count=$SUCCESS_COUNT" >> $GITHUB_OUTPUT
-          echo "total_size=$TOTAL_SIZE" >> $GITHUB_OUTPUT
+          echo "success*count=$SUCCESS*COUNT" >> $GITHUB*OUTPUT
+          echo "total*size=$TOTAL*SIZE" >> $GITHUB*OUTPUT
 
       - name: Notify success
+
         if: success()
         uses: 8398a7/action-slack@v3
         with:
           status: success
-          webhook_url: ${{ secrets.SLACK_WEBHOOK }}
+          webhook*url: ${{ secrets.SLACK*WEBHOOK }}
           text: |
             ✅ Daily backup completed successfully!
 
             📊 **Backup Summary:**
-            • Success Count: ${{ steps.backup.outputs.success_count }}
-            • Total Size: ${{ steps.backup.outputs.total_size }}
+            • Success Count: ${{ steps.backup.outputs.success*count }}
+            • Total Size: ${{ steps.backup.outputs.total*size }}
             • Workflow: ${{ github.workflow }}
             • Repository: ${{ github.repository }}
 
       - name: Notify failure
+
         if: failure()
         uses: 8398a7/action-slack@v3
         with:
           status: failure
-          webhook_url: ${{ secrets.SLACK_WEBHOOK }}
+          webhook*url: ${{ secrets.SLACK*WEBHOOK }}
           text: |
             ❌ Daily backup failed!
 
-            🔗 **Check the logs:** ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+            🔗 **Check the logs:** ${{ github.server*url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
 ```
 
 This guide provides comprehensive examples for integrating backupx into CI/CD pipelines with proper error handling, testing, and notifications.

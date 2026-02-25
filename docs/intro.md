@@ -4,7 +4,7 @@
 
 backupx is a comprehensive TypeScript backup library designed specifically for the Bun runtime. It provides a unified solution for backing up databases and files with modern JavaScript features, full type safety, and production-ready performance.
 
-## What is backupx?
+## What is backupx
 
 backupx is a TypeScript-first backup library that supports:
 
@@ -14,7 +14,7 @@ backupx is a TypeScript-first backup library that supports:
 - **Retention Policies**: Automatic cleanup based on count or age
 - **CLI & Library**: Use programmatically or via command-line interface
 
-## Why Choose backupx?
+## Why Choose backupx
 
 ### Built for Performance & Reliability
 
@@ -112,7 +112,7 @@ const devBackup: BackupConfig = {
     { type: BackupType.POSTGRESQL, name: 'dev-db', connection: 'postgres://...' }
   ],
   files: [
-    { name: 'src', path: './src', exclude: ['node_modules/*', '*.log'] }
+    { name: 'src', path: './src', exclude: ['node*modules/*', '*.log'] }
   ]
 }
 ```
@@ -170,7 +170,7 @@ For casual chit-chat with others using this package:
 
 ## Postcardware
 
-Two things are true: Stacks OSS will always stay open-source, and we do love to receive postcards from wherever Stacks is used! 🌍 _We also publish them on our website. And thank you, Spatie_
+Two things are true: Stacks OSS will always stay open-source, and we do love to receive postcards from wherever Stacks is used! 🌍 *We also publish them on our website. And thank you, Spatie_
 
 Our address: Stacks.js, 12665 Village Ln #2306, Playa Vista, CA 90094
 

@@ -37,8 +37,8 @@ const config: BackupConfig = {
       name: 'uploads',
       path: './public/uploads',
       compress: true,
-      include: ['*.jpg', '*.png', '*.pdf'],
-      exclude: ['temp/*'],
+      include: ['_.jpg', '_.png', '_.pdf'],
+      exclude: ['temp/_'],
     },
   ],
 

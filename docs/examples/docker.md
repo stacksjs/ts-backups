@@ -56,19 +56,24 @@ docker run \
 version: '3.8'
 
 services:
-  # Main application
+# Main application
   app:
     build: .
     ports:
+
       - '3000:3000'
+
     environment:
+
       - DATABASE_URL=postgres://user:password@postgres:5432/myapp
       - REDIS_URL=redis://redis:6379
+
     depends_on:
+
       - postgres
       - redis
 
-  # PostgreSQL Database
+# PostgreSQL Database
   postgres:
     image: postgres:15-alpine
     environment:
@@ -76,34 +81,46 @@ services:
       POSTGRES_USER: user
       POSTGRES_PASSWORD: password
     volumes:
+
       - postgres_data:/var/lib/postgresql/data
       - ./db-backups:/backups
+
     ports:
+
       - '5432:5432'
 
-  # Redis Cache
+# Redis Cache
   redis:
     image: redis:7-alpine
     volumes:
+
       - redis_data:/data
+
     ports:
+
       - '6379:6379'
 
-  # Backup Service
+# Backup Service
   backup:
     build:
       context: .
       dockerfile: Dockerfile.backup
     environment:
+
       - DATABASE_URL=postgres://user:password@postgres:5432/myapp
-      - BACKUP_SCHEDULE=0 2 * * * # Daily at 2 AM
+      - BACKUP_SCHEDULE=0 2 _ _ _ # Daily at 2 AM
       - BACKUP_RETENTION_DAYS=30
       - BACKUP_RETENTION_COUNT=10
+
     volumes:
+
       - ./backups:/app/backups
       - ./app-data:/app/data:ro
+
     depends_on:
+
       - postgres
+
     restart: unless-stopped
 
 volumes:
@@ -141,7 +158,7 @@ RUN chmod +x ./scripts/backup-cron.sh
 RUN mkdir -p /app/backups
 
 # Setup cron job
-RUN echo "${BACKUP_SCHEDULE:-0 2 * * *} /app/scripts/backup-cron.sh" > /etc/crontabs/root
+RUN echo "${BACKUP_SCHEDULE:-0 2 _ _ _} /app/scripts/backup-cron.sh" > /etc/crontabs/root
 
 # Start cron daemon
 CMD ["sh", "-c", "crond -f -d 8"]
@@ -150,7 +167,7 @@ CMD ["sh", "-c", "crond -f -d 8"]
 ### Backup Cron Script
 
 ```bash
-#!/bin/sh
+# !/bin/sh
 # scripts/backup-cron.sh
 
 echo "$(date): Starting scheduled backup..."
@@ -180,7 +197,7 @@ metadata:
   name: app-backup
   namespace: production
 spec:
-  schedule: '0 2 * * *' # Daily at 2 AM
+  schedule: '0 2 _ _ _' # Daily at 2 AM
   timeZone: UTC
   concurrencyPolicy: Forbid
   successfulJobsHistoryLimit: 3
@@ -191,23 +208,35 @@ spec:
         spec:
           restartPolicy: OnFailure
           containers:
+
             - name: backup
+
               image: my-app-backup:latest
               imagePullPolicy: Always
               env:
+
                 - name: DATABASE_URL
+
                   valueFrom:
                     secretKeyRef:
                       name: app-secrets
                       key: database-url
+
                 - name: BACKUP_OUTPUT_PATH
+
                   value: /backups
+
                 - name: VERBOSE
+
                   value: 'true'
               volumeMounts:
+
                 - name: backup-storage
+
                   mountPath: /backups
+
                 - name: app-data
+
                   mountPath: /data
                   readOnly: true
               resources:
@@ -218,10 +247,14 @@ spec:
                   memory: 1Gi
                   cpu: 500m
           volumes:
+
             - name: backup-storage
+
               persistentVolumeClaim:
                 claimName: backup-pvc
+
             - name: app-data
+
               persistentVolumeClaim:
                 claimName: app-data-pvc
 ```
@@ -237,7 +270,9 @@ metadata:
   namespace: production
 spec:
   accessModes:
+
     - ReadWriteOnce
+
   resources:
     requests:
       storage: 100Gi
@@ -288,7 +323,7 @@ COPY --from=builder /app/backups.config.ts ./
 
 # Copy scripts
 COPY scripts/ ./scripts/
-RUN chmod +x ./scripts/*.sh
+RUN chmod +x ./scripts/_.sh
 
 # Create backup user
 RUN addgroup -g 1001 backup && \
@@ -323,19 +358,25 @@ services:
       context: .
       dockerfile: Dockerfile.backup
     environment:
-      # External database connection
+# External database connection
+
       - DATABASE_URL=postgres://user:pass@external-host:5432/production_db
       - BACKUP_TYPE=postgresql
       - BACKUP_NAME=production-db
-      - BACKUP_SCHEDULE=0 */6 * * * # Every 6 hours
+      - BACKUP_SCHEDULE=0 _/6 _ _ _ # Every 6 hours
       - BACKUP_COMPRESSION=true
       - BACKUP_RETENTION_COUNT=48 # Keep 48 backups (12 days)
       - BACKUP_VERBOSE=false
+
     volumes:
+
       - ./backups/postgresql:/app/backups
       - ./logs:/app/logs
+
     networks:
+
       - backup-network
+
     restart: unless-stopped
 
   file-backup:
@@ -343,18 +384,24 @@ services:
       context: .
       dockerfile: Dockerfile.backup
     environment:
+
       - BACKUP_TYPE=file
       - BACKUP_NAME=app-files
-      - BACKUP_SCHEDULE=0 3 * * * # Daily at 3 AM
+      - BACKUP_SCHEDULE=0 3 _ _ _ # Daily at 3 AM
       - BACKUP_SOURCE_PATH=/data
       - BACKUP_COMPRESSION=true
       - BACKUP_RETENTION_DAYS=30
+
     volumes:
+
       - ./backups/files:/app/backups
       - /var/app-data:/data:ro
       - ./logs:/app/logs
+
     networks:
+
       - backup-network
+
     restart: unless-stopped
 
 networks:
@@ -367,7 +414,7 @@ networks:
 ### Healthcheck Script
 
 ```bash
-#!/bin/bash
+# !/bin/bash
 # scripts/healthcheck.sh
 
 # Check if backup process is running
@@ -377,7 +424,7 @@ if pgrep -f "backup" > /dev/null; then
 fi
 
 # Check last backup timestamp
-LAST_BACKUP=$(find /app/backups -name "*.sql*" -type f -printf '%T@ %p\n' | sort -nr | head -1 | cut -d' ' -f2-)
+LAST_BACKUP=$(find /app/backups -name "_.sql*" -type f -printf '%T@ %p\n' | sort -nr | head -1 | cut -d' ' -f2-)
 
 if [ -z "$LAST_BACKUP" ]; then
     echo "No backups found"
@@ -408,22 +455,32 @@ services:
   telegraf:
     image: telegraf:1.28-alpine
     volumes:
+
       - ./monitoring/telegraf.conf:/etc/telegraf/telegraf.conf
       - ./backups:/backups:ro
       - /var/run/docker.sock:/var/run/docker.sock
+
     environment:
+
       - INFLUXDB_URL=http://influxdb:8086
       - INFLUXDB_TOKEN=${INFLUXDB_TOKEN}
+
     depends_on:
+
       - influxdb
 
   influxdb:
     image: influxdb:2.7-alpine
     ports:
+
       - '8086:8086'
+
     volumes:
+
       - influxdb_data:/var/lib/influxdb2
+
     environment:
+
       - INFLUXDB_DB=monitoring
       - INFLUXDB_ADMIN_TOKEN=${INFLUXDB_TOKEN}
 

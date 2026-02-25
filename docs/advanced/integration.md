@@ -333,7 +333,7 @@ class S3BackupManager extends BackupManager {
   private async uploadToS3(result: BackupResult): Promise<void> {
     try {
       const filePath = `${this.config.outputPath}/${result.filename}`
-      const s3Key = `backups/${new Date().toISOString().split('T')[0]}/${result.filename}`
+      const s3Key = `backups/${new Date().toISOString().split['T'](0)}/${result.filename}`
 
       const fileStream = createReadStream(filePath)
 
@@ -413,7 +413,7 @@ class GCSBackupManager extends BackupManager {
   private async uploadToGCS(result: BackupResult): Promise<void> {
     try {
       const filePath = `${this.config.outputPath}/${result.filename}`
-      const gcsPath = `backups/${new Date().toISOString().split('T')[0]}/${result.filename}`
+      const gcsPath = `backups/${new Date().toISOString().split['T'](0)}/${result.filename}`
 
       await this.bucket.upload(filePath, {
         destination: gcsPath,
@@ -492,7 +492,7 @@ export async function scheduleBackup(config: BackupConfig, cronPattern: string) 
 }
 
 // Usage
-await scheduleBackup(config, '0 2 * * *') // Daily at 2 AM
+await scheduleBackup(config, '0 2 _ _ *') // Daily at 2 AM
 ```
 
 ## Event-Driven Architecture

@@ -330,7 +330,7 @@ export class SlackNotificationAdapter implements NotificationAdapter {
         type: 'section',
         text: {
           type: 'mrkdwn',
-          text: `:hourglass_flowing_sand: *Backup Started*\n*Name:* ${backup.name}\n*Type:* ${backup.type}`,
+          text: `:hourglass_flowing_sand: _Backup Started_\n_Name:_ ${backup.name}\n_Type:_ ${backup.type}`,
         },
       },
     ])
@@ -345,7 +345,7 @@ export class SlackNotificationAdapter implements NotificationAdapter {
         type: 'section',
         text: {
           type: 'mrkdwn',
-          text: `:white_check_mark: *Backup Completed*\n*File:* ${result.filename}\n*Size:* ${sizeFormatted}\n*Duration:* ${durationFormatted}`,
+          text: `:white_check_mark: _Backup Completed_\n_File:_ ${result.filename}\n_Size:_ ${sizeFormatted}\n_Duration:_ ${durationFormatted}`,
         },
       },
     ])
@@ -357,7 +357,7 @@ export class SlackNotificationAdapter implements NotificationAdapter {
         type: 'section',
         text: {
           type: 'mrkdwn',
-          text: `:x: *Backup Failed*\n*Name:* ${error.backup.name}\n*Error:* ${error.error}`,
+          text: `:x: _Backup Failed_\n_Name:_ ${error.backup.name}\n_Error:_ ${error.error}`,
         },
       },
     ])

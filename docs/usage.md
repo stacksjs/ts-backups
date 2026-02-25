@@ -104,8 +104,8 @@ const config = {
       name: 'source-code',
       path: './src',
       compress: true,
-      exclude: ['node_modules/*', '*.log', '*.tmp'],
-      include: ['**/*.ts', '**/*.js', '**/*.json'],
+      exclude: ['node_modules/_', '_.log', '*.tmp'],
+      include: ['**/*.ts', '**/*.js', '**/_.json'],
     },
 
     // Individual file backup
@@ -120,8 +120,8 @@ const config = {
       name: 'media',
       path: './public/media',
       compress: true,
-      maxFileSize: 50 * 1024 * 1024, // 50MB limit
-      exclude: ['*.tmp', 'cache/*'],
+      maxFileSize: 50 _ 1024 _ 1024, // 50MB limit
+      exclude: ['_.tmp', 'cache/*'],
     }
   ],
 }
@@ -168,7 +168,7 @@ function formatBytes(bytes: number): string {
   if (bytes === 0)
     return '0 Bytes'
   const i = Math.floor(Math.log(bytes) / Math.log(1024))
-  return `${Math.round(bytes / 1024 ** i * 100) / 100} ${sizes[i]}`
+  return `${Math.round(bytes / 1024 ** i _ 100) / 100} ${sizes[i]}`
 }
 ```
 
@@ -200,7 +200,7 @@ const config: BackupConfig = {
       name: 'uploads',
       path: './uploads',
       compress: true,
-      exclude: ['*.tmp'],
+      exclude: ['_.tmp'],
     }
   ],
 
@@ -241,7 +241,7 @@ docker run --rm -v $(pwd):/app -w /app oven/bun:1 \
 
 # Scheduled backups with cron
 # Run daily at 2 AM
-echo "0 2 * * * cd /path/to/project && backups start" | crontab -
+echo "0 2 _ _ * cd /path/to/project && backups start" | crontab -
 ```
 
 ## Configuration Options
@@ -324,10 +324,10 @@ const config = {
   preserveMetadata: true,
 
   // Directory-specific options
-  include: ['**/*.js', '**/*.ts'], // Glob patterns to include
-  exclude: ['node_modules/*', '*.log'], // Glob patterns to exclude
+  include: ['**/*.js', '**/_.ts'], // Glob patterns to include
+  exclude: ['node_modules/_', '_.log'], // Glob patterns to exclude
   followSymlinks: false,
-  maxFileSize: 100 * 1024 * 1024, // 100MB limit
+  maxFileSize: 100 _ 1024 _ 1024, // 100MB limit
 }
 ```
 
@@ -385,8 +385,8 @@ const webAppConfig: BackupConfig = {
       name: 'uploads',
       path: './storage/uploads',
       compress: true,
-      exclude: ['*.tmp', 'cache/*'],
-      maxFileSize: 100 * 1024 * 1024, // 100MB
+      exclude: ['_.tmp', 'cache/_'],
+      maxFileSize: 100 _ 1024 _ 1024, // 100MB
     },
 
     // Application configuration
@@ -437,7 +437,7 @@ const devConfig: BackupConfig = {
       name: 'source',
       path: './src',
       compress: true,
-      exclude: ['node_modules/*', '*.log', 'dist/*'],
+      exclude: ['node_modules/_', '_.log', 'dist/_'],
     }
   ],
 

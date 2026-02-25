@@ -16,12 +16,14 @@ async function backupSQLite(
 ```
 
 **Parameters:**
+
 - `config` - SQLite backup configuration
 - `outputPath` - Directory to save the backup file
 
 **Returns:** `Promise<BackupResult>` - Result of the backup operation
 
 **Example:**
+
 ```ts
 import { backupSQLite, BackupType } from 'backupx'
 
@@ -47,12 +49,14 @@ async function backupPostgreSQL(
 ```
 
 **Parameters:**
+
 - `config` - PostgreSQL backup configuration
 - `outputPath` - Directory to save the backup file
 
 **Returns:** `Promise<BackupResult>` - Result of the backup operation
 
 **Example:**
+
 ```ts
 import { backupPostgreSQL, BackupType } from 'backupx'
 
@@ -77,12 +81,14 @@ async function backupMySQL(
 ```
 
 **Parameters:**
+
 - `config` - MySQL backup configuration
 - `outputPath` - Directory to save the backup file
 
 **Returns:** `Promise<BackupResult>` - Result of the backup operation
 
 **Example:**
+
 ```ts
 import { backupMySQL, BackupType } from 'backupx'
 
@@ -113,12 +119,14 @@ async function backupFile(
 ```
 
 **Parameters:**
+
 - `config` - File backup configuration
 - `outputPath` - Directory to save the backup file
 
 **Returns:** `Promise<BackupResult>` - Result of the backup operation
 
 **Example:**
+
 ```ts
 import { backupFile } from 'backupx'
 
@@ -142,12 +150,14 @@ async function backupDirectory(
 ```
 
 **Parameters:**
+
 - `config` - Directory backup configuration
 - `outputPath` - Directory to save the backup archive
 
 **Returns:** `Promise<BackupResult>` - Result of the backup operation
 
 **Example:**
+
 ```ts
 import { backupDirectory } from 'backupx'
 
@@ -173,11 +183,13 @@ function validateConfig(config: BackupConfig): ValidationResult
 ```
 
 **Parameters:**
+
 - `config` - Backup configuration to validate
 
 **Returns:** `ValidationResult` - Validation results with errors and warnings
 
 **Example:**
+
 ```ts
 import { validateConfig } from 'backupx'
 
@@ -202,11 +214,13 @@ function formatBytes(bytes: number): string
 ```
 
 **Parameters:**
+
 - `bytes` - Number of bytes to format
 
 **Returns:** `string` - Formatted string (e.g., "1.5 MB")
 
 **Example:**
+
 ```ts
 import { formatBytes } from 'backupx'
 
@@ -224,11 +238,13 @@ function formatDuration(milliseconds: number): string
 ```
 
 **Parameters:**
+
 - `milliseconds` - Duration in milliseconds
 
 **Returns:** `string` - Formatted duration string
 
 **Example:**
+
 ```ts
 import { formatDuration } from 'backupx'
 
@@ -249,12 +265,14 @@ async function getBackupHistory(
 ```
 
 **Parameters:**
+
 - `outputPath` - Directory containing backup files and metadata
 - `limit` - Maximum number of results to return (optional, defaults to 10)
 
 **Returns:** `Promise<BackupSummary[]>` - Array of previous backup summaries
 
 **Example:**
+
 ```ts
 import { getBackupHistory } from 'backupx'
 
@@ -276,12 +294,14 @@ async function cleanupOldBackups(
 ```
 
 **Parameters:**
+
 - `outputPath` - Directory containing backup files
 - `retention` - Retention policy configuration
 
 **Returns:** `Promise<CleanupResult>` - Summary of cleanup operation
 
 **Example:**
+
 ```ts
 import { cleanupOldBackups } from 'backupx'
 
@@ -305,11 +325,13 @@ async function ensureDir(dirPath: string): Promise<void>
 ```
 
 **Parameters:**
+
 - `dirPath` - Directory path to ensure exists
 
 **Returns:** `Promise<void>`
 
 **Example:**
+
 ```ts
 import { ensureDir } from 'backupx'
 
@@ -326,11 +348,13 @@ async function getFileSize(filePath: string): Promise<number>
 ```
 
 **Parameters:**
+
 - `filePath` - Path to the file
 
 **Returns:** `Promise<number>` - File size in bytes
 
 **Example:**
+
 ```ts
 import { getFileSize } from 'backupx'
 
@@ -347,11 +371,13 @@ async function calculateChecksum(filePath: string): Promise<string>
 ```
 
 **Parameters:**
+
 - `filePath` - Path to the file
 
 **Returns:** `Promise<string>` - MD5 checksum as hex string
 
 **Example:**
+
 ```ts
 import { calculateChecksum } from 'backupx'
 
@@ -373,12 +399,14 @@ async function compressFile(
 ```
 
 **Parameters:**
+
 - `inputPath` - Path to file to compress
 - `outputPath` - Path for compressed output file
 
 **Returns:** `Promise<void>`
 
 **Example:**
+
 ```ts
 import { compressFile } from 'backupx'
 
@@ -397,12 +425,14 @@ async function decompressFile(
 ```
 
 **Parameters:**
+
 - `inputPath` - Path to compressed file
 - `outputPath` - Path for decompressed output file
 
 **Returns:** `Promise<void>`
 
 **Example:**
+
 ```ts
 import { decompressFile } from 'backupx'
 
@@ -422,11 +452,13 @@ async function testDatabaseConnection(
 ```
 
 **Parameters:**
+
 - `config` - Database configuration to test
 
 **Returns:** `Promise<boolean>` - True if connection successful
 
 **Example:**
+
 ```ts
 import { BackupType, testDatabaseConnection } from 'backupx'
 
@@ -452,11 +484,13 @@ async function getDatabaseSize(
 ```
 
 **Parameters:**
+
 - `config` - Database configuration
 
 **Returns:** `Promise<number>` - Database size in bytes
 
 **Example:**
+
 ```ts
 import { getDatabaseSize } from 'backupx'
 

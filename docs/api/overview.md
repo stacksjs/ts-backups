@@ -17,12 +17,15 @@ class BackupManager {
 ```
 
 **Parameters:**
+
 - `config`: BackupConfig - The backup configuration
 
 **Returns:**
+
 - `Promise<BackupSummary>` - Summary of backup operations
 
 **Example:**
+
 ```ts
 const manager = new BackupManager(config)
 const summary = await manager.createBackup()
@@ -308,33 +311,33 @@ class BackupError extends Error {
 
 Common error codes returned by the library:
 
-- `CONFIG_INVALID` - Configuration validation failed
-- `DATABASE_CONNECTION_FAILED` - Cannot connect to database
-- `FILE_NOT_FOUND` - Source file/directory not found
-- `PERMISSION_DENIED` - Insufficient permissions
-- `DISK_FULL` - Not enough disk space
-- `COMPRESSION_FAILED` - Compression operation failed
+- `CONFIG*INVALID` - Configuration validation failed
+- `DATABASE*CONNECTION*FAILED` - Cannot connect to database
+- `FILE*NOT*FOUND` - Source file/directory not found
+- `PERMISSION*DENIED` - Insufficient permissions
+- `DISK*FULL` - Not enough disk space
+- `COMPRESSION*FAILED` - Compression operation failed
 
 ## Constants
 
 ### Default Values
 
 ```ts
-export const DEFAULT_OUTPUT_PATH = './backups'
-export const DEFAULT_COMPRESSION = true
-export const DEFAULT_INCLUDE_SCHEMA = true
-export const DEFAULT_INCLUDE_DATA = true
-export const DEFAULT_PRESERVE_METADATA = false
-export const DEFAULT_FOLLOW_SYMLINKS = false
-export const DEFAULT_MAX_FILE_SIZE = 100 * 1024 * 1024 // 100MB
-export const DEFAULT_RETENTION_COUNT = 10
-export const DEFAULT_RETENTION_MAX_AGE = 30 // days
+export const DEFAULT*OUTPUT*PATH = './backups'
+export const DEFAULT*COMPRESSION = true
+export const DEFAULT*INCLUDE*SCHEMA = true
+export const DEFAULT*INCLUDE*DATA = true
+export const DEFAULT*PRESERVE*METADATA = false
+export const DEFAULT*FOLLOW*SYMLINKS = false
+export const DEFAULT*MAX*FILE*SIZE = 100 * 1024 * 1024 // 100MB
+export const DEFAULT*RETENTION*COUNT = 10
+export const DEFAULT*RETENTION*MAX*AGE = 30 // days
 ```
 
 ### File Extensions
 
 ```ts
-export const BACKUP_EXTENSIONS = {
+export const BACKUP*EXTENSIONS = {
   SQL: '.sql',
   ARCHIVE: '.tar',
   COMPRESSED_ARCHIVE: '.tar.gz',
@@ -470,6 +473,7 @@ catch (error) {
 ## Version History
 
 ### v1.0.0
+
 - Initial release with SQLite, PostgreSQL, MySQL support
 - File and directory backup capabilities
 - Compression and retention policies

@@ -49,6 +49,7 @@ const compressedConfig = {
 ```
 
 **Benefits:**
+
 - ✅ Automatic compression ratio reporting
 - ✅ Size comparison (before/after)
 - ✅ Preserves original file extensions
@@ -67,6 +68,7 @@ const metadataConfig = {
 ```
 
 Creates a `.meta` file alongside the backup with:
+
 ```ts
 const config = {
   originalPath: './document.pdf',
@@ -118,12 +120,12 @@ const webAssetsConfig = {
     '**/*.html',
     '**/*.png',
     '**/*.jpg',
-    '**/*.svg',
+    '**/_.svg',
   ],
 
   // Exclude temporary and cache files
   exclude: [
-    '*.tmp',
+    '_.tmp',
     '*.log',
     'cache/**',
     'thumbnails/**',
@@ -141,7 +143,7 @@ const sizeLimitConfig = {
   name: 'user-uploads',
   path: './uploads',
   compress: true,
-  maxFileSize: 50 * 1024 * 1024, // 50MB limit
+  maxFileSize: 50 _ 1024 _ 1024, // 50MB limit
   exclude: ['*.tmp'],
 }
 ```
@@ -200,8 +202,8 @@ const webAppFiles: FileConfig[] = [
       'node_modules/**',
       'dist/**',
       'build/**',
-      '*.log',
-      '*.tmp',
+      '_.log',
+      '_.tmp',
       'coverage/**',
     ],
   },
@@ -211,8 +213,8 @@ const webAppFiles: FileConfig[] = [
     name: 'uploads',
     path: './storage/uploads',
     compress: true,
-    maxFileSize: 100 * 1024 * 1024, // 100MB limit
-    exclude: ['*.tmp', '*.processing'],
+    maxFileSize: 100 _ 1024 _ 1024, // 100MB limit
+    exclude: ['_.tmp', '_.processing'],
   },
 
   // Configuration files
@@ -220,8 +222,8 @@ const webAppFiles: FileConfig[] = [
     name: 'config',
     path: './config',
     preserveMetadata: true,
-    include: ['*.json', '*.yaml', '*.env*'],
-    exclude: ['*.example*', '*.template*'],
+    include: ['_.json', '_.yaml', '_.env_'],
+    exclude: ['_.example_', '_.template_'],
   },
 
   // Documentation
@@ -229,7 +231,7 @@ const webAppFiles: FileConfig[] = [
     name: 'docs',
     path: './docs',
     compress: true,
-    include: ['*.md', '*.txt', 'images/**'],
+    include: ['_.md', '_.txt', 'images/**'],
   },
 ]
 ```
@@ -291,7 +293,7 @@ const config = {
     '**/.nyc_output/**',
   ],
 
-  maxFileSize: 10 * 1024 * 1024, // 10MB limit
+  maxFileSize: 10 _ 1024 _ 1024, // 10MB limit
 }
 ```
 
@@ -313,7 +315,7 @@ const textFiles = {
   name: 'text-files',
   path: './documents',
   compress: true, // Good compression for text
-  include: ['**/*.txt', '**/*.md', '**/*.json', '**/*.csv'],
+  include: ['**/*.txt', '**/*.md', '**/*.json', '**/_.csv'],
 }
 ```
 
@@ -328,7 +330,7 @@ const config = {
   compress: true,
 
   // Limit file size to prevent memory issues
-  maxFileSize: 500 * 1024 * 1024, // 500MB limit
+  maxFileSize: 500 _ 1024 * 1024, // 500MB limit
 
   // Use specific includes to avoid scanning everything
   include: [
@@ -378,6 +380,7 @@ for (const failure of fileFailures) {
 ### Common Issues
 
 **Permission Problems:**
+
 ```bash
 # Fix file permissions
 chmod -R 755 ./directory-to-backup
@@ -387,6 +390,7 @@ ls -la ./file-to-backup
 ```
 
 **Path Issues:**
+
 ```ts
 // ❌ Bad: Relative paths might not resolve correctly
 path: '../../../some-file.txt'
@@ -397,6 +401,7 @@ path: path.resolve(__dirname, '../config.json')
 ```
 
 **Large File Handling:**
+
 ```ts
 // For very large files, disable compression to save memory
 const config = {
