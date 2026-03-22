@@ -11,3 +11,5 @@ node_modules
 temp
 docs/.vitepress/cache
 bin/backupx
+.zed
+.cursor
