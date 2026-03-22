@@ -74,9 +74,6 @@
     "better-dx": "^0.2.7",
     "pickier": "^0.1.20"
   },
-  "overrides": {
-    "unconfig": "0.3.10"
-  },
   "git-hooks": {
     "pre-commit": {
       "staged-lint": {
