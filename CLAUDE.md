@@ -940,7 +940,7 @@ export const config: BackupConfig = {
       type: 'mysql',
       name: 'analytics',
       connection: 'mysql://user:pass@localhost:3306/analytics',
-      excludeTables: ['temp_logs', 'cache']
+      excludeTables: ['temp*logs', 'cache']
     }
   ],
 
@@ -1052,7 +1052,7 @@ const result = await backupPostgreSQL(pgConfig, './output')
 
 - Use **pickier** for linting — never use eslint directly
 - Run `bunx --bun pickier .` to lint, `bunx --bun pickier . --fix` to auto-fix
-- When fixing unused variable warnings, prefer `// eslint-disable-next-line` comments over prefixing with `_`
+- When fixing unused variable warnings, prefer `// eslint-disable-next-line` comments over prefixing with `*`
 
 ## Frontend
 
