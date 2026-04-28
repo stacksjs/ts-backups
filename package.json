@@ -73,7 +73,7 @@
   "devDependencies": {
     "better-dx": "^0.2.7",
     "cac": "^7.0.0",
-    "pickier": "^0.1.20"
+    "pickier": "^0.1.21"
   },
   "git-hooks": {
     "pre-commit": {
