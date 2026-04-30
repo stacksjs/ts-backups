@@ -1,5 +1,5 @@
 import process from 'node:process'
-import { CAC } from 'cac'
+import { CLI as CAC } from '@stacksjs/clapp'
 import { version } from '../package.json'
 import { BackupManager } from '../src/backups'
 import { config } from '../src/config'
