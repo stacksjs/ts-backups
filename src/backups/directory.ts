@@ -136,8 +136,8 @@ async function getFilesToBackup(config: FileConfig): Promise<string[]> {
 }
 
 // eslint-disable pickier/no-unused-vars
-function matchesPatterns(path: string, patterns: string[]): boolean {
-  return patterns.some((pattern) => {
+function matchesPatterns(_path: string, _patterns: string[]): boolean {
+  return patterns.some((_pattern) => {
     // Simple glob pattern matching
     const regex = new RegExp(
       `^${pattern
