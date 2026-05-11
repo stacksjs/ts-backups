@@ -135,10 +135,10 @@ async function getFilesToBackup(config: FileConfig): Promise<string[]> {
   return files
 }
 
-// eslint-disable pickier/no-unused-vars
-function matchesPatterns(_path: string, _patterns: string[]): boolean {
-  return patterns.some((_pattern) => {
-    // Simple glob pattern matching
+// eslint-disable-next-line pickier/no-unused-vars
+function matchesPatterns(filePath: string, patterns: string[]): boolean {
+  // eslint-disable-next-line pickier/no-unused-vars
+  return patterns.some((pattern) => {
     const regex = new RegExp(
       `^${pattern
         .replace(/\./g, '\\.')
@@ -146,10 +146,9 @@ function matchesPatterns(_path: string, _patterns: string[]): boolean {
         .replace(/\?/g, '.')
         .replace(/\//g, '[\\/\\\\]')}$`,
     )
-    return regex.test(path) || regex.test(path.replace(/\\/g, '/'))
+    return regex.test(filePath) || regex.test(filePath.replace(/\\/g, '/'))
   })
 }
-// eslint-enable pickier/no-unused-vars
 
 async function createArchive(
   config: FileConfig,
