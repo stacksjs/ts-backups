@@ -72,7 +72,7 @@
   },
   "devDependencies": {
     "@stacksjs/clapp": "^0.2.0",
-    "better-dx": "^0.2.7",
+    "better-dx": "^0.2.15",
     "pickier": "^0.1.20"
   },
   "git-hooks": {
