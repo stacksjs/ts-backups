@@ -5,37 +5,50 @@ import type {
   RestoreResult,
   RestoreSummary,
 } from '../types'
+import { Buffer } from 'node:buffer'
 import { existsSync } from 'node:fs'
 import { chmod, mkdir, readdir, readFile, utimes, writeFile } from 'node:fs/promises'
 import { basename, dirname, join } from 'node:path'
 import { gunzipSync } from 'node:zlib'
-import { Logger } from '@stacksjs/clarity'
 import { BackupType } from '../types'
 
-const ARCHIVE_MAGIC = 'BACKUPX1'
-
+/** A single file entry decoded from a directory archive. */
 interface ArchiveEntry {
   relativePath: string
-  mode: number
-  mtime: Date
   content: Buffer
+  /** Present only when the backup was taken with `preserveMetadata`. */
+  mode?: number
+  mtime?: number
+}
+
+/** Minimal verbose-gated logger (avoids a hard dependency for restore). */
+function makeLogger(verbose: boolean) {
+  return {
+    info: (msg: string) => {
+      if (verbose)
+        console.warn(msg)
+    },
+    error: (msg: string) => console.error(msg),
+  }
 }
 
 /**
- * Restores file and directory backups produced by {@link BackupManager}.
+ * Restores file and directory backups produced by `BackupManager`.
  *
- * Database snapshots are intentionally NOT auto-restored — restoring a SQL dump
+ * Database snapshots are intentionally NOT auto-restored — replaying a SQL dump
  * is destructive and should be done deliberately with the database's native
  * tooling (`psql < dump.sql`, `mysql < dump.sql`, `sqlite3 db < dump.sql`). They
  * are reported as `skipped` so the summary stays honest.
  */
 export class RestoreManager {
-  private logger = new Logger('backupx:restore')
+  private logger: ReturnType<typeof makeLogger>
 
   constructor(
     private config: BackupConfig,
     private options: RestoreOptions = {},
-  ) {}
+  ) {
+    this.logger = makeLogger(this.verbose)
+  }
 
   private get verbose(): boolean {
     return this.options.verbose ?? this.config.verbose
@@ -48,8 +61,7 @@ export class RestoreManager {
     if (!existsSync(outputPath))
       throw new Error(`Backup directory not found: ${outputPath}`)
 
-    if (this.verbose)
-      this.logger.warn(`🔄 Restoring from ${outputPath}...`)
+    this.logger.info(`🔄 Restoring from ${outputPath}...`)
 
     const results: RestoreResult[] = []
 
@@ -74,8 +86,7 @@ export class RestoreManager {
           success: false,
           error: message,
         })
-        if (this.verbose)
-          this.logger.error(`❌ Failed to restore ${fileConfig.name}: ${message}`)
+        this.logger.error(`❌ Failed to restore ${fileConfig.name}: ${message}`)
       }
     }
 
@@ -96,8 +107,7 @@ export class RestoreManager {
         skipped: true,
         error: 'Database restore is manual — load the dump with the database\'s native client.',
       })
-      if (this.verbose)
-        this.logger.warn(`⏭️  Skipping database '${db.name}' — restore manually with its native client.`)
+      this.logger.info(`⏭️  Skipping database '${db.name}' — restore manually with its native client.`)
     }
 
     const summary: RestoreSummary = {
@@ -108,12 +118,10 @@ export class RestoreManager {
       skippedCount: results.filter(r => r.skipped).length,
     }
 
-    if (this.verbose) {
-      this.logger.warn(
-        `\n✅ Restore complete: ${summary.successCount} restored, `
-        + `${summary.failureCount} failed, ${summary.skippedCount} skipped.`,
-      )
-    }
+    this.logger.info(
+      `\n✅ Restore complete: ${summary.successCount} restored, `
+      + `${summary.failureCount} failed, ${summary.skippedCount} skipped.`,
+    )
 
     return summary
   }
@@ -137,42 +145,19 @@ export class RestoreManager {
       name = name.slice(0, -'.gz'.length)
     }
 
-    // `.tar` snapshots are directory archives; everything else is a single file.
-    if (name.endsWith('.tar')) {
-      const destBase = this.options.targetPath ?? config.path
-      const entries = parseArchive(content)
-      let bytes = 0
+    // `.tar` snapshots are directory archives; anything else is a single file.
+    if (name.endsWith('.tar'))
+      return this.restoreDirectory(config, snapshot, content, startTime)
 
-      for (const entry of entries) {
-        const dest = join(destBase, entry.relativePath)
-        if (existsSync(dest) && !this.options.overwrite) {
-          if (this.verbose)
-            this.logger.warn(`  ↷ exists, skipping ${dest} (use --overwrite)`)
-          continue
-        }
-        await mkdir(dirname(dest), { recursive: true })
-        await writeFile(dest, entry.content)
-        await chmod(dest, entry.mode).catch(() => {})
-        await utimes(dest, entry.mtime, entry.mtime).catch(() => {})
-        bytes += entry.content.length
-      }
+    return this.restoreSingleFile(config, snapshot, content, startTime)
+  }
 
-      if (this.verbose)
-        this.logger.warn(`  ✓ restored ${entries.length} file(s) → ${destBase}`)
-
-      return {
-        name: config.name,
-        type: BackupType.DIRECTORY,
-        snapshot,
-        restoredPath: destBase,
-        size: bytes,
-        fileCount: entries.length,
-        duration: performance.now() - startTime,
-        success: true,
-      }
-    }
-
-    // Single file.
+  private async restoreSingleFile(
+    config: FileConfig,
+    snapshot: string,
+    content: Buffer,
+    startTime: number,
+  ): Promise<RestoreResult> {
     const dest = this.options.targetPath
       ? join(this.options.targetPath, basename(config.path))
       : config.path
@@ -182,9 +167,7 @@ export class RestoreManager {
 
     await mkdir(dirname(dest), { recursive: true })
     await writeFile(dest, content)
-
-    if (this.verbose)
-      this.logger.warn(`  ✓ restored ${config.name} → ${dest}`)
+    this.logger.info(`  ✓ restored ${config.name} → ${dest}`)
 
     return {
       name: config.name,
@@ -196,62 +179,114 @@ export class RestoreManager {
       success: true,
     }
   }
+
+  private async restoreDirectory(
+    config: FileConfig,
+    snapshot: string,
+    archive: Buffer,
+    startTime: number,
+  ): Promise<RestoreResult> {
+    const destBase = this.options.targetPath ?? config.path
+    const entries = parseArchive(archive)
+    let bytes = 0
+    let written = 0
+
+    for (const entry of entries) {
+      const dest = join(destBase, entry.relativePath)
+      if (existsSync(dest) && !this.options.overwrite) {
+        this.logger.info(`  ↷ exists, skipping ${dest} (use --overwrite)`)
+        continue
+      }
+      await mkdir(dirname(dest), { recursive: true })
+      await writeFile(dest, entry.content)
+      if (entry.mode !== undefined)
+        await chmod(dest, entry.mode).catch(() => {})
+      if (entry.mtime !== undefined) {
+        const t = new Date(entry.mtime)
+        await utimes(dest, t, t).catch(() => {})
+      }
+      bytes += entry.content.length
+      written++
+    }
+
+    this.logger.info(`  ✓ restored ${written} file(s) → ${destBase}`)
+
+    return {
+      name: config.name,
+      type: BackupType.DIRECTORY,
+      snapshot,
+      restoredPath: destBase,
+      size: bytes,
+      fileCount: written,
+      duration: performance.now() - startTime,
+      success: true,
+    }
+  }
 }
 
 /**
  * Find the most recent snapshot for a backup whose files are named
- * `<base>_<ISO-timestamp>...`. Timestamps are ISO-8601, so a lexicographic
- * sort is chronological.
+ * `<base>_<ISO-timestamp>...`. ISO-8601 timestamps sort chronologically, so a
+ * lexicographic sort suffices.
  */
 export async function findLatestSnapshot(outputPath: string, base: string): Promise<string | null> {
   const prefix = `${base}_`
   const all = await readdir(outputPath)
-  const matches = all.filter(f => f.startsWith(prefix)).sort()
+  // Ignore sidecar metadata files written next to single-file backups.
+  const matches = all.filter(f => f.startsWith(prefix) && !f.endsWith('.meta')).sort()
   return matches.length ? matches[matches.length - 1] : null
 }
 
 /**
- * Parse the custom `BACKUPX1` archive written by {@link backupDirectory}.
+ * Decode the archive written by `backupDirectory`.
  *
- * Layout: magic(8) then per-entry
- *   pathLength(uint32 LE) + path + mode(uint32 LE) + mtime(uint64 LE ms) + contentLength(uint64 LE) + content
+ * Layout (repeated per file): a 4-byte big-endian header length, that many bytes
+ * of JSON (`{ path, size, mtime?, mode?, uid?, gid? }`), then `size` bytes of
+ * raw file content. This matches `createFileHeader` in `src/backups/directory.ts`.
  */
 export function parseArchive(buffer: Buffer): ArchiveEntry[] {
-  const magic = buffer.subarray(0, ARCHIVE_MAGIC.length).toString('utf-8')
-  if (magic !== ARCHIVE_MAGIC)
-    throw new Error(`Not a ${ARCHIVE_MAGIC} archive (bad magic: ${JSON.stringify(magic)})`)
-
   const entries: ArchiveEntry[] = []
-  let offset = ARCHIVE_MAGIC.length
+  let offset = 0
 
   while (offset < buffer.length) {
-    const pathLength = buffer.readUInt32LE(offset)
+    if (offset + 4 > buffer.length)
+      throw new Error('Corrupt archive: truncated header length')
+
+    const headerSize = buffer.readUInt32BE(offset)
     offset += 4
 
-    const relativePath = buffer.subarray(offset, offset + pathLength).toString('utf-8')
-    offset += pathLength
+    if (headerSize <= 0 || offset + headerSize > buffer.length)
+      throw new Error('Corrupt archive: invalid header size')
 
-    const mode = buffer.readUInt32LE(offset)
-    offset += 4
+    const headerJson = buffer.subarray(offset, offset + headerSize).toString('utf-8')
+    offset += headerSize
 
-    const mtime = new Date(Number(buffer.readBigUInt64LE(offset)))
-    offset += 8
+    let header: { path?: string, size?: number, mtime?: number, mode?: number }
+    try {
+      header = JSON.parse(headerJson)
+    }
+    catch {
+      throw new Error('Corrupt archive: header is not valid JSON')
+    }
 
-    const contentLength = Number(buffer.readBigUInt64LE(offset))
-    offset += 8
+    if (typeof header.path !== 'string' || typeof header.size !== 'number')
+      throw new Error('Corrupt archive: header missing path/size')
 
-    const content = buffer.subarray(offset, offset + contentLength)
-    offset += contentLength
+    const content = buffer.subarray(offset, offset + header.size)
+    offset += header.size
 
-    entries.push({ relativePath, mode, mtime, content: Buffer.from(content) })
+    entries.push({
+      relativePath: header.path,
+      content: Buffer.from(content),
+      mode: header.mode,
+      mtime: header.mtime,
+    })
   }
 
   return entries
 }
 
-/**
- * Restore using the project's loaded config (the one used by `backupx restore`).
- */
+/** Restore using a loaded config (the entry point used by `backups restore`). */
 export async function restoreFromConfig(
   config: BackupConfig,
   options: RestoreOptions = {},
