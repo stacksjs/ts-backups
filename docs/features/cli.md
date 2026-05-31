@@ -1,6 +1,6 @@
 # CLI Interface
 
-backupx provides a powerful command-line interface for running backups, managing configurations, and integrating with automation systems.
+ts-backups provides a powerful command-line interface for running backups, managing configurations, and integrating with automation systems.
 
 ## Overview
 
@@ -18,19 +18,19 @@ The CLI offers:
 
 ```bash
 # Install globally with your package manager
-bun add -g backupx
-npm install -g backupx
-pnpm add -g backupx
-yarn global add backupx
+bun add -g ts-backups
+npm install -g ts-backups
+pnpm add -g ts-backups
+yarn global add ts-backups
 ```
 
 ### Using Without Installation
 
 ```bash
 # Run directly with package runners
-bunx backupx start --verbose
-npx backupx start --verbose
-pnpm dlx backupx start --verbose
+bunx ts-backups start --verbose
+npx ts-backups start --verbose
+pnpm dlx ts-backups start --verbose
 ```
 
 ## Basic Commands
@@ -244,7 +244,7 @@ Type=oneshot
 User=backup
 Group=backup
 WorkingDirectory=/opt/myapp
-ExecStart=/usr/local/bin/backupx start --verbose
+ExecStart=/usr/local/bin/ts-backups start --verbose
 StandardOutput=journal
 StandardError=journal
 
@@ -302,7 +302,7 @@ services:
     working_dir: /app
     command: |
       sh -c "
-        bun add -g backupx &&
+        bun add -g ts-backups &&
         backups start --verbose
       "
     depends_on:
@@ -336,7 +336,7 @@ spec:
                 - -c
                 - |
 
-                  bun add -g backupx
+                  bun add -g ts-backups
                   backups start --verbose
               volumeMounts:
 
@@ -403,9 +403,9 @@ jobs:
         with:
           bun-version: latest
 
-      - name: Install backupx
+      - name: Install ts-backups
 
-        run: bun add -g backupx
+        run: bun add -g ts-backups
 
       - name: Run backup
 
@@ -437,7 +437,7 @@ backup:
 
   script:
 
-    - bun add -g backupx
+    - bun add -g ts-backups
     - backups start --verbose
 
   artifacts:
@@ -468,7 +468,7 @@ export DATABASE_URL=postgres://user:pass@localhost/db
 export BACKUP_OUTPUT_PATH=/var/backups
 
 # Enable debug logging
-export DEBUG=backupx:_
+export DEBUG=ts-backups:_
 ```
 
 ### Production Example
@@ -539,7 +539,7 @@ $ backups start
 bash: backups: command not found
 
 # Solutions
-npm install -g backupx     # Install globally
+npm install -g ts-backups     # Install globally
 which backups                 # Check if installed
 echo $PATH                    # Check PATH includes npm globals
 ```
@@ -550,11 +550,11 @@ Enable detailed debugging:
 
 ```bash
 # Enable all debug output
-DEBUG=backupx:_ backups start --verbose
+DEBUG=ts-backups:_ backups start --verbose
 
 # Enable specific module debugging
-DEBUG=backupx:database backups start
-DEBUG=backupx:files backups start
+DEBUG=ts-backups:database backups start
+DEBUG=ts-backups:files backups start
 ```
 
 ### Verbose vs Debug

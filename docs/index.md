@@ -3,7 +3,7 @@
 layout: home
 
 hero:
-  name: "backupx"
+  name: "ts-backups"
   text: "TypeScript Backups"
   tagline: "Comprehensive & performant database and file backup solution."
   image: /images/logo-white.png

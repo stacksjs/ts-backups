@@ -1,6 +1,6 @@
 # Functions API Reference
 
-This page documents all standalone functions available in backupx.
+This page documents all standalone functions available in ts-backups.
 
 ## Database Backup Functions
 
@@ -25,7 +25,7 @@ async function backupSQLite(
 **Example:**
 
 ```ts
-import { backupSQLite, BackupType } from 'backupx'
+import { backupSQLite, BackupType } from 'ts-backups'
 
 const result = await backupSQLite({
   type: BackupType.SQLITE,
@@ -58,7 +58,7 @@ async function backupPostgreSQL(
 **Example:**
 
 ```ts
-import { backupPostgreSQL, BackupType } from 'backupx'
+import { backupPostgreSQL, BackupType } from 'ts-backups'
 
 const result = await backupPostgreSQL({
   type: BackupType.POSTGRESQL,
@@ -90,7 +90,7 @@ async function backupMySQL(
 **Example:**
 
 ```ts
-import { backupMySQL, BackupType } from 'backupx'
+import { backupMySQL, BackupType } from 'ts-backups'
 
 const result = await backupMySQL({
   type: BackupType.MYSQL,
@@ -128,7 +128,7 @@ async function backupFile(
 **Example:**
 
 ```ts
-import { backupFile } from 'backupx'
+import { backupFile } from 'ts-backups'
 
 const result = await backupFile({
   name: 'config-backup',
@@ -159,7 +159,7 @@ async function backupDirectory(
 **Example:**
 
 ```ts
-import { backupDirectory } from 'backupx'
+import { backupDirectory } from 'ts-backups'
 
 const result = await backupDirectory({
   name: 'source-code',
@@ -191,7 +191,7 @@ function validateConfig(config: BackupConfig): ValidationResult
 **Example:**
 
 ```ts
-import { validateConfig } from 'backupx'
+import { validateConfig } from 'ts-backups'
 
 const validation = validateConfig({
   verbose: true,
@@ -222,7 +222,7 @@ function formatBytes(bytes: number): string
 **Example:**
 
 ```ts
-import { formatBytes } from 'backupx'
+import { formatBytes } from 'ts-backups'
 
 console.log(formatBytes(1536000)) // "1.46 MB"
 console.log(formatBytes(1024)) // "1.00 KB"
@@ -246,7 +246,7 @@ function formatDuration(milliseconds: number): string
 **Example:**
 
 ```ts
-import { formatDuration } from 'backupx'
+import { formatDuration } from 'ts-backups'
 
 console.log(formatDuration(1500)) // "1.5s"
 console.log(formatDuration(65000)) // "1m 5s"
@@ -274,7 +274,7 @@ async function getBackupHistory(
 **Example:**
 
 ```ts
-import { getBackupHistory } from 'backupx'
+import { getBackupHistory } from 'ts-backups'
 
 const history = await getBackupHistory('./backups', 5)
 history.forEach((summary) => {
@@ -303,7 +303,7 @@ async function cleanupOldBackups(
 **Example:**
 
 ```ts
-import { cleanupOldBackups } from 'backupx'
+import { cleanupOldBackups } from 'ts-backups'
 
 const result = await cleanupOldBackups('./backups', {
   count: 10, // Keep last 10 backups
@@ -333,7 +333,7 @@ async function ensureDir(dirPath: string): Promise<void>
 **Example:**
 
 ```ts
-import { ensureDir } from 'backupx'
+import { ensureDir } from 'ts-backups'
 
 await ensureDir('./backups/2023/12')
 // Directory will be created if it doesn't exist
@@ -356,7 +356,7 @@ async function getFileSize(filePath: string): Promise<number>
 **Example:**
 
 ```ts
-import { getFileSize } from 'backupx'
+import { getFileSize } from 'ts-backups'
 
 const size = await getFileSize('./backup.sql')
 console.log(`File size: ${formatBytes(size)}`)
@@ -379,7 +379,7 @@ async function calculateChecksum(filePath: string): Promise<string>
 **Example:**
 
 ```ts
-import { calculateChecksum } from 'backupx'
+import { calculateChecksum } from 'ts-backups'
 
 const checksum = await calculateChecksum('./backup.sql')
 console.log(`Checksum: ${checksum}`)
@@ -408,7 +408,7 @@ async function compressFile(
 **Example:**
 
 ```ts
-import { compressFile } from 'backupx'
+import { compressFile } from 'ts-backups'
 
 await compressFile('./backup.sql', './backup.sql.gz')
 ```
@@ -434,7 +434,7 @@ async function decompressFile(
 **Example:**
 
 ```ts
-import { decompressFile } from 'backupx'
+import { decompressFile } from 'ts-backups'
 
 await decompressFile('./backup.sql.gz', './backup.sql')
 ```
@@ -460,7 +460,7 @@ async function testDatabaseConnection(
 **Example:**
 
 ```ts
-import { BackupType, testDatabaseConnection } from 'backupx'
+import { BackupType, testDatabaseConnection } from 'ts-backups'
 
 const canConnect = await testDatabaseConnection({
   type: BackupType.POSTGRESQL,
@@ -492,7 +492,7 @@ async function getDatabaseSize(
 **Example:**
 
 ```ts
-import { getDatabaseSize } from 'backupx'
+import { getDatabaseSize } from 'ts-backups'
 
 const size = await getDatabaseSize(dbConfig)
 console.log(`Database size: ${formatBytes(size)}`)

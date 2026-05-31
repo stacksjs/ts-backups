@@ -2,11 +2,11 @@
 
 # Introduction
 
-backupx is a comprehensive TypeScript backup library designed specifically for the Bun runtime. It provides a unified solution for backing up databases and files with modern JavaScript features, full type safety, and production-ready performance.
+ts-backups is a comprehensive TypeScript backup library designed specifically for the Bun runtime. It provides a unified solution for backing up databases and files with modern JavaScript features, full type safety, and production-ready performance.
 
-## What is backupx
+## What is ts-backups
 
-backupx is a TypeScript-first backup library that supports:
+ts-backups is a TypeScript-first backup library that supports:
 
 - **Database Backups**: SQLite, PostgreSQL, and MySQL with native Bun drivers
 - **File & Directory Backups**: Individual files or entire directory trees
@@ -14,18 +14,18 @@ backupx is a TypeScript-first backup library that supports:
 - **Retention Policies**: Automatic cleanup based on count or age
 - **CLI & Library**: Use programmatically or via command-line interface
 
-## Why Choose backupx
+## Why Choose ts-backups
 
 ### Built for Performance & Reliability
 
-Unlike other backup solutions, `backupx` is specifically designed for Bun's high-performance JavaScript runtime. It leverages Bun's native database drivers and fast I/O operations.
+Unlike other backup solutions, `ts-backups` is specifically designed for Bun's high-performance JavaScript runtime. It leverages Bun's native database drivers and fast I/O operations.
 
 ### TypeScript-First Design
 
 Every API is fully typed with comprehensive type safety. You get excellent IntelliSense support and compile-time error checking.
 
 ```ts
-import { BackupManager, BackupType } from 'backupx'
+import { BackupManager, BackupType } from 'ts-backups'
 
 const config: BackupConfig = {
   verbose: true,
@@ -123,7 +123,7 @@ Automate backups in your deployment pipeline:
 
 ```bash
 # Install globally
-bun add -g backupx
+bun add -g ts-backups
 
 # Run backup
 backups start --verbose
@@ -131,11 +131,11 @@ backups start --verbose
 
 ## Getting Started
 
-Ready to start backing up your data? Check out the [Installation Guide](/install) to get backupx set up in your project.
+Ready to start backing up your data? Check out the [Installation Guide](/install) to get ts-backups set up in your project.
 
 ## Architecture
 
-backupx is built with a modular architecture:
+ts-backups is built with a modular architecture:
 
 - **Core Engine**: `BackupManager` orchestrates all operations
 - **Database Modules**: Separate modules for each database type

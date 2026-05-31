@@ -1,14 +1,14 @@
 # Web Application Examples
 
-This guide shows how to integrate backupx into web applications for automated database and file backups.
+This guide shows how to integrate ts-backups into web applications for automated database and file backups.
 
 ## Express.js Integration
 
 ### Basic Backup Route
 
 ```ts
-import type { BackupConfig } from 'backupx'
-import { BackupManager, BackupType } from 'backupx'
+import type { BackupConfig } from 'ts-backups'
+import { BackupManager, BackupType } from 'ts-backups'
 import express from 'express'
 
 const app = express()
@@ -84,7 +84,7 @@ app.listen(3000)
 ### Scheduled Backups with Cron
 
 ```ts
-import { BackupManager } from 'backupx'
+import { BackupManager } from 'ts-backups'
 import cron from 'node-cron'
 
 class BackupScheduler {
@@ -198,8 +198,8 @@ process.on('SIGINT', () => {
 
 ```ts
 // app/api/backup/route.ts
-import type { BackupConfig } from 'backupx'
-import { BackupManager, BackupType } from 'backupx'
+import type { BackupConfig } from 'ts-backups'
+import { BackupManager, BackupType } from 'ts-backups'
 import { NextRequest, NextResponse } from 'next/server'
 
 const backupConfig: BackupConfig = {
@@ -272,10 +272,10 @@ export async function GET() {
 ### Pages Router API Route
 
 ```ts
-import type { BackupConfig } from 'backupx'
+import type { BackupConfig } from 'ts-backups'
 // pages/api/backup.ts
 import type { NextApiRequest, NextApiResponse } from 'next'
-import { BackupManager, BackupType } from 'backupx'
+import { BackupManager, BackupType } from 'ts-backups'
 
 const backupConfig: BackupConfig = {
   verbose: process.env.NODE_ENV === 'development',
@@ -538,8 +538,8 @@ export function BackupManager() {
 ### Bull Queue Integration
 
 ```ts
-import type { BackupConfig } from 'backupx'
-import { BackupManager } from 'backupx'
+import type { BackupConfig } from 'ts-backups'
+import { BackupManager } from 'ts-backups'
 import Queue from 'bull'
 
 // Create backup queue
@@ -624,4 +624,4 @@ async function notifyUser(userId: string, result: any) {
 }
 ```
 
-This guide provides comprehensive examples for integrating backupx into web applications with proper error handling, scheduling, and user interfaces.
+This guide provides comprehensive examples for integrating ts-backups into web applications with proper error handling, scheduling, and user interfaces.

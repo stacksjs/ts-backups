@@ -10,7 +10,8 @@ logs
 node_modules
 temp
 docs/.vitepress/cache
-bin/backupx
+bin/ts-backups
 .zed
 .cursor
 pantry
+bin/backupx

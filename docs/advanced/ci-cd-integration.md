@@ -1,6 +1,6 @@
 # CI/CD Integration
 
-Integrate backupx into your continuous integration and deployment pipelines for automated database backups, testing data snapshots, and disaster recovery workflows.
+Integrate ts-backups into your continuous integration and deployment pipelines for automated database backups, testing data snapshots, and disaster recovery workflows.
 
 ## GitHub Actions
 
@@ -54,7 +54,7 @@ jobs:
           DATABASE*URL: ${{ secrets.DATABASE*URL }}
           BACKUP*ENCRYPTION*KEY: ${{ secrets.BACKUP*ENCRYPTION*KEY }}
         run: |
-          bun run backupx start --verbose
+          bun run ts-backups start --verbose
 
       - name: Upload backup artifacts
 
@@ -107,7 +107,7 @@ jobs:
         env:
           DATABASE*URL: ${{ secrets.DATABASE*URL }}
         run: |
-          bun run backupx start --verbose
+          bun run ts-backups start --verbose
           echo "BACKUP*FILE=$(ls -t backups/*.sql* | head -1)" >> $GITHUB*ENV
 
       - name: Upload backup
@@ -216,7 +216,7 @@ jobs:
         env:
           DATABASE*URL: postgres://test:test@localhost:5432/test*db
         run: |
-          bun run backupx start --output test-fixtures
+          bun run ts-backups start --output test-fixtures
 ```
 
 ## GitLab CI
@@ -244,7 +244,7 @@ daily-backup:
   script:
 
     - bun install
-    - bun run backupx start --verbose
+    - bun run ts-backups start --verbose
 
   artifacts:
     paths:
@@ -314,7 +314,7 @@ ENV NODE*ENV=production
 ENV BACKUP*OUTPUT*PATH=/backups
 
 # Default command
-CMD ["bun", "run", "backupx", "start", "--verbose"]
+CMD ["bun", "run", "ts-backups", "start", "--verbose"]
 ```
 
 ### Docker Compose for Scheduled Backups
@@ -355,7 +355,7 @@ services:
     labels:
       ofelia.job-run.backup.schedule: "0 2 * * *"
       ofelia.job-run.backup.container: "backup"
-      ofelia.job-run.backup.command: "bun run backupx start"
+      ofelia.job-run.backup.command: "bun run ts-backups start"
 
 volumes:
   backup-data:
@@ -379,7 +379,7 @@ spec:
 
             - name: backup
 
-              image: your-registry/backupx:latest
+              image: your-registry/ts-backups:latest
               env:
 
                 - name: DATABASE*URL
@@ -406,7 +406,7 @@ spec:
 
                 - bun
                 - run
-                - backupx
+                - ts-backups
                 - start
                 - --verbose
 
@@ -430,7 +430,7 @@ spec:
 
 ```ts
 // scripts/backup.ts
-import { createBackup } from 'backupx'
+import { createBackup } from 'ts-backups'
 import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3'
 import { readFile, readdir } from 'node:fs/promises'
 import { join } from 'node:path'

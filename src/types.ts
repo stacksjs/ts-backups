@@ -128,3 +128,43 @@ export interface BackupSummary {
   databaseBackups: BackupResult[]
   fileBackups: BackupResult[]
 }
+
+export interface RestoreOptions {
+  /** Restore only these named backups (default: every file backup in the config). */
+  only?: string[]
+  /** Restore from a specific snapshot filename instead of the most recent one. */
+  snapshot?: string
+  /** Restore to this base path instead of each backup's original `path`. */
+  targetPath?: string
+  /** Overwrite files that already exist at the destination (default: false). */
+  overwrite?: boolean
+  /** Enable verbose logging (defaults to the config's `verbose`). */
+  verbose?: boolean
+}
+
+export interface RestoreResult {
+  /** The backup entry's name (matches the FileConfig that produced the snapshot). */
+  name: string
+  type: BackupType
+  /** The snapshot file the data was restored from. */
+  snapshot: string
+  /** Where the data was written. */
+  restoredPath: string
+  /** Bytes written (sum of all files for a directory restore). */
+  size: number
+  /** Number of files written (for directory restores). */
+  fileCount?: number
+  duration: number
+  success: boolean
+  /** True when the entry was intentionally not restored (e.g. databases). */
+  skipped?: boolean
+  error?: string
+}
+
+export interface RestoreSummary {
+  results: RestoreResult[]
+  totalDuration: number
+  successCount: number
+  failureCount: number
+  skippedCount: number
+}

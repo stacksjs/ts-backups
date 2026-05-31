@@ -1,6 +1,6 @@
 # Database Backups
 
-backupx provides comprehensive database backup support for SQLite, PostgreSQL, and MySQL databases, with advanced features for filtering, compression, and connection management.
+ts-backups provides comprehensive database backup support for SQLite, PostgreSQL, and MySQL databases, with advanced features for filtering, compression, and connection management.
 
 ## Supported Databases
 
@@ -303,7 +303,7 @@ const devConfig: BackupConfig = {
 
 ## Error Handling
 
-Database backups can fail for various reasons. backupx provides detailed error information:
+Database backups can fail for various reasons. ts-backups provides detailed error information:
 
 ```ts
 const manager = new BackupManager(config)
@@ -416,7 +416,7 @@ const dataOnlyLargeConfig = {
 Run multiple database backups concurrently:
 
 ```ts
-import { backupMySQL, backupPostgreSQL, backupSQLite } from 'backupx'
+import { backupMySQL, backupPostgreSQL, backupSQLite } from 'ts-backups'
 
 // Manual parallel execution
 const backupPromises = [

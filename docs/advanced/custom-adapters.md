@@ -1,6 +1,6 @@
 # Custom Adapters
 
-Backupx supports extending its functionality through custom adapters. This guide covers creating custom database adapters, storage adapters, and notification handlers.
+ts-backups supports extending its functionality through custom adapters. This guide covers creating custom database adapters, storage adapters, and notification handlers.
 
 ## Database Adapter Architecture
 
@@ -40,7 +40,7 @@ interface BackupResult {
 Implement a custom adapter for a new database type:
 
 ```ts
-import type { DatabaseAdapter, BackupOptions, BackupResult } from 'backupx'
+import type { DatabaseAdapter, BackupOptions, BackupResult } from 'ts-backups'
 
 export class MongoDBAdapter implements DatabaseAdapter {
   type = 'mongodb'
@@ -140,7 +140,7 @@ export class MongoDBAdapter implements DatabaseAdapter {
 Register your custom adapter with the backup manager:
 
 ```ts
-import { BackupManager, registerAdapter } from 'backupx'
+import { BackupManager, registerAdapter } from 'ts-backups'
 import { MongoDBAdapter } from './adapters/mongodb'
 
 // Register the custom adapter
@@ -185,7 +185,7 @@ interface StorageAdapter {
 Implement a custom storage adapter for S3:
 
 ```ts
-import type { StorageAdapter } from 'backupx'
+import type { StorageAdapter } from 'ts-backups'
 import { S3Client, PutObjectCommand, GetObjectCommand, ListObjectsV2Command, DeleteObjectCommand, HeadObjectCommand } from '@aws-sdk/client-s3'
 
 export class S3StorageAdapter implements StorageAdapter {
@@ -258,7 +258,7 @@ export class S3StorageAdapter implements StorageAdapter {
 Configure the backup manager to use a custom storage adapter:
 
 ```ts
-import { BackupManager, setStorageAdapter } from 'backupx'
+import { BackupManager, setStorageAdapter } from 'ts-backups'
 import { S3StorageAdapter } from './adapters/s3-storage'
 
 // Create and set the storage adapter
@@ -306,7 +306,7 @@ interface BackupError {
 Send backup notifications to Slack:
 
 ```ts
-import type { NotificationAdapter, BackupInfo, BackupResult, BackupError } from 'backupx'
+import type { NotificationAdapter, BackupInfo, BackupResult, BackupError } from 'ts-backups'
 
 export class SlackNotificationAdapter implements NotificationAdapter {
   type = 'slack'
@@ -377,7 +377,7 @@ export class SlackNotificationAdapter implements NotificationAdapter {
 Send notifications to Discord:
 
 ```ts
-import type { NotificationAdapter, BackupInfo, BackupResult, BackupError } from 'backupx'
+import type { NotificationAdapter, BackupInfo, BackupResult, BackupError } from 'ts-backups'
 
 export class DiscordNotificationAdapter implements NotificationAdapter {
   type = 'discord'
@@ -446,7 +446,7 @@ export class DiscordNotificationAdapter implements NotificationAdapter {
 Register and use notification adapters:
 
 ```ts
-import { BackupManager, addNotificationAdapter } from 'backupx'
+import { BackupManager, addNotificationAdapter } from 'ts-backups'
 import { SlackNotificationAdapter } from './adapters/slack'
 import { DiscordNotificationAdapter } from './adapters/discord'
 
@@ -497,7 +497,7 @@ export class ZstdCompressionAdapter implements CompressionAdapter {
 Build reusable plugins that combine adapters:
 
 ```ts
-import type { BackupPlugin } from 'backupx'
+import type { BackupPlugin } from 'ts-backups'
 
 export function createCloudBackupPlugin(options: {
   storage: 's3' | 'gcs' | 'azure'
@@ -534,7 +534,7 @@ export function createCloudBackupPlugin(options: {
 }
 
 // Usage
-import { BackupManager } from 'backupx'
+import { BackupManager } from 'ts-backups'
 import { createCloudBackupPlugin } from './plugins/cloud-backup'
 
 const manager = new BackupManager(config)

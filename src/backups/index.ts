@@ -14,7 +14,7 @@ export class BackupManager {
 
   async createBackup(): Promise<BackupSummary> {
     const startTime = performance.now()
-    const logger = new Logger('backupx:manager')
+    const logger = new Logger('ts-backups:manager')
 
     if (this.config.verbose) {
       logger.warn('🚀 Starting backup process...')
@@ -181,7 +181,7 @@ export class BackupManager {
     if (!this.config.retention)
       return
 
-    const logger = new Logger('backupx:retention')
+    const logger = new Logger('ts-backups:retention')
     try {
       const files = await readdir(outputPath)
       const backupFiles: Array<{ name: string, path: string, stats: any, age: number }> = []
@@ -259,7 +259,7 @@ export class BackupManager {
   }
 
   private printSummary(summary: BackupSummary): void {
-    const logger = new Logger('backupx:summary')
+    const logger = new Logger('ts-backups:summary')
     logger.warn('\n📊 Backup Summary:')
     logger.warn(`⏱️  Total duration: ${summary.totalDuration.toFixed(2)}ms`)
     logger.warn(`✅ Successful: ${summary.successCount}`)

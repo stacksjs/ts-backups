@@ -3,7 +3,7 @@
   "configVersion": 1,
   "workspaces": {
     "": {
-      "name": "backupx",
+      "name": "ts-backups",
       "devDependencies": {
         "@stacksjs/clapp": "^0.2.0",
         "better-dx": "^0.2.15",

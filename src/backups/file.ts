@@ -6,7 +6,7 @@ import { createGzip } from 'node:zlib'
 import { Logger } from '@stacksjs/clarity'
 import { BackupType } from '../types'
 
-const logger = new Logger('backupx:file')
+const logger = new Logger('ts-backups:file')
 
 export async function backupFile(config: FileConfig, outputPath: string): Promise<BackupResult> {
   const startTime = Date.now()

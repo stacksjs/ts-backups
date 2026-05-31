@@ -5,7 +5,7 @@ import { join } from 'node:path'
 import { Logger } from '@stacksjs/clarity'
 import { BackupType } from '../types'
 
-const logger = new Logger('backupx:postgresql')
+const logger = new Logger('ts-backups:postgresql')
 
 function createConnectionString(connection: PostgreSQLConfig['connection']): string {
   if (typeof connection === 'string') {
@@ -62,7 +62,7 @@ export async function backupPostgreSQL(
     sqlDump += `-- PostgreSQL Database Backup\n`
     sqlDump += `-- Database: ${current_database}\n`
     sqlDump += `-- Generated: ${new Date().toISOString()}\n`
-    sqlDump += `-- Backup tool: backupx\n\n`
+    sqlDump += `-- Backup tool: ts-backups\n\n`
 
     // Get tables to backup
     let tables: { table_name: string, table_schema: string }[]

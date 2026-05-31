@@ -1,6 +1,6 @@
 # Scheduled Backups
 
-Backupx supports scheduling automated backups using cron expressions, system schedulers, or programmatic timers. This ensures your data is backed up regularly without manual intervention.
+ts-backups supports scheduling automated backups using cron expressions, system schedulers, or programmatic timers. This ensures your data is backed up regularly without manual intervention.
 
 ## Programmatic Scheduling
 
@@ -9,7 +9,7 @@ Backupx supports scheduling automated backups using cron expressions, system sch
 Set up recurring backups with simple interval-based scheduling:
 
 ```ts
-import { createBackup } from 'backupx'
+import { createBackup } from 'ts-backups'
 
 const config = {
   verbose: true,
@@ -50,7 +50,7 @@ For more precise scheduling, use a cron library:
 
 ```ts
 import { CronJob } from 'cron'
-import { createBackup } from 'backupx'
+import { createBackup } from 'ts-backups'
 
 const config = {
   verbose: false,
@@ -114,13 +114,13 @@ bun run backup:scheduled
 
 ```bash
 # Run daily at 2:00 AM
-0 2 _ _ _ /path/to/backup.sh >> /var/log/backupx.log 2>&1
+0 2 _ _ _ /path/to/backup.sh >> /var/log/ts-backups.log 2>&1
 
 # Run every 6 hours
-0 _/6 _ _ _ /path/to/backup.sh >> /var/log/backupx.log 2>&1
+0 _/6 _ _ _ /path/to/backup.sh >> /var/log/ts-backups.log 2>&1
 
 # Run at 1:00 AM on weekdays
-0 1 _ _ 1-5 /path/to/backup.sh >> /var/log/backupx.log 2>&1
+0 1 _ _ 1-5 /path/to/backup.sh >> /var/log/ts-backups.log 2>&1
 ```
 
 ### systemd Timer (Linux)
@@ -128,9 +128,9 @@ bun run backup:scheduled
 Create a systemd service and timer:
 
 ```ini
-# /etc/systemd/system/backupx.service
+# /etc/systemd/system/ts-backups.service
 [Unit]
-Description=Backupx Database Backup
+Description=ts-backups Database Backup
 After=network.target
 
 [Service]
@@ -138,17 +138,17 @@ Type=oneshot
 User=backup
 WorkingDirectory=/opt/myapp
 ExecStart=/usr/local/bin/bun run backup
-StandardOutput=append:/var/log/backupx.log
-StandardError=append:/var/log/backupx-error.log
+StandardOutput=append:/var/log/ts-backups.log
+StandardError=append:/var/log/ts-backups-error.log
 
 [Install]
 WantedBy=multi-user.target
 ```
 
 ```ini
-# /etc/systemd/system/backupx.timer
+# /etc/systemd/system/ts-backups.timer
 [Unit]
-Description=Run backupx daily
+Description=Run ts-backups daily
 
 [Timer]
 OnCalendar=_-_-_ 02:00:00
@@ -161,11 +161,11 @@ WantedBy=timers.target
 ```bash
 # Enable and start the timer
 sudo systemctl daemon-reload
-sudo systemctl enable backupx.timer
-sudo systemctl start backupx.timer
+sudo systemctl enable ts-backups.timer
+sudo systemctl start ts-backups.timer
 
 # Check timer status
-sudo systemctl list-timers backupx.timer
+sudo systemctl list-timers ts-backups.timer
 ```
 
 ### Windows Task Scheduler
@@ -184,7 +184,7 @@ $action = New-ScheduledTaskAction -Execute "powershell.exe" -Argument "-File C:\
 $trigger = New-ScheduledTaskTrigger -Daily -At 2am
 $settings = New-ScheduledTaskSettingsSet -StartWhenAvailable
 
-Register-ScheduledTask -TaskName "BackupxDaily" -Action $action -Trigger $trigger -Settings $settings
+Register-ScheduledTask -TaskName "ts-backupsDaily" -Action $action -Trigger $trigger -Settings $settings
 ```
 
 ## Schedule Configuration
@@ -195,7 +195,7 @@ Define schedules in your configuration:
 
 ```ts
 // backups.config.ts
-import type { BackupConfig } from 'backupx'
+import type { BackupConfig } from 'ts-backups'
 
 export const config: BackupConfig = {
   verbose: true,
@@ -266,7 +266,7 @@ export const schedules = {
 Implement a grandfather-father-son backup rotation:
 
 ```ts
-import { createBackup } from 'backupx'
+import { createBackup } from 'ts-backups'
 
 const baseConfig = {
   databases: [
@@ -323,7 +323,7 @@ async function yearlyBackup() {
 Track backup execution and send notifications:
 
 ```ts
-import { createBackup, BackupSummary } from 'backupx'
+import { createBackup, BackupSummary } from 'ts-backups'
 
 interface BackupLog {
   timestamp: Date

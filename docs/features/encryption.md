@@ -1,6 +1,6 @@
 # Encryption
 
-Backupx supports encrypting your backups to protect sensitive data at rest. This guide covers encryption options, key management, and best practices for secure backup storage.
+ts-backups supports encrypting your backups to protect sensitive data at rest. This guide covers encryption options, key management, and best practices for secure backup storage.
 
 ## Built-in Compression with Encryption
 
@@ -9,7 +9,7 @@ Backupx supports encrypting your backups to protect sensitive data at rest. This
 Encrypt backups using GPG after creation:
 
 ```ts
-import { createBackup } from 'backupx'
+import { createBackup } from 'ts-backups'
 import { spawn } from 'node:child_process'
 import { join } from 'node:path'
 import { unlink } from 'node:fs/promises'
@@ -110,7 +110,7 @@ await decryptWithGPG(
 Use Node.js built-in crypto for encryption:
 
 ```ts
-import { createBackup } from 'backupx'
+import { createBackup } from 'ts-backups'
 import { createCipheriv, createDecipheriv, randomBytes, scryptSync } from 'node:crypto'
 import { createReadStream, createWriteStream } from 'node:fs'
 import { pipeline } from 'node:stream/promises'
@@ -322,7 +322,7 @@ async function decryptWithKMS(encrypted: Buffer, encryptedKey: Buffer): Promise<
 Use HashiCorp Vault for secrets management:
 
 ```ts
-import { createBackup } from 'backupx'
+import { createBackup } from 'ts-backups'
 
 async function getEncryptionKeyFromVault(): Promise<string> {
   const response = await fetch(`${process.env.VAULT_ADDR}/v1/secret/data/backup-keys`, {

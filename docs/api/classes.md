@@ -1,6 +1,6 @@
 # Classes API Reference
 
-This page documents all the main classes available in backupx.
+This page documents all the main classes available in ts-backups.
 
 ## BackupManager
 
@@ -21,7 +21,7 @@ class BackupManager {
 **Example:**
 
 ```ts
-import { BackupManager } from 'backupx'
+import { BackupManager } from 'ts-backups'
 
 const manager = new BackupManager({
   verbose: true,

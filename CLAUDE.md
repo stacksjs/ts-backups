@@ -770,11 +770,11 @@ dist/
   }
   ```
 
-## backupx Documentation
+## ts-backups Documentation
 
 **Scope:** General information based on the latest ./README.md content
 
-**Purpose:** Documentation for the backupx package
+**Purpose:** Documentation for the ts-backups package
 
 > A comprehensive TypeScript backup library for databases, files, and directories.
 
@@ -795,7 +795,7 @@ dist/
 
 ```bash
 # Using Bun (recommended)
-bun add backupx
+bun add ts-backups
 ```
 
 ## Quick Start
@@ -803,7 +803,7 @@ bun add backupx
 ### Programmatic Usage
 
 ```ts
-import { createBackup } from 'backupx'
+import { createBackup } from 'ts-backups'
 
 const config = {
   verbose: true,
@@ -901,7 +901,7 @@ test/
 Create a `backups.config.ts` file:
 
 ```ts
-import { BackupConfig } from 'backupx'
+import { BackupConfig } from 'ts-backups'
 
 export const config: BackupConfig = {
   verbose: true,
@@ -1040,7 +1040,7 @@ const summary = await manager.createBackup()
 ### Database-Specific Functions
 
 ```ts
-import { backupPostgreSQL, backupSQLite } from 'backupx'
+import { backupPostgreSQL, backupSQLite } from 'ts-backups'
 
 const result = await backupSQLite(sqliteConfig, './output')
 const result = await backupPostgreSQL(pgConfig, './output')

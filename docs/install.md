@@ -1,43 +1,43 @@
 # Installation
 
-Installing backupx is straightforward. Choose your preferred installation method below.
+Installing ts-backups is straightforward. Choose your preferred installation method below.
 
 ## Package Managers
 
-Install backupx using your favorite package manager:
+Install ts-backups using your favorite package manager:
 
 ::: code-group
 
 ```sh [bun]
 # Install as dependency
-bun add backupx
+bun add ts-backups
 
 # Install globally for CLI usage
-bun add -g backupx
+bun add -g ts-backups
 ```
 
 ```sh [npm]
 # Install as dependency
-npm install backupx
+npm install ts-backups
 
 # Install globally for CLI usage
-npm install -g backupx
+npm install -g ts-backups
 ```
 
 ```sh [pnpm]
 # Install as dependency
-pnpm add backupx
+pnpm add ts-backups
 
 # Install globally for CLI usage
-pnpm add -g backupx
+pnpm add -g ts-backups
 ```
 
 ```sh [yarn]
 # Install as dependency
-yarn add backupx
+yarn add ts-backups
 
 # Install globally for CLI usage
-yarn global add backupx
+yarn global add ts-backups
 ```
 
 :::
@@ -116,7 +116,7 @@ The following databases are supported with their respective requirements:
 
 ## Verification
 
-After installation, verify backupx is working correctly:
+After installation, verify ts-backups is working correctly:
 
 ### Check Version
 
@@ -125,7 +125,7 @@ After installation, verify backupx is working correctly:
 backups --version
 
 # If using npx/bunx
-bunx backupx --version
+bunx ts-backups --version
 ```
 
 ### Test Basic Functionality
@@ -141,7 +141,7 @@ backups start --verbose
 
 ## Configuration Setup
 
-After installation, you'll need to create a configuration file. backupx looks for configuration in the following locations (in order of precedence):
+After installation, you'll need to create a configuration file. ts-backups looks for configuration in the following locations (in order of precedence):
 
 1. `backups.config.ts` (TypeScript configuration)
 2. `backups.config.js` (JavaScript configuration)
@@ -153,7 +153,7 @@ Create a `backups.config.ts` file in your project root:
 
 ```ts
 // backups.config.ts
-import { BackupConfig, BackupType } from 'backupx'
+import { BackupConfig, BackupType } from 'ts-backups'
 
 const config: BackupConfig = {
   verbose: true,
@@ -198,12 +198,12 @@ backups start --verbose
 
 ## Development Installation
 
-If you want to contribute to backupx or run from source:
+If you want to contribute to ts-backups or run from source:
 
 ```sh
 # Clone the repository
 git clone https://github.com/stacksjs/ts-backups.git
-cd backupx
+cd ts-backups
 
 # Install dependencies
 bun install
@@ -220,15 +220,15 @@ bun run dev
 
 ## Docker Usage
 
-You can also use backupx in a Docker container:
+You can also use ts-backups in a Docker container:
 
 ```dockerfile
 FROM oven/bun:1
 
 WORKDIR /app
 
-# Install backupx
-RUN bun add -g backupx
+# Install ts-backups
+RUN bun add -g ts-backups
 
 # Copy your configuration
 COPY backups.config.ts .
@@ -247,7 +247,7 @@ If you encounter permission errors:
 
 ```sh
 # On macOS/Linux
-sudo chown -R $(whoami) /usr/local/bin/backupx
+sudo chown -R $(whoami) /usr/local/bin/ts-backups
 
 # Or install to user directory
 npm config set prefix ~/.local
@@ -285,7 +285,7 @@ If you encounter issues:
 
 ## Next Steps
 
-Now that backupx is installed, check out:
+Now that ts-backups is installed, check out:
 
 - [Quick Start Guide](/usage) - Get backing up immediately
 - [Configuration Reference](/config) - Detailed configuration options

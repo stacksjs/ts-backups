@@ -1,9 +1,9 @@
 import type { BunPressOptions } from 'bunpress'
 
 const config: BunPressOptions = {
-  name: 'backupx',
+  name: 'ts-backups',
   description: 'Database backups made simple',
-  url: 'https://backupx.stacksjs.org',
+  url: 'https://ts-backups.stacksjs.org',
   theme: {
     primaryColor: '#0A0ABC',
   },
@@ -20,7 +20,7 @@ const config: BunPressOptions = {
     {
       text: 'Introduction',
       items: [
-        { text: 'What is Backupx?', link: '/intro' },
+        { text: 'What is ts-backups?', link: '/intro' },
         { text: 'Installation', link: '/install' },
         { text: 'Usage', link: '/usage' },
         { text: 'Configuration', link: '/config' },
@@ -55,7 +55,7 @@ const config: BunPressOptions = {
   ],
   sitemap: {
     enabled: true,
-    baseUrl: 'https://backupx.stacksjs.org',
+    baseUrl: 'https://ts-backups.stacksjs.org',
   },
   robots: {
     enabled: true,

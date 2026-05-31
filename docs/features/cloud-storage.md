@@ -1,6 +1,6 @@
 # Cloud Storage
 
-Backupx can integrate with various cloud storage providers to store your backups securely off-site. This guide covers setting up cloud storage integration for disaster recovery and geographic redundancy.
+ts-backups can integrate with various cloud storage providers to store your backups securely off-site. This guide covers setting up cloud storage integration for disaster recovery and geographic redundancy.
 
 ## AWS S3 Integration
 
@@ -9,7 +9,7 @@ Backupx can integrate with various cloud storage providers to store your backups
 Upload backups to Amazon S3 after creation:
 
 ```ts
-import { createBackup } from 'backupx'
+import { createBackup } from 'ts-backups'
 import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3'
 import { readFile, readdir } from 'node:fs/promises'
 import { join } from 'node:path'
@@ -110,7 +110,7 @@ async function configureS3Lifecycle() {
 Upload backups to Google Cloud Storage:
 
 ```ts
-import { createBackup } from 'backupx'
+import { createBackup } from 'ts-backups'
 import { Storage } from '@google-cloud/storage'
 import { join } from 'node:path'
 
@@ -168,7 +168,7 @@ async function backupToGCS() {
 Upload backups to Azure Blob Storage:
 
 ```ts
-import { createBackup } from 'backupx'
+import { createBackup } from 'ts-backups'
 import { BlobServiceClient } from '@azure/storage-blob'
 import { readFile } from 'node:fs/promises'
 import { join } from 'node:path'
@@ -225,7 +225,7 @@ async function backupToAzure() {
 Upload backups to multiple cloud providers for redundancy:
 
 ```ts
-import { createBackup } from 'backupx'
+import { createBackup } from 'ts-backups'
 import { uploadToS3 } from './cloud/s3'
 import { uploadToGCS } from './cloud/gcs'
 import { uploadToAzure } from './cloud/azure'
@@ -305,7 +305,7 @@ async function backupToMultiCloud() {
 Cloudflare R2 uses S3-compatible APIs:
 
 ```ts
-import { createBackup } from 'backupx'
+import { createBackup } from 'ts-backups'
 import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3'
 import { readFile } from 'node:fs/promises'
 import { join } from 'node:path'

@@ -4,7 +4,7 @@ import { join } from 'node:path'
 import { Logger } from '@stacksjs/clarity'
 import { BackupType } from '../types'
 
-const logger = new Logger('backupx:mysql')
+const logger = new Logger('ts-backups:mysql')
 
 // Note: Bun's MySQL support is still in development
 // For now, we'll use a placeholder implementation that shows the structure
@@ -55,7 +55,7 @@ export async function backupMySQL(
     sqlDump += `-- MySQL Database Backup\n`
     sqlDump += `-- Database: ${typeof config.connection === 'string' ? 'from connection string' : config.connection.database}\n`
     sqlDump += `-- Generated: ${new Date().toISOString()}\n`
-    sqlDump += `-- Backup tool: backupx\n`
+    sqlDump += `-- Backup tool: ts-backups\n`
     sqlDump += `-- Note: This is a placeholder until Bun adds MySQL support\n\n`
 
     sqlDump += `-- MySQL support is currently in development for Bun\n`

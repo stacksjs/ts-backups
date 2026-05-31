@@ -1,12 +1,12 @@
 <p align="center"><img src=".github/art/cover.jpg" alt="Social Card of this repo"></p>
 
-[![npm version](https://img.shields.io/npm/v/backupx?style=flat-square)](https://npmjs.com/package/backupx)
+[![npm version](https://img.shields.io/npm/v/ts-backups?style=flat-square)](https://npmjs.com/package/ts-backups)
 [![GitHub Actions](https://img.shields.io/github/actions/workflow/status/stacksjs/ts-backups/ci.yml?style=flat-square&branch=main)](https://github.com/stacksjs/ts-backups/actions?query=workflow%3Aci)
 [![Commitizen friendly](https://img.shields.io/badge/commitizen-friendly-brightgreen.svg)](http://commitizen.github.io/cz-cli/)
 <!-- [![npm downloads][npm-downloads-src]][npm-downloads-href] -->
 <!-- [![Codecov][codecov-src]][codecov-href] -->
 
-# backupx
+# ts-backups
 
 > A comprehensive TypeScript backup library for databases, files, and directories.
 
@@ -27,7 +27,7 @@
 
 ```bash
 # Using Bun (recommended)
-bun add backupx
+bun add ts-backups
 ```
 
 ## Quick Start
@@ -35,7 +35,7 @@ bun add backupx
 ### Programmatic Usage
 
 ```ts
-import { createBackup } from 'backupx'
+import { createBackup } from 'ts-backups'
 
 const config = {
   verbose: true,
@@ -133,7 +133,7 @@ test/
 Create a `backups.config.ts` file:
 
 ```ts
-import { BackupConfig } from 'backupx'
+import { BackupConfig } from 'ts-backups'
 
 export const config: BackupConfig = {
   verbose: true,
@@ -272,7 +272,7 @@ const summary = await manager.createBackup()
 ### Database-Specific Functions
 
 ```ts
-import { backupPostgreSQL, backupSQLite } from 'backupx'
+import { backupPostgreSQL, backupSQLite } from 'ts-backups'
 
 const result = await backupSQLite(sqliteConfig, './output')
 const result = await backupPostgreSQL(pgConfig, './output')

@@ -1,13 +1,13 @@
 # Advanced Configuration
 
-Backupx offers extensive configuration options for customizing backup behavior, output formats, and scheduling. This guide covers advanced configuration patterns and best practices.
+ts-backups offers extensive configuration options for customizing backup behavior, output formats, and scheduling. This guide covers advanced configuration patterns and best practices.
 
 ## Configuration File Structure
 
 Create a `backups.config.ts` file in your project root:
 
 ```ts
-import type { BackupConfig } from 'backupx'
+import type { BackupConfig } from 'ts-backups'
 
 const config: BackupConfig = {
   // Global settings
@@ -58,7 +58,7 @@ Create different configurations for different environments:
 
 ```ts
 // backups.config.ts
-import type { BackupConfig } from 'backupx'
+import type { BackupConfig } from 'ts-backups'
 
 const isDev = process.env.NODE_ENV === 'development'
 const isProd = process.env.NODE_ENV === 'production'
@@ -106,7 +106,7 @@ export default config
 Generate configuration based on runtime conditions:
 
 ```ts
-import type { BackupConfig, DatabaseBackupConfig } from 'backupx'
+import type { BackupConfig, DatabaseBackupConfig } from 'ts-backups'
 import { readdir, stat } from 'node:fs/promises'
 import { join } from 'node:path'
 
@@ -153,7 +153,7 @@ const config = await createDynamicConfig()
 Validate configuration before running backups:
 
 ```ts
-import type { BackupConfig } from 'backupx'
+import type { BackupConfig } from 'ts-backups'
 import { existsSync } from 'node:fs'
 
 interface ValidationResult {
@@ -231,7 +231,7 @@ Define reusable configuration presets:
 
 ```ts
 // config/presets.ts
-import type { BackupConfig } from 'backupx'
+import type { BackupConfig } from 'ts-backups'
 
 export const presets = {
   // Minimal backup for development
@@ -285,7 +285,7 @@ const config: BackupConfig = {
 Merge multiple configuration sources:
 
 ```ts
-import type { BackupConfig } from 'backupx'
+import type { BackupConfig } from 'ts-backups'
 
 function mergeConfigs(...configs: Partial<BackupConfig>[]): BackupConfig {
   return configs.reduce((merged, config) => ({

@@ -1,6 +1,6 @@
 # Programmatic Usage
 
-backupx is designed to be used programmatically in your applications, allowing for custom integration, automation, and advanced backup workflows.
+ts-backups is designed to be used programmatically in your applications, allowing for custom integration, automation, and advanced backup workflows.
 
 ## Overview
 
@@ -17,8 +17,8 @@ Programmatic usage enables:
 ### Simple Backup
 
 ```ts
-import type { BackupConfig } from 'backupx'
-import { BackupManager, BackupType } from 'backupx'
+import type { BackupConfig } from 'ts-backups'
+import { BackupManager, BackupType } from 'ts-backups'
 
 const config: BackupConfig = {
   verbose: true,
@@ -62,7 +62,7 @@ import {
   backupMySQL,
   backupPostgreSQL,
   backupSQLite
-} from 'backupx'
+} from 'ts-backups'
 
 // Database backups
 const sqliteResult = await backupSQLite({
