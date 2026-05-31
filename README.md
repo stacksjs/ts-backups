@@ -1,7 +1,7 @@
 <p align="center"><img src=".github/art/cover.jpg" alt="Social Card of this repo"></p>
 
 [![npm version](https://img.shields.io/npm/v/backupx?style=flat-square)](https://npmjs.com/package/backupx)
-[![GitHub Actions](https://img.shields.io/github/actions/workflow/status/stacksjs/backupx/ci.yml?style=flat-square&branch=main)](https://github.com/stacksjs/backupx/actions?query=workflow%3Aci)
+[![GitHub Actions](https://img.shields.io/github/actions/workflow/status/stacksjs/ts-backups/ci.yml?style=flat-square&branch=main)](https://github.com/stacksjs/ts-backups/actions?query=workflow%3Aci)
 [![Commitizen friendly](https://img.shields.io/badge/commitizen-friendly-brightgreen.svg)](http://commitizen.github.io/cz-cli/)
 <!-- [![npm downloads][npm-downloads-src]][npm-downloads-href] -->
 <!-- [![Codecov][codecov-src]][codecov-href] -->
@@ -317,5 +317,5 @@ Made with 💙
 
 <!-- Badges -->
 
-<!-- [codecov-src]: https://img.shields.io/codecov/c/gh/stacksjs/backupx/main?style=flat-square
-[codecov-href]: https://codecov.io/gh/stacksjs/backupx -->
+<!-- [codecov-src]: https://img.shields.io/codecov/c/gh/stacksjs/ts-backups/main?style=flat-square
+[codecov-href]: https://codecov.io/gh/stacksjs/ts-backups -->

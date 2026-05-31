@@ -13,7 +13,7 @@ hero:
       link: /intro
     - theme: alt
       text: View on GitHub
-      link: https://github.com/stacksjs/backupx
+      link: https://github.com/stacksjs/ts-backups
 
 features:
   - title: "Database Backups"

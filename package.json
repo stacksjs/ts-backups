@@ -1,17 +1,17 @@
 {
-  "name": "backupx",
+  "name": "ts-backups",
   "type": "module",
   "version": "0.1.2",
   "description": "A simple TypeScript starter kit using Bun.",
   "author": "Chris Breuer <chris@stacksjs.org>",
   "license": "MIT",
-  "homepage": "https://github.com/stacksjs/backupx#readme",
+  "homepage": "https://github.com/stacksjs/ts-backups#readme",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/stacksjs/backupx.git"
+    "url": "git+https://github.com/stacksjs/ts-backups.git"
   },
   "bugs": {
-    "url": "https://github.com/stacksjs/backupx/issues"
+    "url": "https://github.com/stacksjs/ts-backups/issues"
   },
   "keywords": [
     "typescript",

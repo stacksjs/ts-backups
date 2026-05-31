@@ -50,35 +50,35 @@ For environments where you can't install Node.js/Bun packages, use our precompil
 
 ```sh [macOS (Apple Silicon)]
 # Download and install
-curl -L https://github.com/stacksjs/backupx/releases/latest/download/backups-darwin-arm64 -o backups
+curl -L https://github.com/stacksjs/ts-backups/releases/latest/download/backups-darwin-arm64 -o backups
 chmod +x backups
 sudo mv backups /usr/local/bin/
 ```
 
 ```sh [macOS (Intel)]
 # Download and install
-curl -L https://github.com/stacksjs/backupx/releases/latest/download/backups-darwin-x64 -o backups
+curl -L https://github.com/stacksjs/ts-backups/releases/latest/download/backups-darwin-x64 -o backups
 chmod +x backups
 sudo mv backups /usr/local/bin/
 ```
 
 ```sh [Linux (ARM64)]
 # Download and install
-curl -L https://github.com/stacksjs/backupx/releases/latest/download/backups-linux-arm64 -o backups
+curl -L https://github.com/stacksjs/ts-backups/releases/latest/download/backups-linux-arm64 -o backups
 chmod +x backups
 sudo mv backups /usr/local/bin/
 ```
 
 ```sh [Linux (x64)]
 # Download and install
-curl -L https://github.com/stacksjs/backupx/releases/latest/download/backups-linux-x64 -o backups
+curl -L https://github.com/stacksjs/ts-backups/releases/latest/download/backups-linux-x64 -o backups
 chmod +x backups
 sudo mv backups /usr/local/bin/
 ```
 
 ```sh [Windows (x64)]
 # Download the binary
-curl -L https://github.com/stacksjs/backupx/releases/latest/download/backups-windows-x64.exe -o backups.exe
+curl -L https://github.com/stacksjs/ts-backups/releases/latest/download/backups-windows-x64.exe -o backups.exe
 
 # Move to your PATH (adjust path as needed)
 move backups.exe C:\Windows\System32\backups.exe
@@ -202,7 +202,7 @@ If you want to contribute to backupx or run from source:
 
 ```sh
 # Clone the repository
-git clone https://github.com/stacksjs/backupx.git
+git clone https://github.com/stacksjs/ts-backups.git
 cd backupx
 
 # Install dependencies
@@ -279,7 +279,7 @@ For database connectivity problems:
 
 If you encounter issues:
 
-1. Check our [GitHub Issues](https://github.com/stacksjs/backupx/issues)
+1. Check our [GitHub Issues](https://github.com/stacksjs/ts-backups/issues)
 2. Join our [Discord Community](https://discord.gg/stacksjs)
 3. Review the [Configuration Reference](/config) guide
 

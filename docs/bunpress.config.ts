@@ -13,7 +13,7 @@ const config: BunPressOptions = {
     { text: 'Advanced', link: '/advanced/configuration' },
     {
       text: 'Changelog',
-      link: 'https://github.com/stacksjs/backupx/blob/main/CHANGELOG.md',
+      link: 'https://github.com/stacksjs/ts-backups/blob/main/CHANGELOG.md',
     },
   ],
   sidebar: [
