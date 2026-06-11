@@ -256,6 +256,42 @@ export const config: BackupConfig = {
 - Binary and text file support
 - Custom filename and output path configuration
 
+### Off-machine Destinations
+
+#### S3 (and S3-compatible) ✅ Supported
+
+Every produced backup is uploaded to each configured destination after the
+local backups complete and **before** local retention runs (so a fresh
+upload is never pruned out from under it). Uses Bun's native `S3Client`, so
+it works with AWS S3, Cloudflare R2, MinIO, Hetzner Object Storage, etc.
+
+```ts
+const summary = await new BackupManager({
+  verbose: true,
+  databases: [{ type: BackupType.SQLITE, name: 'app', path: './app.db' }],
+  files: [{ name: 'uploads', path: './storage/uploads' }],
+  outputPath: './backups',
+  retention: { count: 7 },
+  destinations: [
+    {
+      type: 's3',
+      bucket: 'my-backups',
+      prefix: 'app/',            // optional key prefix
+      region: 'us-east-1',       // or AWS_REGION env
+      // endpoint: 'https://...' // for R2/MinIO/etc.
+      optional: true,            // skip (don't fail) when no credentials
+    },
+  ],
+}).createBackup()
+
+console.log(summary.uploads) // [{ destination: 's3', target, success, skipped? }]
+```
+
+Credentials are read from the standard `AWS_ACCESS_KEY_ID` /
+`AWS_SECRET_ACCESS_KEY` (or `S3_*`) environment variables. With
+`optional: true` (the default), a run with no credentials uploads nothing
+and is **not** reported as a failure — the local backup still succeeds.
+
 ## API Reference
 
 ### `createBackup(config: BackupConfig): Promise<BackupSummary>`

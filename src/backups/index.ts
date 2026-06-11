@@ -1,4 +1,4 @@
-import type { BackupConfig, BackupResult, BackupSummary, DatabaseConfig, FileConfig } from '../types'
+import type { BackupConfig, BackupResult, BackupSummary, DatabaseConfig, FileConfig, UploadResult } from '../types'
 import { mkdir, readdir, stat, unlink } from 'node:fs/promises'
 import { join } from 'node:path'
 import { Logger } from '@stacksjs/clarity'
@@ -7,6 +7,7 @@ import { backupDirectory } from './directory'
 import { backupFile } from './file'
 import { backupMySQL } from './mysql'
 import { backupPostgreSQL } from './postgresql'
+import { uploadToS3 } from './s3'
 import { backupSQLite } from './sqlite'
 
 export class BackupManager {
@@ -96,6 +97,11 @@ export class BackupManager {
       }
     }
 
+    // Upload successful backups to any configured off-machine destinations
+    // BEFORE local retention runs, so a freshly-uploaded file is never
+    // pruned out from under the upload.
+    const uploads = await this.uploadBackups(results, outputPath)
+
     // Clean up old backups if retention policy is configured
     if (this.config.retention) {
       await this.cleanupOldBackups(outputPath)
@@ -111,6 +117,7 @@ export class BackupManager {
       failureCount: results.filter(r => !r.success).length,
       databaseBackups: results.filter(r => [BackupType.SQLITE, BackupType.POSTGRESQL, BackupType.MYSQL].includes(r.type)),
       fileBackups: results.filter(r => [BackupType.DIRECTORY, BackupType.FILE].includes(r.type)),
+      uploads: uploads.length > 0 ? uploads : undefined,
     }
 
     if (this.config.verbose) {
@@ -164,6 +171,40 @@ export class BackupManager {
       const verboseConfig = { ...fileConfig, verbose: fileConfig.verbose ?? this.config.verbose }
       return await backupFile(verboseConfig, outputPath)
     }
+  }
+
+  /** Upload every successfully produced backup to each configured destination. */
+  private async uploadBackups(results: BackupResult[], outputPath: string): Promise<UploadResult[]> {
+    const destinations = this.config.destinations
+    if (!destinations || destinations.length === 0)
+      return []
+
+    const logger = new Logger('ts-backups:upload')
+    const uploads: UploadResult[] = []
+
+    for (const result of results) {
+      if (!result.success || !result.filename)
+        continue
+      const localFile = join(outputPath, result.filename)
+
+      for (const dest of destinations) {
+        if (dest.type === 's3') {
+          uploads.push(await uploadToS3(dest, localFile, this.config.verbose))
+        }
+        else if (this.config.verbose) {
+          logger.warn(`Unknown destination type: ${(dest as any).type}`)
+        }
+      }
+    }
+
+    if (this.config.verbose && uploads.length > 0) {
+      const ok = uploads.filter(u => u.success && !u.skipped).length
+      const skipped = uploads.filter(u => u.skipped).length
+      const failed = uploads.filter(u => !u.success).length
+      logger.warn(`☁️  Uploads: ${ok} succeeded, ${skipped} skipped, ${failed} failed`)
+    }
+
+    return uploads
   }
 
   private async ensureDirectoryExists(path: string): Promise<void> {
@@ -310,5 +351,6 @@ export { backupDirectory } from './directory'
 export { backupFile } from './file'
 export { backupMySQL } from './mysql'
 export { backupPostgreSQL } from './postgresql'
+export { uploadToS3 } from './s3'
 // Export individual backup functions for direct use
 export { backupSQLite } from './sqlite'

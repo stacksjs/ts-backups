@@ -12,6 +12,8 @@ export interface BackupConfig {
   files: FileConfig[]
   outputPath?: string
   retention?: RetentionConfig
+  /** Off-machine destinations every produced backup is uploaded to. */
+  destinations?: BackupDestination[]
 }
 
 export interface RetentionConfig {
@@ -19,6 +21,29 @@ export interface RetentionConfig {
   count?: number
   /** Age in days after which backups are deleted */
   maxAge?: number
+}
+
+export type BackupDestination = S3Destination
+
+export interface S3Destination {
+  type: 's3'
+  /** Target bucket. */
+  bucket: string
+  /** Key prefix within the bucket (e.g. "mail/"). */
+  prefix?: string
+  /** AWS region (falls back to AWS_REGION / AWS_DEFAULT_REGION env). */
+  region?: string
+  /**
+   * Custom S3-compatible endpoint (e.g. for Cloudflare R2, MinIO, Hetzner
+   * Object Storage). Omit for AWS.
+   */
+  endpoint?: string
+  /**
+   * Skip silently when credentials are absent rather than failing the
+   * backup run. Default true — a backup that ran locally shouldn't be
+   * reported as failed just because the off-site copy couldn't upload.
+   */
+  optional?: boolean
 }
 
 export type DatabaseConfig = SQLiteConfig | PostgreSQLConfig | MySQLConfig
@@ -127,6 +152,21 @@ export interface BackupSummary {
   /** Breakdown by backup type */
   databaseBackups: BackupResult[]
   fileBackups: BackupResult[]
+  /** Off-machine upload results, when destinations are configured. */
+  uploads?: UploadResult[]
+}
+
+export interface UploadResult {
+  /** Destination kind ("s3"). */
+  destination: string
+  /** The backup file that was uploaded. */
+  filename: string
+  /** Remote URI it was uploaded to (e.g. s3://bucket/prefix/file). */
+  target: string
+  success: boolean
+  /** True when skipped because credentials were absent and optional=true. */
+  skipped?: boolean
+  error?: string
 }
 
 export interface RestoreOptions {
