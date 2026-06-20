@@ -83,71 +83,157 @@ export async function backupDirectory(config: FileConfig, outputPath: string): P
 async function getFilesToBackup(config: FileConfig): Promise<string[]> {
   const files: string[] = []
 
-  async function scanDirectory(dirPath: string): Promise<void> {
+  // Compile the glob patterns ONCE up front. Compiling them per-entry (as this
+  // used to) means tens of millions of `new RegExp` calls on a large tree —
+  // e.g. ~30 patterns over a 1.4M-file source dir — which dominates the run and
+  // turns a few-second walk into several minutes.
+  const includeM = compileMatcher(config.include)
+  const excludeM = compileMatcher(config.exclude)
+
+  // `relDir` is the entry's directory path relative to config.path, using '/'
+  // separators. We thread it down the recursion and append entry names, which
+  // avoids calling the (surprisingly expensive) path.relative() once per entry
+  // — on a 1.4M-file tree that single change is the difference between minutes
+  // and seconds. Patterns are matched against this '/'-joined form directly.
+  async function scanDirectory(dirPath: string, relDir: string): Promise<void> {
+    let entries
     try {
-      const entries = await readdir(dirPath, { withFileTypes: true })
+      entries = await readdir(dirPath, { withFileTypes: true })
+    }
+    catch {
+      return // Skip directories we can't read
+    }
 
-      for (const entry of entries) {
-        const fullPath = join(dirPath, entry.name)
-        const relativePath = relative(config.path, fullPath)
+    for (const entry of entries) {
+      const relativePath = relDir ? `${relDir}/${entry.name}` : entry.name
 
-        // Check exclusions
-        if (config.exclude && matchesPatterns(relativePath, config.exclude)) {
-          continue
-        }
+      // Exclusions apply to BOTH files and directories, so an excluded
+      // directory (e.g. node_modules) is pruned before we descend into it.
+      if (excludeM && matches(excludeM, relDir, entry.name, relativePath)) {
+        continue
+      }
 
-        // Check inclusions (if specified)
-        if (config.include && !matchesPatterns(relativePath, config.include)) {
-          continue
-        }
+      const fullPath = join(dirPath, entry.name)
 
-        if (entry.isDirectory()) {
-          await scanDirectory(fullPath)
-        }
-        else if (entry.isFile()) {
-          // Check file size limit
-          if (config.maxFileSize) {
-            const stats = await stat(fullPath)
-            if (stats.size > config.maxFileSize) {
-              continue
-            }
-          }
+      if (entry.isDirectory()) {
+        // Always recurse into non-excluded directories. `include` is a FILE
+        // filter only — applying it to directories would halt traversal
+        // before we ever reached the matching files inside them (e.g. an
+        // `include: ['**/.env']` pattern would never enter any subfolder).
+        await scanDirectory(fullPath, relativePath)
+        continue
+      }
 
-          files.push(fullPath)
-        }
-        else if (entry.isSymbolicLink() && config.followSymlinks) {
+      // Inclusions (if specified) gate individual files/symlinked files.
+      if (includeM && !matches(includeM, relDir, entry.name, relativePath)) {
+        continue
+      }
+
+      if (entry.isFile()) {
+        // Check file size limit
+        if (config.maxFileSize) {
           const stats = await stat(fullPath)
-          if (stats.isDirectory()) {
-            await scanDirectory(fullPath)
+          if (stats.size > config.maxFileSize) {
+            continue
           }
-          else if (stats.isFile()) {
-            files.push(fullPath)
-          }
+        }
+
+        files.push(fullPath)
+      }
+      else if (entry.isSymbolicLink() && config.followSymlinks) {
+        const stats = await stat(fullPath)
+        if (stats.isDirectory()) {
+          await scanDirectory(fullPath, relativePath)
+        }
+        else if (stats.isFile()) {
+          files.push(fullPath)
         }
       }
     }
-    catch {
-      // Skip directories we can't read
-    }
   }
 
-  await scanDirectory(config.path)
+  await scanDirectory(config.path, '')
   return files
 }
 
+/** Translate a single glob pattern into an anchored RegExp. */
 // eslint-disable-next-line pickier/no-unused-vars
-function matchesPatterns(filePath: string, patterns: string[]): boolean {
+function compilePattern(pattern: string): RegExp {
   // eslint-disable-next-line pickier/no-unused-vars
-  return patterns.some((pattern) => {
-    const regex = new RegExp(
-      `^${pattern
-        .replace(/\./g, '\\.')
-        .replace(/\*/g, '.*')
-        .replace(/\?/g, '.')
-        .replace(/\//g, '[\\/\\\\]')}$`,
-    )
-    return regex.test(filePath) || regex.test(filePath.replace(/\\/g, '/'))
-  })
+  return new RegExp(
+    `^${pattern
+      .replace(/\./g, '\\.')
+      .replace(/\*/g, '.*')
+      .replace(/\?/g, '.')
+      .replace(/\//g, '[\\/\\\\]')}$`,
+  )
+}
+
+/**
+ * A set of glob patterns precompiled for fast repeated matching against a huge
+ * file tree. The overwhelmingly common patterns — a plain directory/file name
+ * (`node_modules`) or that same name at any depth (`**​/node_modules`) — are
+ * lifted out of regex-land into O(1) Set lookups on the basename, so a walk of
+ * a 1.4M-file tree does one Set check per entry instead of dozens of regex
+ * tests. Anything with embedded globs or path separators still falls back to a
+ * compiled RegExp, preserving the original semantics exactly.
+ */
+interface CompiledMatcher {
+  /** `**​/<name>` → match a non-root entry whose basename is <name>. */
+  anywhereNames: Set<string>
+  /** `<name>` → match only the root-level entry whose basename is <name>. */
+  topLevelNames: Set<string>
+  /** Everything else (real globs, paths with separators). */
+  regexes: RegExp[]
+}
+
+/** A plain token: no glob metacharacters (`*`, `?`) and no path separator. */
+function isLiteralToken(token: string): boolean {
+  return token.length > 0
+    && !token.includes('*')
+    && !token.includes('?')
+    && !token.includes('/')
+}
+
+function compileMatcher(patterns?: string[]): CompiledMatcher | null {
+  if (!patterns || patterns.length === 0)
+    return null
+
+  const anywhereNames = new Set<string>()
+  const topLevelNames = new Set<string>()
+  const regexes: RegExp[] = []
+
+  for (const pattern of patterns) {
+    const anywhere = pattern.startsWith('**/') ? pattern.slice(3) : null
+    if (anywhere !== null && isLiteralToken(anywhere))
+      anywhereNames.add(anywhere)
+    else if (isLiteralToken(pattern))
+      topLevelNames.add(pattern)
+    else
+      regexes.push(compilePattern(pattern))
+  }
+
+  return { anywhereNames, topLevelNames, regexes }
+}
+
+/**
+ * Test one entry against a compiled matcher. `relDir` is the entry's parent
+ * path relative to the backup root ('' at the root); `name` is the basename;
+ * `relativePath` is the '/'-joined full relative path used for glob regexes.
+ */
+function matches(m: CompiledMatcher, relDir: string, name: string, relativePath: string): boolean {
+  if (relDir === '') {
+    if (m.topLevelNames.has(name))
+      return true
+  }
+  else if (m.anywhereNames.has(name)) {
+    return true
+  }
+  for (const re of m.regexes) {
+    if (re.test(relativePath))
+      return true
+  }
+  return false
 }
 
 async function createArchive(
