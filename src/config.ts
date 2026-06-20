@@ -19,7 +19,9 @@ let _config: BackupConfig | null = null
 export async function getConfig(): Promise<BackupConfig> {
   if (!_config) {
     _config = await loadConfig({
-  name: 'backup',
+  // Resolves `backups.config.ts` (and .js/.json/etc.) from the cwd. Keep this
+  // in sync with the CLI name (`backups`) and the documented config filename.
+  name: 'backups',
   defaultConfig,
 })
   }
