@@ -61,6 +61,7 @@ export class BackupManager {
     for (const fileConfig of this.config.files) {
       // Determine type programmatically
       let fileType: 'directory' | 'file'
+      let sourceExists = true
       try {
         const stats = await stat(fileConfig.path)
         fileType = stats.isDirectory() ? 'directory' : 'file'
@@ -68,6 +69,26 @@ export class BackupManager {
       catch {
         // If we can't stat the file, assume it's a file and let the backup function handle the error
         fileType = 'file'
+        sourceExists = false
+      }
+
+      // An optional source that isn't here is skipped, not failed — so a config
+      // shared across machines stays green when an app/credential is absent.
+      if (!sourceExists && fileConfig.optional) {
+        results.push({
+          name: fileConfig.name,
+          type: fileType === 'directory' ? BackupType.DIRECTORY : BackupType.FILE,
+          filename: '',
+          size: 0,
+          duration: 0,
+          success: false,
+          skipped: true,
+          error: `Source not found (optional): ${fileConfig.path}`,
+        })
+        if (this.config.verbose) {
+          logger.warn(`⏭️  Skipping optional ${fileConfig.name} — not present at ${fileConfig.path}`)
+        }
+        continue
       }
 
       if (this.config.verbose) {
@@ -114,7 +135,8 @@ export class BackupManager {
       results,
       totalDuration,
       successCount: results.filter(r => r.success).length,
-      failureCount: results.filter(r => !r.success).length,
+      // Skipped optional sources are not failures.
+      failureCount: results.filter(r => !r.success && !r.skipped).length,
       databaseBackups: results.filter(r => [BackupType.SQLITE, BackupType.POSTGRESQL, BackupType.MYSQL].includes(r.type)),
       fileBackups: results.filter(r => [BackupType.DIRECTORY, BackupType.FILE].includes(r.type)),
       uploads: uploads.length > 0 ? uploads : undefined,
@@ -305,6 +327,9 @@ export class BackupManager {
     logger.warn(`⏱️  Total duration: ${summary.totalDuration.toFixed(2)}ms`)
     logger.warn(`✅ Successful: ${summary.successCount}`)
     logger.warn(`❌ Failed: ${summary.failureCount}`)
+    const skipped = summary.results.filter(r => r.skipped).length
+    if (skipped > 0)
+      logger.warn(`⏭️  Skipped (optional, absent): ${skipped}`)
 
     if (summary.databaseBackups.length > 0) {
       logger.warn('\n🗄️  Database Backups:')
@@ -324,7 +349,7 @@ export class BackupManager {
     if (summary.fileBackups.length > 0) {
       logger.warn('\n📁 File Backups:')
       for (const result of summary.fileBackups) {
-        const status = result.success ? '✅' : '❌'
+        const status = result.skipped ? '⏭️' : result.success ? '✅' : '❌'
         const size = result.success ? `${(result.size / 1024 / 1024).toFixed(2)} MB` : 'N/A'
         const duration = `${result.duration.toFixed(2)}ms`
         const fileCount = result.fileCount ? ` (${result.fileCount} files)` : ''

@@ -72,6 +72,12 @@ export interface FileConfig {
   filename?: string
   /** Whether to preserve file permissions and timestamps */
   preserveMetadata?: boolean
+  /**
+   * When true, a missing source path is reported as *skipped* rather than
+   * *failed*, so a config shared across machines isn't marked failed just
+   * because an app/credential isn't installed on this one.
+   */
+  optional?: boolean
 
   // Directory-specific options (ignored if path is a file)
   /** Glob patterns to include (if not specified, all files are included) */
@@ -142,6 +148,8 @@ export interface BackupResult {
   error?: string
   /** Number of files included (for file backups) */
   fileCount?: number
+  /** True when an optional source was absent and intentionally not backed up. */
+  skipped?: boolean
 }
 
 export interface BackupSummary {
