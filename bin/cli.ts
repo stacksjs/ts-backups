@@ -2,7 +2,7 @@ import process from 'node:process'
 import { CLI as CAC } from '@stacksjs/clapp'
 import { version } from '../package.json'
 import { BackupManager } from '../src/backups'
-import { config } from '../src/config'
+import { getConfig } from '../src/config'
 import { RestoreManager } from '../src/restore'
 
 const cli = new CAC('backups')
@@ -31,7 +31,9 @@ cli
   .example('backups start --verbose')
   .action(async (options?: CliOption) => {
     try {
-      // Override config verbosity if CLI option is provided
+      // Load the user's backups.config.ts (falls back to defaults), then let
+      // the CLI --verbose flag win over the file's setting.
+      const config = await getConfig()
       const backupConfig = {
         ...config,
         verbose: options?.verbose ?? config.verbose,
@@ -70,6 +72,7 @@ cli
   .example('backups restore --snapshot gitconfig_2026-05-30T17-30-00-000Z')
   .action(async (options?: RestoreCliOption) => {
     try {
+      const config = await getConfig()
       const restoreConfig = {
         ...config,
         verbose: options?.verbose ?? config.verbose,
