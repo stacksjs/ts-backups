@@ -288,13 +288,31 @@ export class BackupManager {
       const { count, maxAge } = this.config.retention
       const filesToDelete: string[] = []
 
-      // Remove files that exceed the count limit
-      if (count && backupFiles.length > count) {
-        const excessFiles = backupFiles.slice(count)
-        filesToDelete.push(...excessFiles.map(f => f.path))
+      // The `count` limit is PER backup entry, not global. Each snapshot is
+      // named `<base>_<ISO-timestamp><ext>`, so group by that base before
+      // applying `count` — otherwise a config with more entries than `count`
+      // would delete whole entries (e.g. 14 entries, count 10 → the 4 oldest
+      // entries vanish on every run). Files that don't carry a timestamp fall
+      // back to their own name as the group key.
+      if (count) {
+        const groups = new Map<string, typeof backupFiles>()
+        for (const file of backupFiles) {
+          const base = file.name.replace(/_\d{4}-\d{2}-\d{2}T[\d-]+Z.*$/, '')
+          const key = base === file.name ? file.name : base
+          const group = groups.get(key)
+          if (group)
+            group.push(file)
+          else
+            groups.set(key, [file])
+        }
+        for (const group of groups.values()) {
+          // group is already newest-first (inherited from the global sort)
+          if (group.length > count)
+            filesToDelete.push(...group.slice(count).map(f => f.path))
+        }
       }
 
-      // Remove files that exceed the age limit
+      // The age limit applies to every file regardless of entry.
       if (maxAge) {
         const oldFiles = backupFiles.filter(f => f.age > maxAge)
         for (const file of oldFiles) {

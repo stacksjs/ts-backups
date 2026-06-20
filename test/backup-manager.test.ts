@@ -2,7 +2,7 @@ import type { BackupConfig } from '../src/types'
 import { Database } from 'bun:sqlite'
 import { afterEach, beforeEach, describe, expect, it } from 'bun:test'
 import { existsSync } from 'node:fs'
-import { mkdir, readdir, rmdir, unlink, writeFile } from 'node:fs/promises'
+import { mkdir, readdir, rmdir, unlink, utimes, writeFile } from 'node:fs/promises'
 import { join } from 'node:path'
 import { BackupManager, createBackup } from '../src/backups'
 import { BackupType } from '../src/types'
@@ -435,21 +435,29 @@ describe('BackupManager', () => {
         ],
       }
 
-      // Create old backup files to test cleanup
-      await writeFile(join(testOutputDir, 'old_backup1.sql'), 'old backup 1')
-      await writeFile(join(testOutputDir, 'old_backup2.tar'), 'old backup 2')
-      await writeFile(join(testOutputDir, 'old_backup3.txt'), 'old backup 3')
-
-      // Wait a bit to ensure timestamp difference
-      await new Promise(resolve => setTimeout(resolve, 10))
+      // Seed three old snapshots of the SAME entry (test-db), with explicit
+      // old mtimes so ordering is deterministic. Retention `count` is per
+      // entry, so after a new run this group should be trimmed to the 2 newest.
+      const oldDb1 = join(testOutputDir, 'test-db_2020-01-01T00-00-00-000Z.sql')
+      const oldDb2 = join(testOutputDir, 'test-db_2020-01-02T00-00-00-000Z.sql')
+      const oldDb3 = join(testOutputDir, 'test-db_2020-01-03T00-00-00-000Z.sql')
+      await writeFile(oldDb1, 'old db 1')
+      await writeFile(oldDb2, 'old db 2')
+      await writeFile(oldDb3, 'old db 3')
+      await utimes(oldDb1, new Date('2020-01-01'), new Date('2020-01-01'))
+      await utimes(oldDb2, new Date('2020-01-02'), new Date('2020-01-02'))
+      await utimes(oldDb3, new Date('2020-01-03'), new Date('2020-01-03'))
 
       const manager = new BackupManager(config)
       await manager.createBackup()
 
-      // Should have cleaned up old files due to retention policy
-      expect(existsSync(join(testOutputDir, 'old_backup1.sql'))).toBe(false)
-      expect(existsSync(join(testOutputDir, 'old_backup2.tar'))).toBe(false)
-      expect(existsSync(join(testOutputDir, 'old_backup3.txt'))).toBe(false)
+      // The new test-db snapshot + the newest old one survive; the two oldest
+      // are pruned. Exactly `count` (2) snapshots of test-db remain.
+      const remaining = (await readdir(testOutputDir)).filter(f => f.startsWith('test-db_'))
+      expect(remaining.length).toBe(2)
+      expect(existsSync(oldDb1)).toBe(false)
+      expect(existsSync(oldDb2)).toBe(false)
+      expect(existsSync(oldDb3)).toBe(true)
     })
   })
 
