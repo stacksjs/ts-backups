@@ -74,8 +74,8 @@
     "typecheck": "bun --bun tsc --noEmit"
   },
   "devDependencies": {
-    "@stacksjs/clapp": "^0.2.0",
-    "better-dx": "^0.2.15"
+    "@stacksjs/clapp": "^0.2.12",
+    "better-dx": "^0.2.20"
   },
   "git-hooks": {
     "pre-commit": {
