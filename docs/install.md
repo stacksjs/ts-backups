@@ -280,7 +280,7 @@ For database connectivity problems:
 If you encounter issues:
 
 1. Check our [GitHub Issues](https://github.com/stacksjs/ts-backups/issues)
-2. Join our [Discord Community](https://discord.gg/stacksjs)
+2. Join our [Discord Community](https://stacksjs.com/discord)
 3. Review the [Configuration Reference](/config) guide
 
 ## Next Steps
