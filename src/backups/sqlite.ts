@@ -1,17 +1,97 @@
 import type { BackupResult, SQLiteConfig } from '../types'
 import { Database } from 'bun:sqlite'
-import { writeFile } from 'node:fs/promises'
+import { existsSync } from 'node:fs'
+import { unlink, writeFile } from 'node:fs/promises'
 import { join } from 'node:path'
 import { Logger } from '@stacksjs/clarity'
 import { BackupType } from '../types'
 
 const logger = new Logger('ts-backups:sqlite')
 
+/**
+ * Capture a database with SQLite's own `VACUUM INTO`.
+ *
+ * SQLite runs this inside a read transaction, so the copy is a consistent
+ * snapshot even while the database is being written to - which a plain file
+ * copy is not, because it races the WAL and can land mid-checkpoint. The result
+ * is a compact, fully formed database file rather than a script to replay.
+ */
+async function backupSQLiteFile(
+  config: SQLiteConfig,
+  outputPath: string,
+  startTime: number,
+): Promise<BackupResult> {
+  const timestamp = new Date().toISOString().replace(/[:.]/g, '-')
+  const filename = `${config.filename || config.name}_${timestamp}.sqlite`
+  const outputFile = join(outputPath, filename)
+
+  try {
+    if (config.verbose) {
+      logger.warn(`📦 Starting SQLite file backup for: ${config.name}`)
+      logger.warn(`📄 Database: ${config.path}`)
+      logger.warn(`💾 Output: ${outputFile}`)
+    }
+
+    // Readonly still permits VACUUM INTO: it only reads the source.
+    const db = new Database(config.path, { readonly: true })
+
+    try {
+      // VACUUM INTO refuses to overwrite, so a stale file from an interrupted
+      // run would otherwise fail the backup rather than replace it.
+      if (existsSync(outputFile))
+        await unlink(outputFile)
+
+      // Bound as a parameter: a path is caller-supplied and quoting it by hand
+      // is how a stray apostrophe becomes a syntax error at backup time.
+      db.query('VACUUM INTO ?').run(outputFile)
+    }
+    finally {
+      db.close()
+    }
+
+    const duration = performance.now() - startTime
+    const stats = await Bun.file(outputFile).stat()
+
+    if (config.verbose) {
+      logger.warn(`✅ SQLite file backup completed in ${duration.toFixed(2)}ms`)
+      logger.warn(`📊 File size: ${(stats.size / 1024 / 1024).toFixed(2)} MB`)
+    }
+
+    return {
+      name: config.name,
+      type: BackupType.SQLITE,
+      filename,
+      size: stats.size,
+      duration,
+      success: true,
+    }
+  }
+  catch (error) {
+    const duration = performance.now() - startTime
+    const message = error instanceof Error ? error.message : String(error)
+
+    logger.error(`❌ SQLite file backup failed for ${config.name}: ${message}`)
+
+    return {
+      name: config.name,
+      type: BackupType.SQLITE,
+      filename,
+      size: 0,
+      duration,
+      success: false,
+      error: message,
+    }
+  }
+}
+
 export async function backupSQLite(
   config: SQLiteConfig,
   outputPath: string,
 ): Promise<BackupResult> {
   const startTime = performance.now()
+
+  if (config.mode === 'file')
+    return backupSQLiteFile(config, outputPath, startTime)
 
   try {
     // Open the SQLite database

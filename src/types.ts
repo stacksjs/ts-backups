@@ -94,6 +94,21 @@ export interface SQLiteConfig extends BaseDbConfig {
   type: BackupType.SQLITE
   /** Path to the SQLite database file */
   path: string
+  /**
+   * How the database is captured.
+   *
+   * `sql` (default) writes portable INSERT statements, which restore into any
+   * SQLite and are readable by eye.
+   *
+   * `file` uses SQLite's own `VACUUM INTO` to produce a compact binary copy.
+   * Prefer it for anything large or busy: the SQL dump holds every row of every
+   * table in memory at once and concatenates the script into a single string,
+   * so a database of a few hundred MB turns into a far larger string and can
+   * fail outright. `VACUUM INTO` streams through SQLite, is transactionally
+   * consistent against concurrent writers, and restores by copying the file
+   * back rather than replaying a script.
+   */
+  mode?: 'sql' | 'file'
 }
 
 export interface PostgreSQLConfig extends BaseDbConfig {
