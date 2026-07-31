@@ -9,10 +9,12 @@ const cli = new CAC('backups')
 
 interface CliOption {
   verbose: boolean
+  config?: string
 }
 
 interface RestoreCliOption {
   verbose?: boolean
+  config?: string
   only?: string | string[]
   snapshot?: string
   target?: string
@@ -28,12 +30,14 @@ function toArray(value?: string | string[]): string[] | undefined {
 cli
   .command('start', 'Start the Backup Process')
   .option('--verbose', 'Enable verbose logging')
+  .option('--config <path>', 'Use this config file instead of discovering one from the cwd')
   .example('backups start --verbose')
+  .example('backups start --config /etc/backups/statushq.config.ts')
   .action(async (options?: CliOption) => {
     try {
       // Load the user's backups.config.ts (falls back to defaults), then let
       // the CLI --verbose flag win over the file's setting.
-      const config = await getConfig()
+      const config = await getConfig(options?.config)
       const backupConfig = {
         ...config,
         verbose: options?.verbose ?? config.verbose,
@@ -63,6 +67,7 @@ cli
 cli
   .command('restore', 'Restore files and directories from a snapshot')
   .option('--verbose', 'Enable verbose logging')
+  .option('--config <path>', 'Use this config file instead of discovering one from the cwd')
   .option('--only <name>', 'Restore only the named backup(s); repeatable')
   .option('--snapshot <file>', 'Restore from a specific snapshot filename (default: latest)')
   .option('--target <path>', 'Restore to this base path instead of the original location')
@@ -72,7 +77,7 @@ cli
   .example('backups restore --snapshot gitconfig_2026-05-30T17-30-00-000Z')
   .action(async (options?: RestoreCliOption) => {
     try {
-      const config = await getConfig()
+      const config = await getConfig(options?.config)
       const restoreConfig = {
         ...config,
         verbose: options?.verbose ?? config.verbose,
