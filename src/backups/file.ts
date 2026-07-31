@@ -9,7 +9,7 @@ import { BackupType } from '../types'
 const logger = new Logger('ts-backups:file')
 
 export async function backupFile(config: FileConfig, outputPath: string): Promise<BackupResult> {
-  const startTime = Date.now()
+  const startTime = performance.now()
   const timestamp = new Date().toISOString().replace(/[:.]/g, '-')
   const baseFilename = config.filename || config.name
   const originalExt = extname(config.path)
@@ -53,7 +53,7 @@ export async function backupFile(config: FileConfig, outputPath: string): Promis
       await preserveFileMetadata(config.path, fullPath, fileStats)
     }
 
-    const duration = Date.now() - startTime
+    const duration = performance.now() - startTime
 
     if (config.verbose) {
       logger.warn(`✅ File backup completed in ${duration}ms`)
@@ -75,7 +75,7 @@ export async function backupFile(config: FileConfig, outputPath: string): Promis
     }
   }
   catch (error) {
-    const duration = Date.now() - startTime
+    const duration = performance.now() - startTime
     const errorMessage = error instanceof Error ? error.message : String(error)
 
     if (config.verbose) {

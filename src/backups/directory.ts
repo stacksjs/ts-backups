@@ -11,7 +11,7 @@ import { BackupType } from '../types'
 const logger = new Logger('ts-backups:directory')
 
 export async function backupDirectory(config: FileConfig, outputPath: string): Promise<BackupResult> {
-  const startTime = Date.now()
+  const startTime = performance.now()
   const timestamp = new Date().toISOString().replace(/[:.]/g, '-')
   const baseFilename = config.filename || config.name
   // Not tar. The archive is this tool's own format - length-prefixed JSON
@@ -46,7 +46,7 @@ export async function backupDirectory(config: FileConfig, outputPath: string): P
     // Create backup archive
     const { size } = await createArchive(config, filesToBackup, fullPath)
 
-    const duration = Date.now() - startTime
+    const duration = performance.now() - startTime
 
     if (config.verbose) {
       logger.warn(`✅ Directory backup completed in ${duration}ms`)
@@ -65,7 +65,7 @@ export async function backupDirectory(config: FileConfig, outputPath: string): P
     }
   }
   catch (error) {
-    const duration = Date.now() - startTime
+    const duration = performance.now() - startTime
     const errorMessage = error instanceof Error ? error.message : String(error)
 
     if (config.verbose) {
