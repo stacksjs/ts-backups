@@ -30,6 +30,25 @@ export const COMPRESSION: {
   DEFAULT_EXTENSION: '.gz',
 } as const
 
+/**
+ * The extension for a multi-file archive.
+ *
+ * `.tsbak`, not `.tar`: the archive is this tool's own container format and
+ * `tar` cannot read it. Archives written before this was corrected still carry
+ * `.tar` / `.tar.gz`, so restore accepts all four - the name changes, the
+ * ability to read old backups does not.
+ */
+export const ARCHIVE_EXTENSION = '.tsbak'
+export const ARCHIVE_EXTENSION_GZ = '.tsbak.gz'
+
+/** Every archive extension restore recognises, current and historical. */
+export const ARCHIVE_EXTENSIONS: readonly string[] = [
+  ARCHIVE_EXTENSION,
+  ARCHIVE_EXTENSION_GZ,
+  '.tar',
+  '.tar.gz',
+] as const
+
 export const DATABASE_DEFAULTS: {
   readonly POSTGRESQL_PORT: 5432
   readonly MYSQL_PORT: 3306

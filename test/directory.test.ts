@@ -79,7 +79,7 @@ describe('Directory Backup', () => {
       expect(result.success).toBe(true)
       expect(result.name).toBe('full-backup')
       expect(result.type).toBe(BackupType.DIRECTORY)
-      expect(result.filename).toMatch(/full-backup_\d{4}-\d{2}-\d{2}T\d{2}-\d{2}-\d{2}.*\.tar/)
+      expect(result.filename).toMatch(/full-backup_\d{4}-\d{2}-\d{2}T\d{2}-\d{2}-\d{2}.*\.tsbak/)
       expect(result.size).toBeGreaterThan(0)
       expect(result.duration).toBeGreaterThan(0)
       expect(result.fileCount).toBeGreaterThan(5) // Should include all test files
@@ -101,7 +101,7 @@ describe('Directory Backup', () => {
       const result = await backupDirectory(config, testOutputDir)
 
       expect(result.success).toBe(true)
-      expect(result.filename).toMatch(/compressed-backup_\d{4}-\d{2}-\d{2}T\d{2}-\d{2}-\d{2}.*\.tar\.gz/)
+      expect(result.filename).toMatch(/compressed-backup_\d{4}-\d{2}-\d{2}T\d{2}-\d{2}-\d{2}.*\.tsbak\.gz/)
 
       // Verify backup file exists
       const backupPath = join(testOutputDir, result.filename)
@@ -189,7 +189,7 @@ describe('Directory Backup', () => {
       const result = await backupDirectory(config, testOutputDir)
 
       expect(result.success).toBe(true)
-      expect(result.filename).toMatch(/custom-directory-backup_\d{4}-\d{2}-\d{2}T\d{2}-\d{2}-\d{2}.*\.tar/)
+      expect(result.filename).toMatch(/custom-directory-backup_\d{4}-\d{2}-\d{2}T\d{2}-\d{2}-\d{2}.*\.tsbak/)
     })
 
     it('should handle empty directory', async () => {
@@ -273,7 +273,7 @@ describe('Directory Backup', () => {
       expect(existsSync(backupPath)).toBe(true)
 
       // Verify it's a tar file (should end with .tar or .tar.gz)
-      expect(result.filename).toMatch(/\.tar(\.gz)?$/)
+      expect(result.filename).toMatch(/\.tsbak(\.gz)?$/)
     })
   })
 

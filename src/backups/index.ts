@@ -9,6 +9,7 @@ import { backupMySQL } from './mysql'
 import { backupPostgreSQL } from './postgresql'
 import { uploadToS3 } from './s3'
 import { backupSQLite } from './sqlite'
+import { ARCHIVE_EXTENSIONS } from '../constants'
 
 export class BackupManager {
   constructor(private config: BackupConfig) {}
@@ -254,8 +255,7 @@ export class BackupManager {
         // Match backup files by common extensions and patterns
         const isBackupFile
           = file.endsWith('.sql')
-            || file.endsWith('.tar')
-            || file.endsWith('.tar.gz')
+            || ARCHIVE_EXTENSIONS.some(ext => file.endsWith(ext))
             || file.endsWith('.gz')
             || file.includes('_backup')
             || file.includes('backup_')

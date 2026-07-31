@@ -11,6 +11,7 @@ import { chmod, mkdir, readdir, readFile, utimes, writeFile } from 'node:fs/prom
 import { basename, dirname, join } from 'node:path'
 import { gunzipSync } from 'node:zlib'
 import { BackupType } from '../types'
+import { ARCHIVE_EXTENSION } from '../constants'
 
 /** A single file entry decoded from a directory archive. */
 interface ArchiveEntry {
@@ -145,8 +146,10 @@ export class RestoreManager {
       name = name.slice(0, -'.gz'.length)
     }
 
-    // `.tar` snapshots are directory archives; anything else is a single file.
-    if (name.endsWith('.tar'))
+    // Multi-file archives are this tool's own container format. `.tsbak` is the
+    // current name; `.tar` is what older archives were misleadingly called, and
+    // they still have to restore.
+    if (name.endsWith(ARCHIVE_EXTENSION) || name.endsWith('.tar'))
       return this.restoreDirectory(config, snapshot, content, startTime)
 
     return this.restoreSingleFile(config, snapshot, content, startTime)

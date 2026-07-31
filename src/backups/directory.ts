@@ -5,6 +5,7 @@ import { mkdir, readdir, readFile, stat } from 'node:fs/promises'
 import { dirname, join, relative } from 'node:path'
 import { createGzip } from 'node:zlib'
 import { Logger } from '@stacksjs/clarity'
+import { ARCHIVE_EXTENSION, ARCHIVE_EXTENSION_GZ } from '../constants'
 import { BackupType } from '../types'
 
 const logger = new Logger('ts-backups:directory')
@@ -13,7 +14,11 @@ export async function backupDirectory(config: FileConfig, outputPath: string): P
   const startTime = Date.now()
   const timestamp = new Date().toISOString().replace(/[:.]/g, '-')
   const baseFilename = config.filename || config.name
-  const extension = config.compress ? '.tar.gz' : '.tar'
+  // Not tar. The archive is this tool's own format - length-prefixed JSON
+  // headers followed by contents - and calling it .tar sends whoever finds it
+  // to `tar xzf`, which fails with "unrecognized archive format" at exactly the
+  // moment they are trying to recover something. Name it for what it is.
+  const extension = config.compress ? ARCHIVE_EXTENSION_GZ : ARCHIVE_EXTENSION
   const filename = `${baseFilename}_${timestamp}${extension}`
   const fullPath = join(outputPath, filename)
 

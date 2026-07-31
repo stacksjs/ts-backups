@@ -216,7 +216,7 @@ describe('BackupManager', () => {
       expect(result.success).toBe(true)
       expect(result.name).toBe('uploads-backup')
       expect(result.type).toBe(BackupType.DIRECTORY)
-      expect(result.filename).toMatch(/\.tar\.gz$/)
+      expect(result.filename).toMatch(/\.tsbak\.gz$/)
       expect(result.fileCount).toBe(3) // jpg, png, pdf files
     })
   })
