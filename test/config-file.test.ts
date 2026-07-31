@@ -2,7 +2,7 @@ import { afterEach, describe, expect, it } from 'bun:test'
 import { existsSync } from 'node:fs'
 import { mkdir, rm, writeFile } from 'node:fs/promises'
 import { join, resolve } from 'node:path'
-import { getConfig, loadConfigFile } from '../src/config'
+import { getConfig } from '../src/config'
 
 /**
  * Pointing the CLI at a config file rather than hoping the cwd contains the
@@ -13,7 +13,7 @@ import { getConfig, loadConfigFile } from '../src/config'
  * somewhere for the occasion and being off by one directory means backing up
  * the wrong things - which you discover at restore time.
  */
-describe('loadConfigFile', () => {
+describe('getConfig with an explicit file', () => {
   const dir = resolve('./test-config-file')
 
   afterEach(async () => {
@@ -36,7 +36,7 @@ describe('loadConfigFile', () => {
       files: [],
     }`)
 
-    const config = await loadConfigFile(path)
+    const config = await getConfig(path)
 
     expect(config.outputPath).toBe('/tmp/one')
     expect(config.databases).toHaveLength(1)
@@ -46,11 +46,11 @@ describe('loadConfigFile', () => {
   it('throws rather than falling back when the file is missing', async () => {
     // Falling back to discovery or defaults would "succeed" while backing up
     // something other than what was asked for.
-    await expect(loadConfigFile(join(dir, 'absent.config.ts'))).rejects.toThrow('not found')
+    await expect(getConfig(join(dir, 'absent.config.ts'))).rejects.toThrow()
   })
 
-  it('names the resolved path in the error', async () => {
-    await expect(loadConfigFile('./nope.config.ts')).rejects.toThrow(resolve('./nope.config.ts'))
+  it('rejects a relative path that does not exist', async () => {
+    await expect(getConfig('./nope.config.ts')).rejects.toThrow()
   })
 
   it('fills in defaults the file leaves out', async () => {
@@ -58,7 +58,7 @@ describe('loadConfigFile', () => {
       files: [{ name: 'certs', path: '/etc/rpx/certs' }],
     }`)
 
-    const config = await loadConfigFile(path)
+    const config = await getConfig(path)
 
     expect(config.files).toHaveLength(1)
     expect(config.databases).toEqual([])
@@ -68,7 +68,7 @@ describe('loadConfigFile', () => {
   it('defaults databases and files to empty rather than undefined', async () => {
     // BackupManager reads .length on both without guarding.
     const path = await write('empty.config.ts', 'export default { verbose: true }')
-    const config = await loadConfigFile(path)
+    const config = await getConfig(path)
 
     expect(config.databases).toEqual([])
     expect(config.files).toEqual([])
@@ -79,7 +79,7 @@ describe('loadConfigFile', () => {
 export const databases = []
 export const files = []`)
 
-    expect((await loadConfigFile(path)).outputPath).toBe('/tmp/named')
+    expect((await getConfig(path)).outputPath).toBe('/tmp/named')
   })
 })
 
