@@ -1,11 +1,13 @@
-import type { BunPressOptions } from 'bunpress'
+import type { BunPressOptions } from '@stacksjs/bunpress'
 
 const config: BunPressOptions = {
-  name: 'ts-backups',
+  title: 'ts-backups',
   description: 'Database backups made simple',
   url: 'https://ts-backups.stacksjs.org',
-  theme: {
-    primaryColor: '#0A0ABC',
+  themeConfig: {
+    colors: {
+      primary: '#0A0ABC',
+    },
   },
   nav: [
     { text: 'Guide', link: '/intro' },
