@@ -39,6 +39,25 @@ export interface S3Destination {
    */
   endpoint?: string
   /**
+   * Credentials for this destination alone.
+   *
+   * Without them Bun's S3Client reads AWS_ACCESS_KEY_ID and friends from the
+   * environment, which is right for AWS and wrong for a second provider: an
+   * app whose env already holds AWS keys (for its own uploads) would send
+   * those to Hetzner or R2 and be refused. Name the provider's own keys here.
+   */
+  credentials?: {
+    accessKeyId: string
+    secretAccessKey: string
+  }
+  /**
+   * Days to keep uploads under this prefix. After each upload, objects under
+   * the prefix whose last-modified is older than this are deleted, so the
+   * bucket does not grow forever. Omit to keep everything (or when a bucket
+   * lifecycle rule already expires them).
+   */
+  keepDays?: number
+  /**
    * Skip silently when credentials are absent rather than failing the
    * backup run. Default true — a backup that ran locally shouldn't be
    * reported as failed just because the off-site copy couldn't upload.
@@ -190,6 +209,10 @@ export interface UploadResult {
   /** True when skipped because credentials were absent and optional=true. */
   skipped?: boolean
   error?: string
+  /** Bytes uploaded, when the upload succeeded. */
+  bytes?: number
+  /** Old objects deleted under the prefix by `keepDays`. */
+  pruned?: string[]
 }
 
 export interface RestoreOptions {

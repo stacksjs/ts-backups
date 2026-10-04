@@ -394,6 +394,6 @@ export { backupDirectory } from './directory'
 export { backupFile } from './file'
 export { backupMySQL } from './mysql'
 export { backupPostgreSQL } from './postgresql'
-export { uploadToS3 } from './s3'
+export { pruneS3, s3ClientFor, uploadToS3 } from './s3'
 // Export individual backup functions for direct use
 export { backupSQLite } from './sqlite'
