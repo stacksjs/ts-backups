@@ -1,3 +1,49 @@
+[Compare changes](https://github.com/stacksjs/ts-backups/compare/v0.1.3...v0.1.4)
+
+## 🚀 Features
+
+- **s3**: own credentials, streamed uploads, size check, keepDays ([9370ff8](https://github.com/stacksjs/ts-backups/commit/9370ff8)) _(by Chris <chrisbreuer93@gmail.com>)_
+- **sqlite**: capture large databases with VACUUM INTO ([ab43c7d](https://github.com/stacksjs/ts-backups/commit/ab43c7d)) _(by Chris <chrisbreuer93@gmail.com>)_
+- back up from an explicit config file ([4e57a42](https://github.com/stacksjs/ts-backups/commit/4e57a42)) _(by Chris <chrisbreuer93@gmail.com>)_
+- **backups**: skip missing optional sources instead of failing ([830d73f](https://github.com/stacksjs/ts-backups/commit/830d73f)) _(by Chris <chrisbreuer93@gmail.com>)_
+- S3 (and S3-compatible) off-machine backup destinations ([a22d2b1](https://github.com/stacksjs/ts-backups/commit/a22d2b1)) _(by Chris <chrisbreuer93@gmail.com>)_
+
+## 🐛 Bug Fixes
+
+- **ci**: setup-php 2.37.1, which closes the open advisory ([37cbe0d](https://github.com/stacksjs/ts-backups/commit/37cbe0d)) _(by Chris <chrisbreuer93@gmail.com>)_
+- **docs**: use the config keys bunpress actually has ([3257fff](https://github.com/stacksjs/ts-backups/commit/3257fff)) _(by Chris <chrisbreuer93@gmail.com>)_
+- time file and directory backups with performance.now ([981f0e8](https://github.com/stacksjs/ts-backups/commit/981f0e8)) _(by Chris <chrisbreuer93@gmail.com>)_
+- stop calling the archive a tar ([6fda16f](https://github.com/stacksjs/ts-backups/commit/6fda16f)) _(by Chris <chrisbreuer93@gmail.com>)_
+- **retention**: apply count per backup entry, not globally ([a7fbf15](https://github.com/stacksjs/ts-backups/commit/a7fbf15)) _(by Chris <chrisbreuer93@gmail.com>)_
+- **directory**: nested include recursion + fast set-based matching ([698073e](https://github.com/stacksjs/ts-backups/commit/698073e)) _(by Chris <chrisbreuer93@gmail.com>)_
+- **cli**: load the user's backups config instead of the empty default ([4c35486](https://github.com/stacksjs/ts-backups/commit/4c35486)) _(by Chris <chrisbreuer93@gmail.com>)_
+
+## ♻️ Code Refactoring
+
+- let bunfig resolve the config file ([dc2d67e](https://github.com/stacksjs/ts-backups/commit/dc2d67e)) _(by Chris <chrisbreuer93@gmail.com>)_
+- **config**: resolve config as backups.config.ts to match the CLI ([64c922d](https://github.com/stacksjs/ts-backups/commit/64c922d)) _(by Chris <chrisbreuer93@gmail.com>)_
+- **restore**: drop clarity dependency and add round-trip tests ([99a183e](https://github.com/stacksjs/ts-backups/commit/99a183e)) _(by Chris <chrisbreuer93@gmail.com>)_
+
+## 📚 Documentation
+
+- link the community as stacksjs.com/discord ([d0edbb8](https://github.com/stacksjs/ts-backups/commit/d0edbb8)) _(by Chris <chrisbreuer93@gmail.com>)_
+
+## 🧹 Chores
+
+- release v0.1.4 ([520250a](https://github.com/stacksjs/ts-backups/commit/520250a)) _(by Chris <chrisbreuer93@gmail.com>)_
+- run bun-git-hooks and @stacksjs/logsmith, not the unrelated npm 'git-hooks' and 'logsmith' ([4d0548e](https://github.com/stacksjs/ts-backups/commit/4d0548e)) _(by Chris <chrisbreuer93@gmail.com>)_
+- release through @stacksjs/bumpx, not the unrelated npm 'bumpx' ([88be643](https://github.com/stacksjs/ts-backups/commit/88be643)) _(by Chris <chrisbreuer93@gmail.com>)_
+- **deps**: declare bun ^1.3.14 in deps.yaml ([83f99f1](https://github.com/stacksjs/ts-backups/commit/83f99f1)) _(by Chris <chrisbreuer93@gmail.com>)_
+- **deps**: refresh bun.lock to pick up pickier 0.1.37 ([f562c38](https://github.com/stacksjs/ts-backups/commit/f562c38)) _(by glennmichael123 <gtorregosa@gmail.com>)_
+- **deps**: refresh bun.lock to pick up pickier 0.1.35 ([d356f74](https://github.com/stacksjs/ts-backups/commit/d356f74)) _(by glennmichael123 <gtorregosa@gmail.com>)_
+- **deps**: refresh bun.lock to pick up pickier 0.1.33 ([5e60132](https://github.com/stacksjs/ts-backups/commit/5e60132)) _(by glennmichael123 <gtorregosa@gmail.com>)_
+- wip ([d89f988](https://github.com/stacksjs/ts-backups/commit/d89f988)) _(by Chris <chrisbreuer93@gmail.com>)_
+
+## Contributors
+
+- _Chris <chrisbreuer93@gmail.com>_
+- _glennmichael123 <gtorregosa@gmail.com>_
+
 [Compare changes](https://github.com/stacksjs/backupx/compare/v0.1.2...v0.1.3)
 
 ### 🐛 Bug Fixes
