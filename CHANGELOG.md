@@ -1,3 +1,17 @@
+[Compare changes](https://github.com/stacksjs/ts-backups/compare/v0.1.4...v0.1.5)
+
+## 🐛 Bug Fixes
+
+- **build**: ship the CLI as dist/bin/cli.js and declare bundled deps ([1037c33](https://github.com/stacksjs/ts-backups/commit/1037c33)) _(by Chris <chrisbreuer93@gmail.com>)_
+
+## 🧹 Chores
+
+- release v0.1.5 ([fe7683d](https://github.com/stacksjs/ts-backups/commit/fe7683d)) _(by Chris <chrisbreuer93@gmail.com>)_
+
+## Contributors
+
+- _Chris <chrisbreuer93@gmail.com>_
+
 [Compare changes](https://github.com/stacksjs/ts-backups/compare/v0.1.3...v0.1.4)
 
 ## 🚀 Features
