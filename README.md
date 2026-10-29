@@ -355,3 +355,21 @@ Made with 💙
 
 <!-- [codecov-src]: https://img.shields.io/codecov/c/gh/stacksjs/ts-backups/main?style=flat-square
 [codecov-href]: https://codecov.io/gh/stacksjs/ts-backups -->
+
+### PostgreSQL and encrypted recovery copies
+
+PostgreSQL backups run `pg_dump` (install the same or a newer PostgreSQL client
+than the server). This preserves sequences, constraints, indexes and a consistent
+snapshot. Database passwords are passed through the child environment, never argv.
+
+An S3 destination can set `encryption: { keyEnv: 'BACKUP_ENCRYPTION_KEY' }`.
+Set that environment variable to a separate random secret of at least 32 characters.
+Uploads then contain a streaming AES-256-GCM `TSCB1` envelope with `.enc` appended
+to the object key. An absent key fails the upload. Keep an independent recovery
+copy of the key: bucket access alone cannot recover the backup.
+
+After downloading an encrypted object, call `decryptBackupFile(source, target,
+secret)` from `ts-backups`. It authenticates the complete file and removes an
+unauthenticated recovery output on failure. Restore PostgreSQL SQL into a separate
+empty database with `psql --set ON_ERROR_STOP=on`; validate it before a cutover.
+The key is not stored in the object or its metadata.

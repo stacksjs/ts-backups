@@ -164,3 +164,44 @@ describe('S3 upload to a second provider', () => {
     }
   })
 })
+
+it('uploads only an authenticated encrypted envelope and fails closed without its key', async () => {
+  const { mkdtemp, readFile, rm, writeFile } = await import('node:fs/promises')
+  const { join } = await import('node:path')
+  const { tmpdir } = await import('node:os')
+  const { decryptBackupFile } = await import('../src/encryption')
+  const directory = await mkdtemp(join(tmpdir(), 'encrypted-upload-'))
+  const original = join(directory, 'database.sql')
+  await writeFile(original, 'CREATE TABLE private_fixture(id int);')
+  let uploaded: Uint8Array | undefined
+  let path = ''
+  const server = Bun.serve({ port: 0, async fetch(request) {
+    path = new URL(request.url).pathname
+    if (request.method === 'PUT') { uploaded = new Uint8Array(await request.arrayBuffer()); return new Response(null, { headers: { etag: 'x' } }) }
+    if (request.method === 'HEAD') return new Response(null, { headers: { 'content-length': String(uploaded?.length || 0) } })
+    return new Response(null, { status: 404 })
+  } })
+  const keyName = 'TEST_BACKUP_ENCRYPTION_SECRET'
+  const prior = process.env[keyName]
+  const destination = { type: 's3' as const, bucket: 'b', prefix: 'lsu', endpoint: `http://127.0.0.1:${server.port}`, credentials: { accessKeyId: 'test', secretAccessKey: 'secret' }, encryption: { keyEnv: keyName }, optional: false }
+  try {
+    delete process.env[keyName]
+    expect((await uploadToS3(destination, original)).success).toBe(false)
+    expect(uploaded).toBeUndefined()
+    process.env[keyName] = 'a dedicated recovery secret of at least thirty-two bytes'
+    const result = await uploadToS3(destination, original)
+    expect(result.success).toBe(true)
+    expect(path).toEndWith('/lsu/database.sql.enc')
+    expect(Buffer.from(uploaded!).includes(Buffer.from('private_fixture'))).toBe(false)
+    const encrypted = join(directory, 'encrypted'), restored = join(directory, 'restored')
+    await writeFile(encrypted, uploaded!)
+    await decryptBackupFile(encrypted, restored, process.env[keyName]!)
+    expect(await readFile(restored)).toEqual(await readFile(original))
+  }
+  finally {
+    if (prior === undefined) delete process.env[keyName]
+    else process.env[keyName] = prior
+    server.stop(true)
+    await rm(directory, { recursive: true, force: true })
+  }
+})

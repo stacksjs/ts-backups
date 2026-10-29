@@ -63,6 +63,8 @@ export interface S3Destination {
    * reported as failed just because the off-site copy couldn't upload.
    */
   optional?: boolean
+  /** Client-side authenticated encryption; the key stays outside the config. */
+  encryption?: { keyEnv: string }
 }
 
 export type DatabaseConfig = SQLiteConfig | PostgreSQLConfig | MySQLConfig

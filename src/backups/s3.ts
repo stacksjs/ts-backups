@@ -1,8 +1,12 @@
 import type { S3Destination, UploadResult } from '../types'
 import { basename } from 'node:path'
+import { join } from 'node:path'
+import { mkdtemp, rm } from 'node:fs/promises'
+import { tmpdir } from 'node:os'
 import process from 'node:process'
 import { S3Client } from 'bun'
 import { Logger } from '@stacksjs/clarity'
+import { encryptBackupFile } from '../encryption'
 
 const logger = new Logger('ts-backups:s3')
 
@@ -100,7 +104,7 @@ export async function uploadToS3(
   localFile: string,
   verbose = false,
 ): Promise<UploadResult> {
-  const key = keyPrefix(dest) + basename(localFile)
+  const key = keyPrefix(dest) + basename(localFile) + (dest.encryption ? '.enc' : '')
   const target = `s3://${dest.bucket}/${key}`
 
   if (dest.optional !== false && !hasCredentials(dest)) {
@@ -109,6 +113,7 @@ export async function uploadToS3(
     return { destination: 's3', filename: basename(localFile), target, success: true, skipped: true }
   }
 
+  let temporary: string | undefined
   try {
     if (verbose)
       logger.warn(`☁️  Uploading ${basename(localFile)} → ${target}`)
@@ -118,7 +123,15 @@ export async function uploadToS3(
     // A BunFile, not its bytes: Bun streams it up in parts, so a backup the
     // size of the database never has to fit in the memory of the box taking
     // it. This used to read the whole archive in first.
-    const file = Bun.file(localFile)
+    let uploadFile = localFile
+    if (dest.encryption) {
+      const secret = process.env[dest.encryption.keyEnv]
+      if (!secret) throw new Error('The configured backup encryption key is unavailable')
+      temporary = await mkdtemp(join(tmpdir(), 'ts-backups-encrypted-'))
+      uploadFile = join(temporary, 'backup.enc')
+      await encryptBackupFile(localFile, uploadFile, secret)
+    }
+    const file = Bun.file(uploadFile)
     const bytes = file.size
     await client.write(key, file)
 
@@ -138,5 +151,8 @@ export async function uploadToS3(
     const message = error instanceof Error ? error.message : String(error)
     logger.error(`❌ S3 upload failed for ${target}: ${message}`)
     return { destination: 's3', filename: basename(localFile), target, success: false, error: message }
+  }
+  finally {
+    if (temporary) await rm(temporary, { recursive: true, force: true })
   }
 }

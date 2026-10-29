@@ -1,5 +1,6 @@
 export * from './backups'
 export * from './config'
+export * from './encryption'
 export * from './constants'
 export * from './restore'
 export * from './types'

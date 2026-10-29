@@ -1,299 +1,51 @@
 import type { BackupResult, PostgreSQLConfig } from '../types'
-import { SQL } from 'bun'
-import { writeFile } from 'node:fs/promises'
-import { join } from 'node:path'
-import { Logger } from '@stacksjs/clarity'
+import { open, unlink } from 'node:fs/promises'
+import { basename, join } from 'node:path'
 import { BackupType } from '../types'
 
-const logger = new Logger('ts-backups:postgresql')
-
-function createConnectionString(connection: PostgreSQLConfig['connection']): string {
-  if (typeof connection === 'string') {
-    return connection
-  }
-
-  const { hostname = 'localhost', port = 5432, database, username = 'postgres', password, ssl } = connection
-
-  let url = `postgres://${username}`
-  if (password) {
-    url += `:${password}`
-  }
-  url += `@${hostname}:${port}/${database}`
-
-  if (ssl && typeof ssl === 'string') {
-    url += `?sslmode=${ssl}`
-  }
-  else if (ssl === true) {
-    url += `?sslmode=require`
-  }
-
-  return url
+/** Engine-native, transactionally consistent export, with credentials outside argv. */
+export function postgresDumpOptions(config: PostgreSQLConfig): { args: string[], env: Record<string, string> } {
+  const connection = typeof config.connection === 'string' ? new URL(config.connection) : config.connection
+  const values = connection instanceof URL
+    ? { hostname: connection.hostname, port: Number(connection.port || 5432), database: decodeURIComponent(connection.pathname.slice(1)), username: decodeURIComponent(connection.username), password: decodeURIComponent(connection.password), ssl: connection.searchParams.get('sslmode') || 'prefer' }
+    : connection
+  if (!values.database || config.includeSchema === false && config.includeData === false) throw new Error('PostgreSQL backup requires a database and schema or data')
+  const env = { PGHOST: values.hostname || '127.0.0.1', PGPORT: String(values.port || 5432), PGDATABASE: values.database, PGUSER: values.username || 'postgres', PGPASSWORD: values.password || '', PGSSLMODE: values.ssl === true ? 'require' : values.ssl === false ? 'disable' : values.ssl || 'prefer' }
+  const args = ['--no-password', '--no-owner', '--no-acl', '--format=plain']
+  if (config.includeSchema === false) args.push('--data-only')
+  if (config.includeData === false) args.push('--schema-only')
+  for (const table of config.tables || []) args.push('--table', table)
+  for (const table of config.excludeTables || []) args.push('--exclude-table', table)
+  return { args, env }
 }
 
-export async function backupPostgreSQL(
-  config: PostgreSQLConfig,
-  outputPath: string,
-): Promise<BackupResult> {
-  const startTime = performance.now()
-
+export async function backupPostgreSQL(config: PostgreSQLConfig, outputPath: string): Promise<BackupResult> {
+  const start = performance.now()
+  let file: string | undefined
+  let created = false
   try {
-    // Create SQL connection
-    const connectionString = createConnectionString(config.connection)
-    const db = new SQL(connectionString)
-
-    const timestamp = new Date().toISOString().replace(/[:.]/g, '-')
-    const filename = `${config.filename || config.name}_${timestamp}.sql`
-    const outputFile = join(outputPath, filename)
-
-    if (config.verbose) {
-      logger.warn(`📦 Starting PostgreSQL backup for: ${config.name}`)
-      logger.warn(`💾 Output: ${outputFile}`)
+    const options = postgresDumpOptions(config)
+    const name = config.filename || config.name
+    if (!name || basename(name) !== name || name === '.' || name === '..') throw new Error('Invalid PostgreSQL backup filename')
+    const filename = `${name}_${new Date().toISOString().replace(/[:.]/g, '-')}.sql`
+    file = join(outputPath, filename)
+    const output = await open(file, 'wx', 0o600)
+    created = true
+    try {
+      const dump = Bun.spawn(['pg_dump', ...options.args], { env: { ...process.env, ...options.env }, stdout: output.fd, stderr: 'pipe' })
+      const diagnostics = await new Response(dump.stderr).text()
+      if (await dump.exited !== 0) throw new Error(`pg_dump failed: ${diagnostics.replaceAll(options.env.PGPASSWORD || '\0', '[redacted]').slice(0, 1000)}`)
     }
-
-    const includeSchema = config.includeSchema !== false
-    const includeData = config.includeData !== false
-
-    // Get current database name
-    const [{ current_database }] = await db`SELECT current_database()`
-
-    let sqlDump = ''
-
-    // Add header comment
-    sqlDump += `-- PostgreSQL Database Backup\n`
-    sqlDump += `-- Database: ${current_database}\n`
-    sqlDump += `-- Generated: ${new Date().toISOString()}\n`
-    sqlDump += `-- Backup tool: ts-backups\n\n`
-
-    // Get tables to backup
-    let tables: { table_name: string, table_schema: string }[]
-
-    if (config.tables && config.tables.length > 0) {
-      // Backup specific tables
-      tables = await db`
-        SELECT table_name, table_schema
-        FROM information_schema.tables
-        WHERE table_type = 'BASE TABLE'
-        AND table_schema NOT IN ('information_schema', 'pg_catalog')
-        AND table_name = ANY(${config.tables})
-        ORDER BY table_schema, table_name
-      `
+    finally { await output.close() }
+    if (config.compress) {
+      const compression = Bun.spawn(['gzip', '-f', file], { stdout: 'ignore', stderr: 'pipe' })
+      if (await compression.exited !== 0) throw new Error('PostgreSQL backup compression failed')
+      file += '.gz'
     }
-    else {
-      // Backup all tables except excluded ones
-      if (config.excludeTables && config.excludeTables.length > 0) {
-        tables = await db`
-          SELECT table_name, table_schema
-          FROM information_schema.tables
-          WHERE table_type = 'BASE TABLE'
-          AND table_schema NOT IN ('information_schema', 'pg_catalog')
-          AND table_name != ALL(${config.excludeTables})
-          ORDER BY table_schema, table_name
-        `
-      }
-      else {
-        tables = await db`
-          SELECT table_name, table_schema
-          FROM information_schema.tables
-          WHERE table_type = 'BASE TABLE'
-          AND table_schema NOT IN ('information_schema', 'pg_catalog')
-          ORDER BY table_schema, table_name
-        `
-      }
-    }
-
-    if (includeSchema) {
-      sqlDump += `-- Schema\n`
-      sqlDump += `SET statement_timeout = 0;\n`
-      sqlDump += `SET lock_timeout = 0;\n`
-      sqlDump += `SET client_encoding = 'UTF8';\n`
-      sqlDump += `SET standard_conforming_strings = on;\n`
-      sqlDump += `SET check_function_bodies = false;\n`
-      sqlDump += `SET xmloption = content;\n`
-      sqlDump += `SET client_min_messages = warning;\n\n`
-
-      // Create schemas
-      const schemas = [...new Set(tables.map(t => t.table_schema))]
-      for (const schema of schemas) {
-        if (schema !== 'public') {
-          sqlDump += `CREATE SCHEMA IF NOT EXISTS "${schema}";\n`
-        }
-      }
-      sqlDump += '\n'
-
-      // Create tables
-      for (const table of tables) {
-        if (config.verbose) {
-          logger.warn(`  📋 Backing up schema for table: ${table.table_schema}.${table.table_name}`)
-        }
-
-        // Get table definition using a simpler approach
-        const columns = await db`
-          SELECT
-            column_name,
-            data_type,
-            character_maximum_length,
-            is_nullable,
-            column_default
-          FROM information_schema.columns
-          WHERE table_schema = ${table.table_schema}
-          AND table_name = ${table.table_name}
-          ORDER BY ordinal_position
-        ` as {
-          column_name: string
-          data_type: string
-          character_maximum_length: number | null
-          is_nullable: string
-          column_default: string | null
-        }[]
-
-        if (columns.length > 0) {
-          sqlDump += `-- Table: ${table.table_schema}.${table.table_name}\n`
-          sqlDump += `DROP TABLE IF EXISTS "${table.table_schema}"."${table.table_name}" CASCADE;\n`
-
-          const columnDefs = columns.map((col) => {
-            let def = `"${col.column_name}" ${col.data_type.toUpperCase()}`
-
-            if (col.character_maximum_length) {
-              def += `(${col.character_maximum_length})`
-            }
-
-            if (col.is_nullable === 'NO') {
-              def += ' NOT NULL'
-            }
-
-            if (col.column_default) {
-              def += ` DEFAULT ${col.column_default}`
-            }
-
-            return def
-          }).join(',\n  ')
-
-          sqlDump += `CREATE TABLE "${table.table_schema}"."${table.table_name}" (\n  ${columnDefs}\n);\n\n`
-        }
-      }
-    }
-
-    if (includeData) {
-      sqlDump += `-- Data\n`
-
-      for (const table of tables) {
-        if (config.verbose) {
-          logger.warn(`  📊 Backing up data for table: ${table.table_schema}.${table.table_name}`)
-        }
-
-        // Get row count
-        const [{ count }] = await db.unsafe(`SELECT COUNT(*) as count FROM "${table.table_schema}"."${table.table_name}"`) as [{ count: number }]
-
-        if (count > 0) {
-          sqlDump += `-- Data for table: ${table.table_schema}.${table.table_name} (${count} rows)\n`
-
-          // Get column names
-          const columns = await db`
-            SELECT column_name
-            FROM information_schema.columns
-            WHERE table_schema = ${table.table_schema}
-            AND table_name = ${table.table_name}
-            ORDER BY ordinal_position
-          ` as { column_name: string }[]
-
-          const columnNames = columns.map(c => `"${c.column_name}"`).join(', ')
-
-          // Process data in batches
-          const batchSize = 1000
-          for (let offset = 0; offset < count; offset += batchSize) {
-            const rows = await db.unsafe(
-              `SELECT ${columnNames} FROM "${table.table_schema}"."${table.table_name}" LIMIT ${batchSize} OFFSET ${offset}`,
-            ) as Record<string, unknown>[]
-
-            for (const row of rows) {
-              const values = columns.map((col) => {
-                const value = row[col.column_name]
-                if (value === null || value === undefined)
-                  return 'NULL'
-                if (typeof value === 'string') {
-                  return `'${value.replace(/'/g, '\'\'').replace(/\\/g, '\\\\')}'`
-                }
-                if (typeof value === 'boolean') {
-                  return value ? 'true' : 'false'
-                }
-                if (value instanceof Date) {
-                  return `'${value.toISOString()}'`
-                }
-                if (typeof value === 'object') {
-                  return `'${JSON.stringify(value).replace(/'/g, '\'\'')}'`
-                }
-                return String(value)
-              }).join(', ')
-
-              sqlDump += `INSERT INTO "${table.table_schema}"."${table.table_name}" (${columnNames}) VALUES (${values});\n`
-            }
-          }
-          sqlDump += '\n'
-        }
-      }
-    }
-
-    // Get indexes if schema is included
-    if (includeSchema) {
-      sqlDump += `-- Indexes\n`
-      for (const table of tables) {
-        const indexes = await db`
-          SELECT indexname, indexdef
-          FROM pg_indexes
-          WHERE schemaname = ${table.table_schema}
-          AND tablename = ${table.table_name}
-          AND indexname NOT LIKE '%_pkey'
-        ` as { indexname: string, indexdef: string }[]
-
-        for (const index of indexes) {
-          sqlDump += `${index.indexdef};\n`
-        }
-      }
-      sqlDump += '\n'
-    }
-
-    // Write backup file
-    await writeFile(outputFile, sqlDump, 'utf8')
-
-    // Close connection
-    await db.close()
-
-    const endTime = performance.now()
-    const duration = endTime - startTime
-    const stats = await Bun.file(outputFile).stat()
-
-    if (config.verbose) {
-      logger.warn(`✅ PostgreSQL backup completed in ${duration.toFixed(2)}ms`)
-      logger.warn(`📊 File size: ${(stats.size / 1024 / 1024).toFixed(2)} MB`)
-    }
-
-    return {
-      name: config.name,
-      type: BackupType.POSTGRESQL,
-      filename,
-      size: stats.size,
-      duration,
-      success: true,
-    }
+    return { name: config.name, type: BackupType.POSTGRESQL, filename: basename(file), size: Bun.file(file).size, duration: performance.now() - start, success: true }
   }
   catch (error) {
-    const endTime = performance.now()
-    const duration = endTime - startTime
-
-    const errorMessage = error instanceof Error ? error.message : String(error)
-
-    if (config.verbose) {
-      logger.error(`❌ PostgreSQL backup failed: ${errorMessage}`)
-    }
-
-    return {
-      name: config.name,
-      type: BackupType.POSTGRESQL,
-      filename: '',
-      size: 0,
-      duration,
-      success: false,
-      error: errorMessage,
-    }
+    if (created && file) await unlink(file).catch(() => {})
+    return { name: config.name, type: BackupType.POSTGRESQL, filename: '', size: 0, duration: performance.now() - start, success: false, error: error instanceof Error ? error.message : String(error) }
   }
 }
