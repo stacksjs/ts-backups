@@ -1,3 +1,17 @@
+[Compare changes](https://github.com/stacksjs/ts-backups/compare/v0.1.5...v0.1.6)
+
+## 🐛 Bug Fixes
+
+- preserve PostgreSQL recovery and encrypt offsite backups ([9de7880](https://github.com/stacksjs/ts-backups/commit/9de7880)) _(by Chris <chrisbreuer93@gmail.com>)_
+
+## 🧹 Chores
+
+- release v0.1.6 ([181b835](https://github.com/stacksjs/ts-backups/commit/181b835)) _(by Chris <chrisbreuer93@gmail.com>)_
+
+## Contributors
+
+- _Chris <chrisbreuer93@gmail.com>_
+
 [Compare changes](https://github.com/stacksjs/ts-backups/compare/v0.1.4...v0.1.5)
 
 ## 🐛 Bug Fixes
