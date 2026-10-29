@@ -4,9 +4,13 @@ on:
   push:
     tags:
       - 'v*'
+  workflow_dispatch:
 
 jobs:
   npm:
+    permissions:
+      contents: write
+      id-token: write
     name: npm
     runs-on: ubuntu-latest
 
@@ -15,8 +19,8 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Install Bun
-        uses: oven-sh/setup-bun@v2.1.2
+      - name: Setup Pantry
+        uses: home-lang/pantry/packages/action@main
 
       - name: Use cached node_modules
         uses: actions/cache@v5.0.3
@@ -29,10 +33,13 @@ jobs:
       - name: Install Dependencies
         run: bun install
 
+      - name: Build release packages
+        run: bun run build
+
       - name: Publish to npm
-        run: bun publish --access public
+        run: pantry publish --npm --access public
         env:
-          BUN_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Create GitHub release
         run: bunx changelogithub
@@ -43,10 +50,10 @@ jobs:
         uses: stacksjs/action-releaser@v1.2.9
         with:
           files: |
-            bin/ts-backups-linux-x64.zip
-            bin/ts-backups-linux-arm64.zip
-            bin/ts-backups-windows-x64.zip
-            bin/ts-backups-darwin-x64.zip
-            bin/ts-backups-darwin-arm64.zip
+            bin/backup-linux-x64.zip
+            bin/backup-linux-arm64.zip
+            bin/backup-windows-x64.zip
+            bin/backup-darwin-x64.zip
+            bin/backup-darwin-arm64.zip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
