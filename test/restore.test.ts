@@ -1,12 +1,12 @@
 import type { BackupConfig } from '../src/types'
 import { Buffer } from 'node:buffer'
 import { existsSync } from 'node:fs'
-import { mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises'
+import { mkdir, mkdtemp, readFile, rm, symlink, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { gzipSync } from 'node:zlib'
 import { afterEach, beforeEach, describe, expect, it } from 'bun:test'
-import { findLatestSnapshot, parseArchive, RestoreManager } from '../src/restore'
+import { findLatestSnapshot, parseArchive, resolveInside, RestoreManager } from '../src/restore'
 import { BackupType } from '../src/types'
 
 let root: string
@@ -142,6 +142,69 @@ describe('restore: directory', () => {
     ).restore()
     expect(summary.successCount).toBe(1)
     expect(await readFile(join(target, 'a.txt'), 'utf-8')).toBe('aaa')
+  })
+})
+
+describe('restore: archive paths stay inside the target', () => {
+  const outsideName = 'outside.txt'
+
+  it.each([
+    ['parent traversal', '../outside.txt'],
+    ['nested traversal', 'nested/../../outside.txt'],
+    ['backslash traversal', '..\\outside.txt'],
+    ['absolute path', '/tmp/backupx-should-not-exist.txt'],
+    ['drive letter', 'C:/outside.txt'],
+  ])('refuses %s', async (_label, path) => {
+    const dir = join(source, 'proj')
+    await writeDirSnapshot('proj', [{ path, content: 'escaped' }])
+
+    const summary = await new RestoreManager(cfg([{ name: 'proj', path: dir }])).restore()
+    expect(summary.failureCount).toBe(1)
+    expect(summary.results[0].error).toContain('Refusing archive entry')
+    expect(existsSync(join(source, outsideName))).toBe(false)
+    expect(existsSync('/tmp/backupx-should-not-exist.txt')).toBe(false)
+  })
+
+  it('refuses to write through a symlinked directory inside the target', async () => {
+    const dir = join(source, 'proj')
+    const elsewhere = join(root, 'elsewhere')
+    await mkdir(dir, { recursive: true })
+    await mkdir(elsewhere, { recursive: true })
+    await symlink(elsewhere, join(dir, 'link'))
+    await writeDirSnapshot('proj', [{ path: 'link/x/escaped.txt', content: 'escaped' }])
+
+    const summary = await new RestoreManager(cfg([{ name: 'proj', path: dir }])).restore()
+    expect(summary.failureCount).toBe(1)
+    expect(existsSync(join(elsewhere, 'x'))).toBe(false)
+  })
+
+  it('replaces a symlink at the destination instead of writing through it', async () => {
+    const dir = join(source, 'proj')
+    const victim = join(root, 'victim.txt')
+    await mkdir(dir, { recursive: true })
+    await writeFile(victim, 'untouched')
+    await symlink(victim, join(dir, 'a.txt'))
+    await writeDirSnapshot('proj', [{ path: 'a.txt', content: 'restored' }])
+
+    const summary = await new RestoreManager(cfg([{ name: 'proj', path: dir }]), { overwrite: true }).restore()
+    expect(summary.successCount).toBe(1)
+    expect(await readFile(victim, 'utf-8')).toBe('untouched')
+    expect(await readFile(join(dir, 'a.txt'), 'utf-8')).toBe('restored')
+  })
+
+  it('resolveInside keeps ordinary nested paths', () => {
+    expect(resolveInside('/srv/app', 'a/b/c.txt')).toBe('/srv/app/a/b/c.txt')
+    expect(resolveInside('/srv/app', './a/../b.txt')).toBe('/srv/app/b.txt')
+    expect(() => resolveInside('/srv/app', '')).toThrow()
+    expect(() => resolveInside('/srv/app', 'a\0b')).toThrow()
+  })
+
+  it('rejects an entry whose size runs past the archive', () => {
+    const headerJson = JSON.stringify({ path: 'a.txt', size: 999 })
+    const header = Buffer.alloc(4 + headerJson.length)
+    header.writeUInt32BE(headerJson.length, 0)
+    header.write(headerJson, 4, 'utf8')
+    expect(() => parseArchive(Buffer.concat([header, Buffer.from('short')]))).toThrow('runs past the end')
   })
 })
 

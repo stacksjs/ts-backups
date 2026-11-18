@@ -6,9 +6,9 @@ import type {
   RestoreSummary,
 } from '../types'
 import { Buffer } from 'node:buffer'
-import { existsSync } from 'node:fs'
-import { chmod, mkdir, readdir, readFile, utimes, writeFile } from 'node:fs/promises'
-import { basename, dirname, join } from 'node:path'
+import { existsSync, lstatSync, realpathSync } from 'node:fs'
+import { chmod, mkdir, readdir, readFile, unlink, utimes, writeFile } from 'node:fs/promises'
+import { basename, dirname, isAbsolute, join, relative, resolve, sep } from 'node:path'
 import { gunzipSync } from 'node:zlib'
 import { BackupType } from '../types'
 import { ARCHIVE_EXTENSION } from '../constants'
@@ -194,16 +194,28 @@ export class RestoreManager {
     let bytes = 0
     let written = 0
 
+    await mkdir(destBase, { recursive: true })
+    const realBase = realpathSync(destBase)
+
     for (const entry of entries) {
-      const dest = join(destBase, entry.relativePath)
+      const dest = resolveInside(destBase, entry.relativePath)
       if (existsSync(dest) && !this.options.overwrite) {
         this.logger.info(`  ↷ exists, skipping ${dest} (use --overwrite)`)
         continue
       }
+      // A directory inside the target may be a symlink to somewhere else (already on disk, or left
+      // by an earlier entry). Check the nearest existing ancestor before creating anything under it,
+      // then the real parent once it exists.
+      assertInside(realBase, realpathSync(nearestExistingAncestor(dirname(dest))), entry.relativePath, true)
       await mkdir(dirname(dest), { recursive: true })
-      await writeFile(dest, entry.content)
+      assertInside(realBase, realpathSync(dirname(dest)), entry.relativePath, true)
+      // Never write through a symlink sitting at the destination itself.
+      if (lstatSync(dest, { throwIfNoEntry: false })?.isSymbolicLink())
+        await unlink(dest)
+      await writeFile(dest, entry.content, { flag: this.options.overwrite ? 'w' : 'wx' })
+      // Restore permission bits but never setuid or setgid from an archive.
       if (entry.mode !== undefined)
-        await chmod(dest, entry.mode).catch(() => {})
+        await chmod(dest, entry.mode & 0o1777).catch(() => {})
       if (entry.mtime !== undefined) {
         const t = new Date(entry.mtime)
         await utimes(dest, t, t).catch(() => {})
@@ -225,6 +237,39 @@ export class RestoreManager {
       success: true,
     }
   }
+}
+
+/**
+ * Resolve an archive entry path against the restore target, refusing anything that would land
+ * outside it: absolute paths, drive or UNC prefixes, `..` segments that climb out, and NUL bytes.
+ * Archive headers are untrusted input; a tampered archive must never write elsewhere.
+ */
+export function resolveInside(base: string, entryPath: string): string {
+  if (entryPath.length === 0 || entryPath.includes('\0'))
+    throw new Error(`Refusing archive entry with an invalid path: ${JSON.stringify(entryPath)}`)
+  const normalized = entryPath.replace(/\\/g, '/')
+  if (isAbsolute(normalized) || /^[a-z]:/i.test(normalized) || normalized.startsWith('//'))
+    throw new Error(`Refusing archive entry with an absolute path: ${JSON.stringify(entryPath)}`)
+  const root = resolve(base)
+  const dest = resolve(root, normalized)
+  assertInside(root, dest, entryPath)
+  return dest
+}
+
+function nearestExistingAncestor(path: string): string {
+  let current = path
+  while (!existsSync(current)) {
+    const parent = dirname(current)
+    if (parent === current) break
+    current = parent
+  }
+  return current
+}
+
+function assertInside(root: string, candidate: string, entryPath: string, allowRoot = false): void {
+  const rel = relative(root, candidate)
+  if ((rel === '' && !allowRoot) || rel.startsWith(`..${sep}`) || rel === '..' || isAbsolute(rel))
+    throw new Error(`Refusing archive entry outside the restore target: ${JSON.stringify(entryPath)}`)
 }
 
 /**
@@ -274,6 +319,9 @@ export function parseArchive(buffer: Buffer): ArchiveEntry[] {
 
     if (typeof header.path !== 'string' || typeof header.size !== 'number')
       throw new Error('Corrupt archive: header missing path/size')
+
+    if (!Number.isInteger(header.size) || header.size < 0 || offset + header.size > buffer.length)
+      throw new Error('Corrupt archive: entry size runs past the end of the archive')
 
     const content = buffer.subarray(offset, offset + header.size)
     offset += header.size
