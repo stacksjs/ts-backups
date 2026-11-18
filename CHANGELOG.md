@@ -1,3 +1,18 @@
+[Compare changes](https://github.com/stacksjs/ts-backups/compare/v0.1.6...v0.1.7)
+
+## 🐛 Bug Fixes
+
+- **restore**: keep directory archive entries inside the restore target ([16363df](https://github.com/stacksjs/ts-backups/commit/16363df)) _(by Chris <chrisbreuer93@gmail.com>)_
+- use trusted publishing for backup releases ([bd964ad](https://github.com/stacksjs/ts-backups/commit/bd964ad)) _(by Chris <chrisbreuer93@gmail.com>)_
+
+## 🧹 Chores
+
+- release v0.1.7 ([7d590ca](https://github.com/stacksjs/ts-backups/commit/7d590ca)) _(by Chris <chrisbreuer93@gmail.com>)_
+
+## Contributors
+
+- _Chris <chrisbreuer93@gmail.com>_
+
 [Compare changes](https://github.com/stacksjs/ts-backups/compare/v0.1.5...v0.1.6)
 
 ## 🐛 Bug Fixes
